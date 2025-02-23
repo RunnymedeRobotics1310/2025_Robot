@@ -52,7 +52,7 @@ public class LoggingCommand extends Command {
      * @param timeout to check, in seconds
      * @return {@code true} if the timeout has been exceeded, {@code false} otherwise
      */
-    public boolean isTimeoutExceeded(double timeout) {
+    public boolean hasElapsed(double timeout) {
         if ((System.currentTimeMillis() - initializeTime) / 1000.0d > timeout) {
             return true;
         }

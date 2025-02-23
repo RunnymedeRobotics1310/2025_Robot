@@ -3,19 +3,27 @@ package frc.robot.commands.operator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.CoralConstants.ArmAngle;
+import frc.robot.Constants.CoralConstants.CoralPose;
 import frc.robot.commands.CancelCommand;
+import frc.robot.commands.coral.MoveToCoralPoseCommand;
+import frc.robot.commands.coral.arm.MoveArmToAngleCommand;
+import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.swervedrive.ResetOdometryCommand;
 import frc.robot.commands.swervedrive.ZeroGyroCommand;
 import frc.robot.commands.test.SystemTestCommand;
+import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 /**
  * The DriverController exposes all driver functions
  */
-public class OperatorInput {
+public class OperatorInput extends SubsystemBase {
 
     private final XboxController driverController;
     private final XboxController operatorController;
@@ -39,15 +47,82 @@ public class OperatorInput {
      * @param operatorControllerPort on the driver station which the aux joystick is
      * plugged into
      */
-    public OperatorInput(int driverControllerPort, int operatorControllerPort) {
-        driverController   = new RunnymedeGameController(driverControllerPort);
-        operatorController = new RunnymedeGameController(operatorControllerPort);
+    public OperatorInput(int driverControllerPort, int operatorControllerPort, double deadband) {
+        driverController   = new GameController(driverControllerPort, deadband);
+        operatorController = new GameController(operatorControllerPort, deadband);
     }
 
-    public boolean isToggleTestMode() {
-        return !DriverStation.isFMSAttached() && driverController.getBackButton() && driverController.getStartButton();
+    /**
+     * Configure the button bindings for all operator commands
+     * <p>
+     * NOTE: This routine requires all subsystems to be passed in
+     * <p>
+     * NOTE: This routine must only be called once from the RobotContainer
+     *
+     */
+    public void configureButtonBindings(SwerveSubsystem driveSubsystem, CoralSubsystem coralSubsystem) {
+
+        // System Test Command
+        new Trigger(() -> driverController.getStartButton() && driverController.getBackButton()
+            && !DriverStation.isFMSAttached())
+            .onTrue(new SystemTestCommand(this, driveSubsystem, coralSubsystem));
+
+        // Cancel Command
+        new Trigger(this::isCancel).whileTrue(new CancelCommand(this, driveSubsystem, coralSubsystem));
+
+        // Reset Gyro
+        new Trigger(() -> driverController.getBackButton())
+            .onTrue(new ZeroGyroCommand(driveSubsystem));
+
+        /*
+         * Reset Odometry and Compact (X button)
+         */
+        new Trigger(driverController::getXButton).whileTrue(
+            new ResetOdometryCommand(driveSubsystem, new Pose2d(1.83, 0.40, Rotation2d.fromDegrees(0))));
+
+        new Trigger(() -> driverController.getXButton())
+            .onTrue(new MoveToCoralPoseCommand(CoralPose.COMPACT, coralSubsystem));
+
+        /*
+         * Arm Buttons
+         */
+        // Y (delivery), A (intake) for arm position
+        new Trigger(() -> driverController.getYButton())
+            .onTrue(new MoveArmToAngleCommand(ArmAngle.LEVEL_2, coralSubsystem));
+
+        new Trigger(() -> driverController.getAButton())
+            .onTrue(new MoveArmToAngleCommand(ArmAngle.INTAKE, coralSubsystem));
+
+        /*
+         * Coral Intake Buttons
+         */
+        new Trigger(() -> driverController.getLeftTriggerAxis() > 0.5)
+            .onTrue(new IntakeCoralCommand(coralSubsystem));
     }
 
+    /*
+     * Cancel Command support
+     * Do not end the command while the button is pressed
+     */
+    public boolean isCancel() {
+        return driverController.getStartButton() && !driverController.getBackButton();
+    }
+
+    public boolean isZeroGyro() {
+        return driverController.getBackButton();
+    }
+
+
+    /*
+     * The following routines are used by the default commands for each subsystem
+     *
+     * They allow the default commands to get user input to manually move the
+     * robot elements.
+     */
+
+    /*
+     * Default Drive Command Buttons
+     */
     public XboxController getRawDriverController() {
         return driverController;
     }
@@ -56,24 +131,12 @@ public class OperatorInput {
         return driverController.getLeftBumperButton();
     }
 
-    public boolean isDriverRightBumper() {
+    public boolean isFastMode() {
         return driverController.getRightBumperButton();
     }
 
     public boolean isFaceSpeaker() {
         return driverController.getYButton();
-    }
-
-    public boolean isZeroGyro() {
-        return driverController.getBackButton();
-    }
-
-    public boolean isCancel() {
-        return driverController.getStartButton();
-    }
-
-    public int getPOV() {
-        return driverController.getPOV();
     }
 
     public double getDriverControllerAxis(Stick stick, Axis axis) {
@@ -97,34 +160,39 @@ public class OperatorInput {
         return 0;
     }
 
-    /**
-     * Use this method to define your trigger->command mappings. Triggers can be
-     * created via the
-     * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
-     * an arbitrary
-     * predicate, or via the named factories in {@link
-     * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-     * {@link
-     * CommandXboxController
-     * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-     * PS4} controllers or
-     * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-     * joysticks}.
+    /*
+     * Default Coral Command
      */
-    public void configureBindings(SwerveSubsystem driveSubsystem) {
-        // Enter Test Mode (Start and Back pressed at the same time)
-        new Trigger(() -> (isToggleTestMode())).onTrue(new SystemTestCommand(this, driveSubsystem));
-
-        new Trigger(() -> (isZeroGyro())).onTrue(new ZeroGyroCommand(driveSubsystem));
-        new Trigger(this::isCancel).whileTrue(new CancelCommand(driveSubsystem));
-        new Trigger(driverController::getXButton).whileTrue(
-            new ResetOdometryCommand(driveSubsystem, new Pose2d(1.83, 0.40, Rotation2d.fromDegrees(0))));
-        // drive to position test
-        // Translation2d location = new Translation2d(2, 2);
-        // Rotation2d heading = Rotation2d.fromDegrees(-20);
-        // Pose2d desiredPose = new Pose2d(location, heading);
-        // DriveToPositionCommand dtpc = new DriveToPositionCommand(driveSubsystem, BLUE_2_2_20,
-        // RED_2_2_20);
-        // new Trigger(driverController::getBButton).onTrue(dtpc);
+    public double getElevatorInput() {
+        return driverController.getRightY();
     }
+
+    public double getArmStick() {
+        return driverController.getLeftY();
+    }
+
+    public boolean getEjectButton() {
+        return driverController.getRightBumperButton();
+    }
+
+    public boolean getInjectButton() {
+        return driverController.getLeftBumperButton();
+    }
+
+    /*
+     * Support for haptic feedback to the driver
+     */
+    public void startVibrate() {
+        driverController.setRumble(GenericHID.RumbleType.kBothRumble, 1);
+    }
+
+    public void stopVibrate() {
+        driverController.setRumble(GenericHID.RumbleType.kBothRumble, 0);
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putString("Driver Controller", driverController.toString());
+    }
+
 }

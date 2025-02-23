@@ -57,6 +57,7 @@ public class TeleopDriveCommand extends BaseDriveCommand {
 
     // Called every time the scheduler runs while the command is scheduled.
     // @Override
+    @Override
     public void execute() {
         super.execute();
 
@@ -84,7 +85,7 @@ public class TeleopDriveCommand extends BaseDriveCommand {
         // Compute boost factor
         // final boolean isSlow = oi.isDriverLeftBumper();
         final boolean isSlow              = false;
-        final boolean isFast              = oi.isDriverRightBumper();
+        final boolean isFast              = oi.isFastMode();
         final double  boostFactor         = isSlow ? SLOW_SPEED_FACTOR : (isFast ? MAX_SPEED_FACTOR : GENERAL_SPEED_FACTOR);
 
         Translation2d velocity            = calculateTeleopVelocity(vX, vY, boostFactor, invert);
