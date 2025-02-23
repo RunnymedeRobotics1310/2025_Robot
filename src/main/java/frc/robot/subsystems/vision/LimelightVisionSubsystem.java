@@ -7,27 +7,36 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.networktables.*;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
+import edu.wpi.first.networktables.DoubleArraySubscriber;
+import edu.wpi.first.networktables.DoubleEntry;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.TimestampedDoubleArray;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LimelightVisionSubsystem extends SubsystemBase implements VisionPoseCallback {
 
-    private final NetworkTable lowRiderVision = NetworkTableInstance.getDefault().getTable("limelight-hugh");
-    private final NetworkTable elevateVision = NetworkTableInstance.getDefault().getTable("limelight-jackman");
+    private final NetworkTable          lowRiderVision      = NetworkTableInstance.getDefault().getTable("limelight-hugh");
+    private final NetworkTable          elevateVision       = NetworkTableInstance.getDefault().getTable("limelight-jackman");
 
     // inputs/configs
-    private final NetworkTableEntry lr_camMode = lowRiderVision.getEntry("camMode");
-    private final NetworkTableEntry lr_pipeline = lowRiderVision.getEntry("pipeline");
-    private final DoubleArrayPublisher lr_robotOrientation = lowRiderVision.getDoubleArrayTopic("robot_orientation_set").publish();
+    private final NetworkTableEntry     lr_camMode          = lowRiderVision.getEntry("camMode");
+    private final NetworkTableEntry     lr_pipeline         = lowRiderVision.getEntry("pipeline");
+    private final DoubleArrayPublisher  lr_robotOrientation = lowRiderVision.getDoubleArrayTopic("robot_orientation_set")
+        .publish();
 
-    private final NetworkTableEntry elevate_camMode = lowRiderVision.getEntry("camMode");
-    private final NetworkTableEntry elevate_pipeline = lowRiderVision.getEntry("pipeline");
-    private final DoubleEntry elevate_stream = elevateVision.getDoubleTopic("stream").getEntry(-1);
+    private final NetworkTableEntry     elevate_camMode     = lowRiderVision.getEntry("camMode");
+    private final NetworkTableEntry     elevate_pipeline    = lowRiderVision.getEntry("pipeline");
+    private final DoubleEntry           elevate_stream      = elevateVision.getDoubleTopic("stream").getEntry(-1);
 
     // output
-    private final DoubleArraySubscriber lr_MegaTag1 = lowRiderVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
-    private final DoubleArraySubscriber lr_MegaTag2 = lowRiderVision.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
+    private final DoubleArraySubscriber lr_MegaTag1         = lowRiderVision.getDoubleArrayTopic("botpose_wpiblue")
+        .subscribe(new double[0]);
+    private final DoubleArraySubscriber lr_MegaTag2         = lowRiderVision.getDoubleArrayTopic("botpose_orb_wpiblue")
+        .subscribe(new double[0]);
 
     public enum CamStreamType {
         SIDE_BY_SIDE(0),
@@ -80,31 +89,30 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
         }
     }
 
-    private Matrix<N3, N1> poseDeviationMegaTag1 = VecBuilder.fill(0.01, 0.01, 0.05);
-    private Matrix<N3, N1> poseDeviationMegaTag2 = VecBuilder.fill(0.06, 0.06, 9999999);
+    private Matrix<N3, N1>         poseDeviationMegaTag1 = VecBuilder.fill(0.01, 0.01, 0.05);
+    private Matrix<N3, N1>         poseDeviationMegaTag2 = VecBuilder.fill(0.06, 0.06, 9999999);
 
-    private final LimelightBotPose limelightBotPose = new LimelightBotPose(null, 0);
-    LimelightPoseEstimate currentPoseEstimate = new LimelightPoseEstimate(
+    private final LimelightBotPose limelightBotPose      = new LimelightBotPose(null, 0);
+    LimelightPoseEstimate          currentPoseEstimate   = new LimelightPoseEstimate(
         limelightBotPose.getPose(),
         limelightBotPose.getTimestampSeconds(),
-        poseDeviationMegaTag1
-    );
+        poseDeviationMegaTag1);
 
-    private double[] orientationSet = new double[] { 0, 0, 0, 0, 0, 0 };
+    private double[]               orientationSet        = new double[] { 0, 0, 0, 0, 0, 0 };
 
-    private final double fieldExtentMetresX;
-    private final double fieldExtentMetresY;
-    private final double maxAmbiguity;
-    private final double highQualityAmbiguity;
-    private final double maxVisposDeltaDistanceMetres;
+    private final double           fieldExtentMetresX;
+    private final double           fieldExtentMetresY;
+    private final double           maxAmbiguity;
+    private final double           highQualityAmbiguity;
+    private final double           maxVisposDeltaDistanceMetres;
 
-    private int targetTagId = 0;
+    private int                    targetTagId           = 0;
 
     public LimelightVisionSubsystem(VisionConfig visionConfig) {
-        this.fieldExtentMetresX = visionConfig.fieldExtentMetresX();
-        this.fieldExtentMetresY = visionConfig.fieldExtentMetresY();
-        this.maxAmbiguity = visionConfig.maxAmbiguity();
-        this.highQualityAmbiguity = visionConfig.highQualityAmbiguity();
+        this.fieldExtentMetresX           = visionConfig.fieldExtentMetresX();
+        this.fieldExtentMetresY           = visionConfig.fieldExtentMetresY();
+        this.maxAmbiguity                 = visionConfig.maxAmbiguity();
+        this.highQualityAmbiguity         = visionConfig.highQualityAmbiguity();
         this.maxVisposDeltaDistanceMetres = visionConfig.maxVisposeDeltaDistanceMetres();
 
         this.lr_pipeline.setNumber(visionConfig.pipelineAprilTagDetect());
@@ -153,6 +161,7 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
 
     /**
      * Set the camera view to the specified stream.
+     * 
      * @param stream the camera stream to set the view to
      */
     public void setCameraView(CamStreamType stream) {
@@ -165,6 +174,7 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
 
     /**
      * Get the pose estimate from the vision system, for callback via VisionPoseCallback
+     * 
      * @param yaw the current yaw of the robot
      * @param yawRate the current yaw rate of the robot
      * @return the pose estimate
@@ -174,17 +184,19 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
         orientationSet[0] = yaw;
         lr_robotOrientation.set(orientationSet);
 
-        // System.out.println("Poser: yaw["+yaw+"], yawRate["+yawRate+"], llX["+currentPoseEstimate.getPose().getX()+"], llY["+currentPoseEstimate.getPose().getY()+"], llY["+currentPoseEstimate.getPose().getRotation().getDegrees()+"], ambg["+limelightBotPose.getTagAmbiguity(0)+"]");
+        // System.out.println("Poser: yaw["+yaw+"], yawRate["+yawRate+"],
+        // llX["+currentPoseEstimate.getPose().getX()+"],
+        // llY["+currentPoseEstimate.getPose().getY()+"],
+        // llY["+currentPoseEstimate.getPose().getRotation().getDegrees()+"],
+        // ambg["+limelightBotPose.getTagAmbiguity(0)+"]");
 
         // If pose is 0,0 or no tags in view, we don't actually have data - return null
-        if (
-            currentPoseEstimate.getPose().getX() > 0 &&
+        if (currentPoseEstimate.getPose().getX() > 0 &&
             currentPoseEstimate.getPose().getY() > 0 &&
             limelightBotPose.getTagCount() > 0 &&
             currentPoseEstimate.getPose().getX() < fieldExtentMetresX &&
             currentPoseEstimate.getPose().getY() < fieldExtentMetresY &&
-            yawRate <= 720
-        ) {
+            yawRate <= 720) {
             // Get the "best" tag - assuming the first one is the best - TBD TODO
             double tagAmbiguity = limelightBotPose.getTagAmbiguity(0);
             if (tagAmbiguity < maxAmbiguity) {
@@ -193,16 +205,18 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
                 if (tagAmbiguity < highQualityAmbiguity || DriverStation.isDisabled()) {
                     currentPoseEstimate.setStandardDeviations(poseDeviationMegaTag1);
                     return currentPoseEstimate;
-                } else {
-                    double compareDistance = currentPoseEstimate.getPose().getTranslation().getDistance(odometryPose.getTranslation());
+                }
+                else {
+                    double compareDistance = currentPoseEstimate.getPose().getTranslation()
+                        .getDistance(odometryPose.getTranslation());
 
                     // We need to be careful with this data set. If the location is too far off,
                     // don't use it. Otherwise, scale confidence by distance.
                     if (compareDistance < maxVisposDeltaDistanceMetres) {
-                        double stdDevRatio = Math.pow(limelightBotPose.getTagDistToCamera(0), 2) / 2;
-                        double stdDevRatio2 = 5 * stdDevRatio;
+                        double         stdDevRatio  = Math.pow(limelightBotPose.getTagDistToCamera(0), 2) / 2;
+                        double         stdDevRatio2 = 5 * stdDevRatio;
 
-                        Matrix<N3, N1> deviation = VecBuilder.fill(stdDevRatio, stdDevRatio, stdDevRatio2);
+                        Matrix<N3, N1> deviation    = VecBuilder.fill(stdDevRatio, stdDevRatio, stdDevRatio2);
                         currentPoseEstimate.setStandardDeviations(deviation);
 
                         return currentPoseEstimate;

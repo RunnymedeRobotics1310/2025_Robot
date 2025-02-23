@@ -38,5 +38,5 @@ public record SwerveTranslationConfig(
     double maxAccelMPS2,
     double velocityP,
     double velocityI,
-    double velocityD
-) {}
+    double velocityD) {
+}

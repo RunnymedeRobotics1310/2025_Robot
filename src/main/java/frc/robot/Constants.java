@@ -6,7 +6,12 @@ package frc.robot;
 
 import static edu.wpi.first.math.util.Units.inchesToMeters;
 
-import ca.team1310.swerve.core.config.*;
+import ca.team1310.swerve.core.config.CoreSwerveConfig;
+import ca.team1310.swerve.core.config.EncoderConfig;
+import ca.team1310.swerve.core.config.ModuleConfig;
+import ca.team1310.swerve.core.config.MotorConfig;
+import ca.team1310.swerve.core.config.MotorType;
+import ca.team1310.swerve.core.config.TelemetryLevel;
 import ca.team1310.swerve.utils.Coordinates;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -32,26 +37,26 @@ public final class Constants {
 
     public static final class OiConstants {
 
-        public static final int DRIVER_CONTROLLER_PORT = 0;
-        public static final int OPERATOR_CONTROLLER_PORT = 1;
+        public static final int    DRIVER_CONTROLLER_PORT   = 0;
+        public static final int    OPERATOR_CONTROLLER_PORT = 1;
 
         /**
          * Standard drive speed factor. Regular teleop drive will use this factor of the max
          * translational speed.
          */
-        public static final double GENERAL_SPEED_FACTOR = .6;
+        public static final double GENERAL_SPEED_FACTOR     = .6;
 
         /**
          * Maximum drive speed factor. When boosting, this factor will be multiplied against the
          * max translational speed.
          */
-        public static final double MAX_SPEED_FACTOR = 1;
+        public static final double MAX_SPEED_FACTOR         = 1;
 
         /**
          * Slow mode drive speed factor. When running in slow mode, this factor will be
          * multiplied against the max translational speed.
          */
-        public static final double SLOW_SPEED_FACTOR = .1;
+        public static final double SLOW_SPEED_FACTOR        = .1;
     }
 
     public static final class FieldConstants {
@@ -68,23 +73,22 @@ public final class Constants {
         0.7,
         0.1,
         .5,
-        "hugh"
-    );
+        "hugh");
 
     public static final class Swerve {
 
         /**
          * Front to back from the middle of the wheels
          */
-        public static final double WHEEL_BASE_METRES = inchesToMeters(21);
+        public static final double                     WHEEL_BASE_METRES       = inchesToMeters(21);
         /**
          * Side to side from the middle of the wheels
          */
-        public static final double TRACK_WIDTH_METRES = inchesToMeters(21.75);
+        public static final double                     TRACK_WIDTH_METRES      = inchesToMeters(21.75);
 
-        public static final double SDS_MK4I_WHEEL_RADIUS_M = 0.051;
+        public static final double                     SDS_MK4I_WHEEL_RADIUS_M = 0.051;
 
-        public static final SwerveTranslationConfig TRANSLATION_CONFIG = new SwerveTranslationConfig(
+        public static final SwerveTranslationConfig    TRANSLATION_CONFIG      = new SwerveTranslationConfig(
             /* tolerance (m) */0.02,
             /* min speed (m/s) */1.0,
             /* max speed (m/s) */20,
@@ -92,48 +96,44 @@ public final class Constants {
             /* max acceleration (m/s/s) */42.0,
             /* velocity PID p */1.2,
             /* velocity PID i */0,
-            /* velocity PID d */0
-        );
+            /* velocity PID d */0);
 
-        public static final SwerveRotationConfig ROTATION_CONFIG = new SwerveRotationConfig(
+        public static final SwerveRotationConfig       ROTATION_CONFIG         = new SwerveRotationConfig(
             /* max rot vel (rad/s) */Rotation2d.fromRotations(1).getRadians(),
             /* max rotation accel (rad/s/s) */Rotation2d.fromRotations(4).getRadians(),
-            /* heading PID p */0.025, // Rads/Deg
+            /* heading PID p */0.025,                                                                               // Rads/Deg
             /* heading PID i */0,
-            /* heading PID d */0
-        );
+            /* heading PID d */0);
 
-        private static final MotorConfig ANGLE_MOTOR_CONFIG = new MotorConfig(
+        private static final MotorConfig               ANGLE_MOTOR_CONFIG      = new MotorConfig(
             /* motor hardware type */MotorType.NEO_SPARK_MAX,
             /* inverted? */true,
             /* current limit (A) */20,
             /* nominal voltage (V) */12,
-            /* ramp rate 0 to full power (s)*/0.25,
+            /* ramp rate 0 to full power (s) */0.25,
             /* angle motor gear ratio */150.0 / 7/* SDS MK4i 150/7:1 */,
             /* angle motor PID p */0.0125,
             /* angle motor PID i */0,
             /* angle motor PID d */0,
             /* angle motor PID ff */0,
-            /* angle motor PID izone */0
-        );
+            /* angle motor PID izone */0);
 
-        private static final MotorConfig DRIVE_MOTOR_CONFIG = new MotorConfig(
+        private static final MotorConfig               DRIVE_MOTOR_CONFIG      = new MotorConfig(
             /* motor hardware type */MotorType.NEO_SPARK_FLEX,
             /* inverted? */true,
             /* current limit (A) */40,
             /* current limit (A) */12,
-            /* ramp rate 0 to full power (s)*/0.25,
+            /* ramp rate 0 to full power (s) */0.25,
             /* drive motor gear ratio */6.75/* SDS MK4i L2 --> 6.75:1 */,
             /* drive motor PID p */0.11,
             /* drive motor PID i */0,
             /* drive motor PID d */0,
             /* drive motor PID ff */0,
-            /* drive motor PID izone */0
-        );
+            /* drive motor PID izone */0);
 
-        private static final EncoderConfig ANGLE_ENCODER_CONFIG = new EncoderConfig(false, 0.005, 5);
+        private static final EncoderConfig             ANGLE_ENCODER_CONFIG    = new EncoderConfig(false, 0.005, 5);
 
-        public static final ModuleConfig FRONT_LEFT = new ModuleConfig(
+        public static final ModuleConfig               FRONT_LEFT              = new ModuleConfig(
             "frontleft",
             new Coordinates(TRACK_WIDTH_METRES / 2, WHEEL_BASE_METRES / 2),
             SDS_MK4I_WHEEL_RADIUS_M,
@@ -143,10 +143,9 @@ public final class Constants {
             ANGLE_MOTOR_CONFIG,
             12,
             Rotation2d.fromRotations(0.279785).getDegrees(),
-            ANGLE_ENCODER_CONFIG
-        );
+            ANGLE_ENCODER_CONFIG);
 
-        public static final ModuleConfig FRONT_RIGHT = new ModuleConfig(
+        public static final ModuleConfig               FRONT_RIGHT             = new ModuleConfig(
             "frontright",
             new Coordinates(TRACK_WIDTH_METRES / 2, -WHEEL_BASE_METRES / 2),
             SDS_MK4I_WHEEL_RADIUS_M,
@@ -156,10 +155,9 @@ public final class Constants {
             ANGLE_MOTOR_CONFIG,
             22,
             Rotation2d.fromRotations(0.405518).getDegrees(),
-            ANGLE_ENCODER_CONFIG
-        );
+            ANGLE_ENCODER_CONFIG);
 
-        public static final ModuleConfig BACK_LEFT = new ModuleConfig(
+        public static final ModuleConfig               BACK_LEFT               = new ModuleConfig(
             "backleft",
             new Coordinates(-TRACK_WIDTH_METRES / 2, WHEEL_BASE_METRES / 2),
             SDS_MK4I_WHEEL_RADIUS_M,
@@ -169,10 +167,9 @@ public final class Constants {
             ANGLE_MOTOR_CONFIG,
             37,
             Rotation2d.fromRotations(0.501953).getDegrees(),
-            ANGLE_ENCODER_CONFIG
-        );
+            ANGLE_ENCODER_CONFIG);
 
-        public static final ModuleConfig BACK_RIGHT = new ModuleConfig(
+        public static final ModuleConfig               BACK_RIGHT              = new ModuleConfig(
             "backright",
             new Coordinates(-TRACK_WIDTH_METRES / 2, -WHEEL_BASE_METRES / 2),
             SDS_MK4I_WHEEL_RADIUS_M,
@@ -182,10 +179,9 @@ public final class Constants {
             ANGLE_MOTOR_CONFIG,
             32,
             Rotation2d.fromRotations(0.357422).getDegrees(),
-            ANGLE_ENCODER_CONFIG
-        );
+            ANGLE_ENCODER_CONFIG);
 
-        public static final CoreSwerveConfig CORE_SWERVE_CONFIG = new CoreSwerveConfig(
+        public static final CoreSwerveConfig           CORE_SWERVE_CONFIG      = new CoreSwerveConfig(
             WHEEL_BASE_METRES,
             TRACK_WIDTH_METRES,
             SDS_MK4I_WHEEL_RADIUS_M,
@@ -197,15 +193,13 @@ public final class Constants {
             FRONT_RIGHT,
             BACK_LEFT,
             BACK_RIGHT,
-            TelemetryLevel.VERBOSE
-        );
+            TelemetryLevel.VERBOSE);
 
-        public static final SwerveDriveSubsystemConfig SUBSYSTEM_CONFIG = new SwerveDriveSubsystemConfig(
+        public static final SwerveDriveSubsystemConfig SUBSYSTEM_CONFIG        = new SwerveDriveSubsystemConfig(
             true,
             CORE_SWERVE_CONFIG,
             TRANSLATION_CONFIG,
-            ROTATION_CONFIG
-        );
+            ROTATION_CONFIG);
     }
 
     public enum BotTarget {
@@ -262,10 +256,12 @@ public final class Constants {
 
     public static final class UsefulPoses {
 
-        public static final Pose2d SCORE_BLUE_AMP = (new Pose2d(BotTarget.BLUE_AMP.getLocation().getX(), 7.6, Rotation2d.fromDegrees(90)));
-        public static final Pose2d SCORE_RED_AMP = (new Pose2d(BotTarget.RED_AMP.getLocation().getX(), 7.6, Rotation2d.fromDegrees(90)));
+        public static final Pose2d SCORE_BLUE_AMP = (new Pose2d(BotTarget.BLUE_AMP.getLocation().getX(), 7.6,
+            Rotation2d.fromDegrees(90)));
+        public static final Pose2d SCORE_RED_AMP  = (new Pose2d(BotTarget.RED_AMP.getLocation().getX(), 7.6,
+            Rotation2d.fromDegrees(90)));
 
-        public static final Pose2d BLUE_2_2_20 = new Pose2d(2, 2, Rotation2d.fromDegrees(20));
-        public static final Pose2d RED_2_2_20 = new Pose2d(14.54, 2, Rotation2d.fromDegrees(-20));
+        public static final Pose2d BLUE_2_2_20    = new Pose2d(2, 2, Rotation2d.fromDegrees(20));
+        public static final Pose2d RED_2_2_20     = new Pose2d(14.54, 2, Rotation2d.fromDegrees(-20));
     }
 }

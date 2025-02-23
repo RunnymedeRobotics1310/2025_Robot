@@ -21,9 +21,11 @@ import frc.robot.subsystems.vision.LimelightVisionSubsystem;
  */
 public class RobotContainer {
 
-    private final LimelightVisionSubsystem visionSubsystem = new LimelightVisionSubsystem(Constants.VISION_CONFIG);
-    private final SwerveSubsystem swerveDriveSubsystem = new SwerveSubsystem(Constants.Swerve.SUBSYSTEM_CONFIG, visionSubsystem);
-    private final OperatorInput operatorInput = new OperatorInput(OiConstants.DRIVER_CONTROLLER_PORT, OiConstants.OPERATOR_CONTROLLER_PORT);
+    private final LimelightVisionSubsystem visionSubsystem      = new LimelightVisionSubsystem(Constants.VISION_CONFIG);
+    private final SwerveSubsystem          swerveDriveSubsystem = new SwerveSubsystem(Constants.Swerve.SUBSYSTEM_CONFIG,
+        visionSubsystem);
+    private final OperatorInput            operatorInput        = new OperatorInput(OiConstants.DRIVER_CONTROLLER_PORT,
+        OiConstants.OPERATOR_CONTROLLER_PORT);
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.

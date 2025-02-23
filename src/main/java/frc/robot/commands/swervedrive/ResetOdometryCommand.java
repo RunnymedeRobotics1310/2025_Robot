@@ -14,7 +14,8 @@ public class ResetOdometryCommand extends InstantCommand {
             if (getRunnymedeAlliance() == DriverStation.Alliance.Blue) {
                 System.out.println("ResetOdometryCommand: Reset the pose to " + bluePose.toString());
                 swerve.resetOdometry(bluePose);
-            } else {
+            }
+            else {
                 System.out.println("ResetOdometryCommand: Reset the pose to " + redPose.toString());
                 swerve.resetOdometry(redPose);
             }

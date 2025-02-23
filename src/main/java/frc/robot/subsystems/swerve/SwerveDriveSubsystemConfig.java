@@ -6,5 +6,5 @@ public record SwerveDriveSubsystemConfig(
     boolean enabled,
     CoreSwerveConfig coreConfig,
     SwerveTranslationConfig translationConfig,
-    SwerveRotationConfig rotationConfig
-) {}
+    SwerveRotationConfig rotationConfig) {
+}

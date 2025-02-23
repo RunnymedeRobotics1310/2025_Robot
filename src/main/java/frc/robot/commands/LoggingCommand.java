@@ -1,15 +1,16 @@
 package frc.robot.commands;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * The Logging Command Base implements command helpers to aid with logging and command timeout
@@ -18,10 +19,10 @@ public class LoggingCommand extends Command {
 
     SimpleDateFormat START_TIMESTAMP_FMT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
-    protected long initializeTime = 0;
-    private String finishReason = null;
+    protected long   initializeTime      = 0;
+    private String   finishReason        = null;
 
-    List<Subsystem> subsystemList = new ArrayList<>();
+    List<Subsystem>  subsystemList       = new ArrayList<>();
 
     /**
      * Default implementation automatically logs start of command with required subsystems
@@ -75,7 +76,7 @@ public class LoggingCommand extends Command {
      */
     public void logCommandStart(String commandParms) {
         this.subsystemList.clear();
-        finishReason = null;
+        finishReason   = null;
         initializeTime = 0;
 
         this.subsystemList.addAll(getRequirements());
@@ -187,7 +188,8 @@ public class LoggingCommand extends Command {
 
         if (initializeTime == 0) {
             sb.append(" at ").append(START_TIMESTAMP_FMT.format(new Date()));
-        } else {
+        }
+        else {
             sb.append(" at ").append(System.currentTimeMillis() - initializeTime).append("ms");
         }
 
@@ -224,14 +226,12 @@ public class LoggingCommand extends Command {
     }
 
     public static String format(Translation2d vector) {
-        return (
-            String.format("%.2f", vector.getNorm()) +
+        return (String.format("%.2f", vector.getNorm()) +
             " (" +
             String.format("%.2f", vector.getX()) +
             "," +
             String.format("%.2f", vector.getY()) +
-            ")"
-        );
+            ")");
     }
 
     public static String format(Transform2d transform) {

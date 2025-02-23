@@ -6,30 +6,29 @@ import ca.team1310.swerve.odometry.FieldAwareSwerveDrive;
 import ca.team1310.swerve.vision.VisionPoseCallback;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.telemetry.Telemetry;
 
 public class SwerveSubsystem extends SubsystemBase {
 
-    private final RunnymedeSwerveDrive drive;
+    private final RunnymedeSwerveDrive       drive;
     private final SwerveDriveSubsystemConfig config;
-    private final SlewRateLimiter xLimiter;
-    private final SlewRateLimiter yLimiter;
-    private final SlewRateLimiter omegaLimiter;
-    private final PIDController headingPIDController;
+    private final SlewRateLimiter            xLimiter;
+    private final SlewRateLimiter            yLimiter;
+    private final SlewRateLimiter            omegaLimiter;
+    private final PIDController              headingPIDController;
 
     public SwerveSubsystem(SwerveDriveSubsystemConfig config, VisionPoseCallback callback) {
-        this.drive = new FieldAwareSwerveDrive(config.coreConfig(), callback);
-        this.config = config;
-        this.xLimiter = new SlewRateLimiter(this.config.translationConfig().maxAccelMPS2());
-        this.yLimiter = new SlewRateLimiter(this.config.translationConfig().maxAccelMPS2());
-        this.omegaLimiter = new SlewRateLimiter(config.rotationConfig().maxAccelerationRadPS2());
+        this.drive           = new FieldAwareSwerveDrive(config.coreConfig(), callback);
+        this.config          = config;
+        this.xLimiter        = new SlewRateLimiter(this.config.translationConfig().maxAccelMPS2());
+        this.yLimiter        = new SlewRateLimiter(this.config.translationConfig().maxAccelMPS2());
+        this.omegaLimiter    = new SlewRateLimiter(config.rotationConfig().maxAccelerationRadPS2());
         headingPIDController = new PIDController(
             config.rotationConfig().headingP(),
             config.rotationConfig().headingI(),
-            config.rotationConfig().headingD()
-        );
+            config.rotationConfig().headingD());
         headingPIDController.enableContinuousInput(-180, 180);
         headingPIDController.setTolerance(2);
     }
@@ -42,13 +41,14 @@ public class SwerveSubsystem extends SubsystemBase {
     /**
      * Add limiters to the change in drive values. Note this may not scale
      * evenly - one may reach desired speed before another.
+     * 
      * @param x m/s
      * @param y m/s
      * @param omega rad/s
      */
     private void driveSafely(double x, double y, double omega) {
-        x = xLimiter.calculate(x);
-        y = yLimiter.calculate(y);
+        x     = xLimiter.calculate(x);
+        y     = yLimiter.calculate(y);
         omega = omegaLimiter.calculate(omega);
 
         if (this.config.enabled()) {
@@ -63,16 +63,17 @@ public class SwerveSubsystem extends SubsystemBase {
      * This method is responsible for applying safety code to prevent the robot from attempting to
      * exceed its physical limits both in terms of speed and acceleration.
      * <p>
+     * 
      * @param x m/s
      * @param y m/s
      * @param omega rad/s
      */
     public final void driveRobotOriented(double x, double y, double omega) {
-        Telemetry.drive.fieldOrientedVelocityX = 0;
-        Telemetry.drive.fieldOrientedVelocityY = 0;
-        Telemetry.drive.fieldOrientedVelocityOmega = 0;
-        Telemetry.drive.fieldOrientedDeltaToPoseX = 0;
-        Telemetry.drive.fieldOrientedDeltaToPoseY = 0;
+        Telemetry.drive.fieldOrientedVelocityX          = 0;
+        Telemetry.drive.fieldOrientedVelocityY          = 0;
+        Telemetry.drive.fieldOrientedVelocityOmega      = 0;
+        Telemetry.drive.fieldOrientedDeltaToPoseX       = 0;
+        Telemetry.drive.fieldOrientedDeltaToPoseY       = 0;
         Telemetry.drive.fieldOrientedDeltaToPoseHeading = 0;
 
         driveSafely(x, y, omega);
@@ -90,28 +91,36 @@ public class SwerveSubsystem extends SubsystemBase {
      * field-oriented inputs into the required robot-oriented inputs that can
      * be used by the robot.
      *
-     * @param x the linear velocity of the robot in metres per second. Positive x is away from the blue alliance wall
-     * @param y the linear velocity of the robot in metres per second. Positive y is to the left of the robot
-     * @param omega the rotation rate of the heading of the robot in radians per second. CCW positive.
+     * @param x the linear velocity of the robot in metres per second. Positive x is away from the
+     * blue alliance wall
+     * @param y the linear velocity of the robot in metres per second. Positive y is to the left of
+     * the robot
+     * @param omega the rotation rate of the heading of the robot in radians per second. CCW
+     * positive.
      */
     public final void driveFieldOriented(double x, double y, double omega) {
-        Telemetry.drive.fieldOrientedDeltaToPoseX = 0;
-        Telemetry.drive.fieldOrientedDeltaToPoseY = 0;
+        Telemetry.drive.fieldOrientedDeltaToPoseX       = 0;
+        Telemetry.drive.fieldOrientedDeltaToPoseY       = 0;
         Telemetry.drive.fieldOrientedDeltaToPoseHeading = 0;
 
         driveFieldOrientedInternal(x, y, omega);
     }
 
     /*
-     * INTERNAL method for driving field-oriented. This should be called by another method that updates
-     * telemetry values  fieldOrientedDeltaToPoseX, fieldOrientedDeltaToPoseY, fieldOrientedDeltaToPoseHeading.
+     * INTERNAL method for driving field-oriented. This should be called by another method that
+     * updates
+     * telemetry values fieldOrientedDeltaToPoseX, fieldOrientedDeltaToPoseY,
+     * fieldOrientedDeltaToPoseHeading.
+     * 
      * @param x
+     * 
      * @param y
+     * 
      * @param omega
      */
     private void driveFieldOrientedInternal(double x, double y, double omega) {
-        Telemetry.drive.fieldOrientedVelocityX = x;
-        Telemetry.drive.fieldOrientedVelocityY = y;
+        Telemetry.drive.fieldOrientedVelocityX     = x;
+        Telemetry.drive.fieldOrientedVelocityY     = y;
         Telemetry.drive.fieldOrientedVelocityOmega = omega;
 
         var robotOriented = SwerveMath.toRobotOriented(x, y, Math.toRadians(drive.getYaw()));
@@ -181,9 +190,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
     @Override
     public String toString() {
-        Pose2d pose = getPose();
-        double x = pose.getX();
-        double y = pose.getY();
+        Pose2d pose  = getPose();
+        double x     = pose.getX();
+        double y     = pose.getY();
         double theta = pose.getRotation().getDegrees();
         return String.format("SwerveDriveSubsystem Pose: %.2f,%.2f @ %.1f deg", x, y, theta);
     }
@@ -197,11 +206,12 @@ public class SwerveSubsystem extends SubsystemBase {
      * Compute the required rotation speed of the robot given the desired heading.
      * Note the desired heading is specified in degrees, adn the returned value
      * is in radians per second.
+     * 
      * @param desiredHeadingDegrees the desired heading of the robot
      * @return the required rotation speed of the robot (omega) in rad/s
      */
     public double computeOmega(double desiredHeadingDegrees) {
         return headingPIDController.calculate(drive.getYaw(), desiredHeadingDegrees);
-        //        return (desiredHeadingDegrees - drive.getYaw()) * config.rotationConfig().headingP();
+        // return (desiredHeadingDegrees - drive.getYaw()) * config.rotationConfig().headingP();
     }
 }
