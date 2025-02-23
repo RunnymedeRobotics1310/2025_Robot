@@ -166,6 +166,7 @@ bin/
 .fleet
 
 # Simulation GUI and other tools window save file
+simgui*
 *-window.json
 
 # Simulation data log directory
