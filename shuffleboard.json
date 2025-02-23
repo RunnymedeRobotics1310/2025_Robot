@@ -1,0 +1,126 @@
+{
+  "tabPane": [
+    {
+      "title": "SmartDashboard",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "SmartDashboard/",
+      "widgetPane": {
+        "gridSize": 64.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {}
+      }
+    },
+    {
+      "title": "LiveWindow",
+      "autoPopulate": true,
+      "autoPopulatePrefix": "LiveWindow/",
+      "widgetPane": {
+        "gridSize": 64.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {}
+      }
+    },
+    {
+      "title": "Drive",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 64.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {
+          "18,4": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///FMSInfo/IsRedAlliance",
+              "_title": "/FMSInfo/IsRedAlliance",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "18,0": {
+            "size": [
+              3,
+              4
+            ],
+            "content": {
+              "_type": "Gyro",
+              "_source0": "network_table:///SmartDashboard/1310/Gyro",
+              "_title": "/SmartDashboard/1310/Gyro",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Visuals/Major tick spacing": 45.0,
+              "Visuals/Starting angle": 180.0,
+              "Visuals/Show tick mark ring": true,
+              "Visuals/Counter clockwise": true
+            }
+          },
+          "5,0": {
+            "size": [
+              13,
+              7
+            ],
+            "content": {
+              "_type": "Field",
+              "_source0": "network_table:///SmartDashboard/Field",
+              "_title": "/SmartDashboard/Field",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Game/Game": "k2025Reefscape",
+              "Visuals/Robot Icon Size": 54.0,
+              "Visuals/Show Outside Circles": true,
+              "Colors/XModules": "#FFFFFFFF"
+            }
+          },
+          "21,0": {
+            "size": [
+              7,
+              6
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_title": "Swerve Drive Subsystem",
+              "_glyph": 149,
+              "_showGlyph": false,
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Network Table Tree",
+                  "_source0": "network_table:///SmartDashboard/1310/Drive",
+                  "_title": "/SmartDashboard/1310/Drive",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                },
+                {
+                  "_type": "Network Table Tree",
+                  "_source0": "network_table:///SmartDashboard/1310/Swerve",
+                  "_title": "/SmartDashboard/1310/Swerve",
+                  "_glyph": 148,
+                  "_showGlyph": false
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "windowGeometry": {
+    "x": 3842.0,
+    "y": 25.0,
+    "width": 3840.0,
+    "height": 2135.0
+  }
+}
