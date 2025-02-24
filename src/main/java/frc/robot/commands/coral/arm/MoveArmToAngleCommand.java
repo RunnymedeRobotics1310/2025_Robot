@@ -20,7 +20,6 @@ public class MoveArmToAngleCommand extends LoggingCommand {
         addRequirements(coralSubsystem);
     }
 
-
     @Override
     public void initialize() {
         logCommandStart();
@@ -29,9 +28,7 @@ public class MoveArmToAngleCommand extends LoggingCommand {
     @Override
     public void execute() {
 
-
         atAngle = coralSubsystem.moveArmToAngle(armAngle);
-
 
     }
 
@@ -50,6 +47,4 @@ public class MoveArmToAngleCommand extends LoggingCommand {
     public void end(boolean interrupted) {
         logCommandEnd(interrupted);
     }
-
-
 }

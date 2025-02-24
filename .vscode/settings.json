@@ -1,7 +1,33 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true,
   "java.configuration.updateBuildConfiguration": "automatic",
+  "java.server.launchMode": "Standard",
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "bin/": true,
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true,
+    "**/*~": true
+  },
+	"java.format.settings.url": "./Runnymede.Formatter.xml",
+	"java.format.settings.profile": "Runnymede",
+  "java.saveActions.organizeImports": true,
+  "java.cleanup.actions": [
+    "addOverride"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "[java]": {
+  	"editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+  },
   "filewatcher.commands": [
     {
       "match": "\\.java",
@@ -10,5 +36,9 @@
       "event": "onFileChange"
     }
   ],
-  "workbench.tree.indent": 14
+  "workbench.tree.indent": 14,
+  "git.allowForcePush": true,
+  "gitlens.telemetry.enabled": false,
+  "gitlens.codeLens.dateFormat": "",
+  "todo-tree.regex.regex": "(//|#|<!--|;|/\\*{1,2}|^\\s*\\*|^|^\\s*(-|\\d+.))\\s*($TAGS)"
 }
