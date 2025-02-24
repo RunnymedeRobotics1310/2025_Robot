@@ -22,35 +22,39 @@ import frc.robot.subsystems.vision.LimelightVisionSubsystem;
  */
 public class RobotContainer {
 
-    // Subsystems
-    private final LimelightVisionSubsystem visionSubsystem      = new LimelightVisionSubsystem(Constants.VISION_CONFIG);
-    private final SwerveSubsystem          swerveDriveSubsystem = new SwerveSubsystem(Swerve.SUBSYSTEM_CONFIG,
-        visionSubsystem);
+  // Subsystems
+  private final LimelightVisionSubsystem visionSubsystem =
+      new LimelightVisionSubsystem(Constants.VISION_CONFIG);
+  private final SwerveSubsystem swerveDriveSubsystem =
+      new SwerveSubsystem(Swerve.SUBSYSTEM_CONFIG, visionSubsystem);
 
-    private final CoralSubsystem           coralSubsystem       = new CoralSubsystem();
+  private final CoralSubsystem coralSubsystem = new CoralSubsystem();
 
-    // Driver and operator controllers
-    private final OperatorInput            operatorInput        = new OperatorInput(OiConstants.DRIVER_CONTROLLER_PORT,
-        OiConstants.OPERATOR_CONTROLLER_PORT, OiConstants.CONTROLLER_DEADBAND);
+  // Driver and operator controllers
+  private final OperatorInput operatorInput =
+      new OperatorInput(
+          OiConstants.DRIVER_CONTROLLER_PORT,
+          OiConstants.OPERATOR_CONTROLLER_PORT,
+          OiConstants.CONTROLLER_DEADBAND);
 
-    /** The container for the robot. Contains subsystems, OI devices, and commands. */
-    public RobotContainer() {
+  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  public RobotContainer() {
 
-        // Initialize all Subsystem default commands
-        swerveDriveSubsystem.setDefaultCommand(new TeleopDriveCommand(swerveDriveSubsystem, operatorInput));
-        coralSubsystem.setDefaultCommand(new DefaultCoralCommand(coralSubsystem, operatorInput));
+    // Initialize all Subsystem default commands
+    swerveDriveSubsystem.setDefaultCommand(
+        new TeleopDriveCommand(swerveDriveSubsystem, operatorInput));
+    coralSubsystem.setDefaultCommand(new DefaultCoralCommand(coralSubsystem, operatorInput));
 
-        // Configure the button bindings - pass in all subsystems
-        operatorInput.configureButtonBindings(swerveDriveSubsystem, coralSubsystem);
+    // Configure the button bindings - pass in all subsystems
+    operatorInput.configureButtonBindings(swerveDriveSubsystem, coralSubsystem);
+  }
 
-    }
-
-    /**
-     * Use this to pass the autonomous command to the main {@link Robot} class.
-     *
-     * @return the command to run in autonomous
-     */
-    public Command getAutonomousCommand() {
-        return null;
-    }
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public Command getAutonomousCommand() {
+    return null;
+  }
 }

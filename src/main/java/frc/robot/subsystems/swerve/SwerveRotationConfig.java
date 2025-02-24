@@ -5,5 +5,4 @@ public record SwerveRotationConfig(
     double maxAccelerationRadPS2,
     double headingP,
     double headingI,
-    double headingD) {
-}
+    double headingD) {}

@@ -6,41 +6,39 @@ import frc.robot.subsystems.CoralSubsystem;
 
 public class MoveToCoralPoseCommand extends LoggingCommand {
 
-    private final CoralSubsystem coralSubsystem;
-    private final CoralPose      pose;
+  private final CoralSubsystem coralSubsystem;
+  private final CoralPose pose;
 
-    boolean                      atElevatorHeight = false;
-    boolean                      atArmAngle       = false;
+  boolean atElevatorHeight = false;
+  boolean atArmAngle = false;
 
-    public MoveToCoralPoseCommand(CoralPose pose, CoralSubsystem coralSubsystem) {
+  public MoveToCoralPoseCommand(CoralPose pose, CoralSubsystem coralSubsystem) {
 
-        this.coralSubsystem = coralSubsystem;
-        this.pose           = pose;
+    this.coralSubsystem = coralSubsystem;
+    this.pose = pose;
 
-        addRequirements(coralSubsystem);
-    }
+    addRequirements(coralSubsystem);
+  }
 
-    @Override
-    public void initialize() {
+  @Override
+  public void initialize() {
 
-        logCommandStart();
+    logCommandStart();
 
-        atElevatorHeight = false;
-        atArmAngle       = false;
-    }
+    atElevatorHeight = false;
+    atArmAngle = false;
+  }
 
-    @Override
-    public void execute() {
+  @Override
+  public void execute() {
 
-        atElevatorHeight = coralSubsystem.moveElevatorToHeight(pose.elevatorHeight);
-        atArmAngle       = coralSubsystem.moveArmToAngle(pose.armAngle);
-    }
+    atElevatorHeight = coralSubsystem.moveElevatorToHeight(pose.elevatorHeight);
+    atArmAngle = coralSubsystem.moveArmToAngle(pose.armAngle);
+  }
 
-    @Override
-    public boolean isFinished() {
+  @Override
+  public boolean isFinished() {
 
-        return atElevatorHeight && atArmAngle;
-    }
-
-
+    return atElevatorHeight && atArmAngle;
+  }
 }

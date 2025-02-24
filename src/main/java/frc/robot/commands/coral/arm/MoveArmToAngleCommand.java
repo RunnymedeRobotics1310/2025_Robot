@@ -6,50 +6,43 @@ import frc.robot.subsystems.CoralSubsystem;
 
 public class MoveArmToAngleCommand extends LoggingCommand {
 
-    private final CoralSubsystem coralSubsystem;
+  private final CoralSubsystem coralSubsystem;
 
-    private final ArmAngle       armAngle;
+  private final ArmAngle armAngle;
 
-    private boolean              atAngle = false;
+  private boolean atAngle = false;
 
-    public MoveArmToAngleCommand(ArmAngle armAngle, CoralSubsystem coralSubsystem) {
+  public MoveArmToAngleCommand(ArmAngle armAngle, CoralSubsystem coralSubsystem) {
 
-        this.coralSubsystem = coralSubsystem;
-        this.armAngle       = armAngle;
+    this.coralSubsystem = coralSubsystem;
+    this.armAngle = armAngle;
 
-        addRequirements(coralSubsystem);
+    addRequirements(coralSubsystem);
+  }
+
+  @Override
+  public void initialize() {
+    logCommandStart();
+  }
+
+  @Override
+  public void execute() {
+
+    atAngle = coralSubsystem.moveArmToAngle(armAngle);
+  }
+
+  @Override
+  public boolean isFinished() {
+
+    // Check if the arm is at the requested position.
+    if (atAngle) {
+      return true;
     }
+    return false;
+  }
 
-
-    @Override
-    public void initialize() {
-        logCommandStart();
-    }
-
-    @Override
-    public void execute() {
-
-
-        atAngle = coralSubsystem.moveArmToAngle(armAngle);
-
-
-    }
-
-    @Override
-    public boolean isFinished() {
-
-        // Check if the arm is at the requested position.
-        if (atAngle) {
-            return true;
-        }
-        return false;
-
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        logCommandEnd(interrupted);
-    }
-
-
+  @Override
+  public void end(boolean interrupted) {
+    logCommandEnd(interrupted);
+  }
 }

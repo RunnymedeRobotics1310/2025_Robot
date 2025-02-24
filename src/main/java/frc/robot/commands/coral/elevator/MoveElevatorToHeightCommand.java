@@ -6,35 +6,35 @@ import frc.robot.subsystems.CoralSubsystem;
 
 public class MoveElevatorToHeightCommand extends LoggingCommand {
 
-    private final ElevatorHeight elevatorHeight;
-    private final CoralSubsystem coralSubsystem;
+  private final ElevatorHeight elevatorHeight;
+  private final CoralSubsystem coralSubsystem;
 
-    public MoveElevatorToHeightCommand(ElevatorHeight elevatorHeight, CoralSubsystem coralSubsystem) {
+  public MoveElevatorToHeightCommand(ElevatorHeight elevatorHeight, CoralSubsystem coralSubsystem) {
 
-        this.elevatorHeight = elevatorHeight;
-        this.coralSubsystem = coralSubsystem;
+    this.elevatorHeight = elevatorHeight;
+    this.coralSubsystem = coralSubsystem;
 
-        addRequirements(coralSubsystem);
-    }
+    addRequirements(coralSubsystem);
+  }
 
-    @Override
-    public void initialize() {
-        logCommandStart();
-    }
+  @Override
+  public void initialize() {
+    logCommandStart();
+  }
 
-    @Override
-    public void execute() {
-        coralSubsystem.moveElevatorToHeight(elevatorHeight);
-    }
+  @Override
+  public void execute() {
+    coralSubsystem.moveElevatorToHeight(elevatorHeight);
+  }
 
-    @Override
-    public boolean isFinished() {
-        return coralSubsystem.isAtElevatorHeight(elevatorHeight);
-    }
+  @Override
+  public boolean isFinished() {
+    return coralSubsystem.isAtElevatorHeight(elevatorHeight);
+  }
 
-    @Override
-    public void end(boolean interrupted) {
-        coralSubsystem.setElevatorSpeed(0);
-        logCommandEnd(interrupted);
-    }
+  @Override
+  public void end(boolean interrupted) {
+    coralSubsystem.setElevatorSpeed(0);
+    logCommandEnd(interrupted);
+  }
 }

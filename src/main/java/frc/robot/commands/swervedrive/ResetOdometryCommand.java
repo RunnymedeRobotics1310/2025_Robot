@@ -9,28 +9,29 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class ResetOdometryCommand extends InstantCommand {
 
-    public ResetOdometryCommand(SwerveSubsystem swerve, Pose2d bluePose, Pose2d redPose) {
-        super(() -> {
-            if (getRunnymedeAlliance() == DriverStation.Alliance.Blue) {
-                System.out.println("ResetOdometryCommand: Reset the pose to " + bluePose.toString());
-                swerve.resetOdometry(bluePose);
-            }
-            else {
-                System.out.println("ResetOdometryCommand: Reset the pose to " + redPose.toString());
-                swerve.resetOdometry(redPose);
-            }
+  public ResetOdometryCommand(SwerveSubsystem swerve, Pose2d bluePose, Pose2d redPose) {
+    super(
+        () -> {
+          if (getRunnymedeAlliance() == DriverStation.Alliance.Blue) {
+            System.out.println("ResetOdometryCommand: Reset the pose to " + bluePose.toString());
+            swerve.resetOdometry(bluePose);
+          } else {
+            System.out.println("ResetOdometryCommand: Reset the pose to " + redPose.toString());
+            swerve.resetOdometry(redPose);
+          }
         });
-    }
+  }
 
-    public ResetOdometryCommand(SwerveSubsystem swerve, Pose2d pose) {
-        super(() -> {
-            System.out.println("ResetOdometryCommand: Reset the pose to " + pose.toString());
-            swerve.resetOdometry(pose);
+  public ResetOdometryCommand(SwerveSubsystem swerve, Pose2d pose) {
+    super(
+        () -> {
+          System.out.println("ResetOdometryCommand: Reset the pose to " + pose.toString());
+          swerve.resetOdometry(pose);
         });
-    }
+  }
 
-    @Override
-    public boolean runsWhenDisabled() {
-        return true;
-    }
+  @Override
+  public boolean runsWhenDisabled() {
+    return true;
+  }
 }

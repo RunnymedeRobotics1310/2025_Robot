@@ -2,16 +2,15 @@ package frc.robot.telemetry;
 
 public class Telemetry {
 
-    public static final String   PREFIX = "1310/";
+  public static final String PREFIX = "1310/";
 
-    public static Test           test   = new Test();
-    public static DriveTelemetry drive  = new DriveTelemetry();
+  public static Test test = new Test();
+  public static DriveTelemetry drive = new DriveTelemetry();
 
-    private Telemetry() {
-    }
+  private Telemetry() {}
 
-    public static void post() {
-        test.post();
-        drive.post();
-    }
+  public static void post() {
+    test.post();
+    drive.post();
+  }
 }
