@@ -21,8 +21,7 @@ appropriate plugin for your IDE:
 --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
 ```
 
-*
-VSCode: [google-java-format](https://marketplace.visualstudio.com/items?itemName=JoseVSeb.google-java-format-for-vs-code)
+* VSCode: [google-java-format](https://marketplace.visualstudio.com/items?itemName=JoseVSeb.google-java-format-for-vs-code)
     * This will be suggested in `Extensions` when you open the project in VSCode.
 
 
