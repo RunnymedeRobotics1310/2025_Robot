@@ -2,5 +2,8 @@
   "editor.formatOnSave": true,
   "java.configuration.updateBuildConfiguration": "automatic",
   "workbench.tree.indent": 14,
-  "java.format.enabled": true
+  "java.format.enabled": true,
+  "[java]": {
+    "editor.defaultFormatter": "josevseb.google-java-format-for-vs-code"
+  }
 }
