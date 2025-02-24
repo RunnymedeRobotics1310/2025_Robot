@@ -26,7 +26,7 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
 public class OperatorInput extends SubsystemBase {
 
     private final XboxController driverController;
-    private final XboxController operatorController;
+    private final XboxController operatorController = null;
 
     public enum Stick {
         LEFT,
@@ -49,7 +49,7 @@ public class OperatorInput extends SubsystemBase {
      */
     public OperatorInput(int driverControllerPort, int operatorControllerPort, double deadband) {
         driverController   = new GameController(driverControllerPort, deadband);
-        operatorController = new GameController(operatorControllerPort, deadband);
+        // operatorController = new GameController(operatorControllerPort, deadband);
     }
 
     /**

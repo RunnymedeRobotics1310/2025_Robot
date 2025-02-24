@@ -143,7 +143,7 @@ public final class Constants {
             11,
             ANGLE_MOTOR_CONFIG,
             12,
-            Rotation2d.fromRotations(0.279785).getDegrees(),
+            Rotation2d.fromRotations(0.257324).getDegrees(),
             ANGLE_ENCODER_CONFIG);
 
         public static final ModuleConfig               FRONT_RIGHT             = new ModuleConfig(
@@ -155,7 +155,7 @@ public final class Constants {
             21,
             ANGLE_MOTOR_CONFIG,
             22,
-            Rotation2d.fromRotations(0.405518).getDegrees(),
+            Rotation2d.fromRotations(0.431152).getDegrees(),
             ANGLE_ENCODER_CONFIG);
 
         public static final ModuleConfig               BACK_LEFT               = new ModuleConfig(
@@ -167,7 +167,7 @@ public final class Constants {
             36,
             ANGLE_MOTOR_CONFIG,
             37,
-            Rotation2d.fromRotations(0.501953).getDegrees(),
+            Rotation2d.fromRotations(-0.360596).getDegrees(),
             ANGLE_ENCODER_CONFIG);
 
         public static final ModuleConfig               BACK_RIGHT              = new ModuleConfig(
@@ -179,7 +179,7 @@ public final class Constants {
             31,
             ANGLE_MOTOR_CONFIG,
             32,
-            Rotation2d.fromRotations(0.357422).getDegrees(),
+            Rotation2d.fromRotations(0.274658).getDegrees(),
             ANGLE_ENCODER_CONFIG);
 
         public static final CoreSwerveConfig           CORE_SWERVE_CONFIG      = new CoreSwerveConfig(
@@ -396,7 +396,7 @@ public final class Constants {
         // Set the encoder offset so that the encoder reads 0.1 rotations against the hard stop
         // This is so that the angle can go negative instead of back to 360 deg when slightly
         // less than zero. This constant was read off the REV Hardware Client Absolute Encoder page
-        public static final double  ARM_ANGLE_ENCODER_OFFSET   = 0.0316152;
+        public static final double  ARM_ANGLE_ENCODER_OFFSET   = 0.0296887;
 
         // Maximum manual tuning speed
         public static final double  ARM_TUNE_MAX_SPEED         = 0.2;
