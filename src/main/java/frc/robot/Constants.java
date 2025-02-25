@@ -309,11 +309,11 @@ public final class Constants {
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
       COMPACT(0),
-      INTAKE(30),
+      INTAKE(26),
       LEVEL_1(20),
       LEVEL_2(80),
       LEVEL_3(120),
-      LEVEL_4(160),
+      LEVEL_4(183),
       REMOVE_LOW_ALGAE(60),
       REMOVE_HIGH_ALGAE(130);
 
@@ -327,11 +327,11 @@ public final class Constants {
     // Arm Angles in degrees
     public enum ArmAngle {
       COMPACT(0),
-      INTAKE(37),
+      INTAKE(28),
       LEVEL_1(0),
       LEVEL_2(120),
       LEVEL_3(120),
-      LEVEL_4(100),
+      LEVEL_4(115),
       REMOVE_ALGAE(40);
 
       public final double angle;
@@ -417,7 +417,7 @@ public final class Constants {
     public static final double CORAL_INTAKE_SPEED = 0.5;
     public static final double CORAL_OUTAKE_SPEED = 0.8;
     public static final double PLANT_ROTATIONS = 15;
-    public static final double INTAKE_ROTATIONS = 8;
+    public static final double INTAKE_ROTATIONS = 0;
   }
 
   public static final class LightsConstants {

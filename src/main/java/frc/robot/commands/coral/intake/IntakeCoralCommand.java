@@ -1,6 +1,8 @@
 package frc.robot.commands.coral.intake;
 
 import frc.robot.Constants.CoralConstants;
+import frc.robot.Constants.CoralConstants.ArmAngle;
+import frc.robot.Constants.CoralConstants.ElevatorHeight;
 import frc.robot.commands.LoggingCommand;
 import frc.robot.subsystems.CoralSubsystem;
 
@@ -26,22 +28,15 @@ public class IntakeCoralCommand extends LoggingCommand {
   @Override
   public void execute() {
     coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_INTAKE_SPEED);
+    coralSubsystem.moveElevatorToHeight(ElevatorHeight.INTAKE);
+    coralSubsystem.moveArmToAngle(ArmAngle.INTAKE);
   }
 
   @Override
   public boolean isFinished() {
 
-    if (coralSubsystem.isCoralDetected() && firstDetect) {
-      // stop the motors when coral is detected
-      encoderOnFirstDetect = coralSubsystem.getIntakeEncoder();
-    }
-
-    if (!firstDetect
-        && (Math.abs(encoderOnFirstDetect - coralSubsystem.getIntakeEncoder()))
-            <= CoralConstants.INTAKE_ROTATIONS) {
-      return true;
-    }
-    return false;
+    
+    return coralSubsystem.isCoralDetected();
   }
 
   @Override
