@@ -24,7 +24,7 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
 public class OperatorInput extends SubsystemBase {
 
   private final XboxController driverController;
-    private final XboxController operatorController = null;
+    private final XboxController operatorController;
 
   public enum Stick {
     LEFT,
@@ -44,7 +44,7 @@ public class OperatorInput extends SubsystemBase {
    */
   public OperatorInput(int driverControllerPort, int operatorControllerPort, double deadband) {
     driverController = new GameController(driverControllerPort, deadband);
-        // operatorController = new GameController(operatorControllerPort, deadband);
+        operatorController = new GameController(operatorControllerPort, deadband);
   }
 
   /**
@@ -74,12 +74,13 @@ public class OperatorInput extends SubsystemBase {
     /*
      * Reset Odometry and Compact (X button)
      */
-    new Trigger(driverController::getXButton)
-        .whileTrue(
-            new ResetOdometryCommand(
-                driveSubsystem, new Pose2d(1.83, 0.40, Rotation2d.fromDegrees(0))));
+    //TODO: Fixme: put on better button
+    // new Trigger(driverController::getXButton)
+    //     .whileTrue(
+    //         new ResetOdometryCommand(
+    //             driveSubsystem, new Pose2d(1.83, 0.40, Rotation2d.fromDegrees(0))));
 
-    new Trigger(() -> driverController.getXButton())
+    new Trigger(() -> driverController.getXButton() ||operatorController.getXButton())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.COMPACT, coralSubsystem));
 
     /*
@@ -87,15 +88,16 @@ public class OperatorInput extends SubsystemBase {
      */
     // Y (delivery), A (intake) for arm position
     new Trigger(() -> driverController.getYButton())
-        .onTrue(new MoveArmToAngleCommand(ArmAngle.LEVEL_2, coralSubsystem));
-
+        .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coralSubsystem));
+    new Trigger(() -> driverController.getBButton())
+        .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L3, coralSubsystem));
     new Trigger(() -> driverController.getAButton())
-        .onTrue(new MoveArmToAngleCommand(ArmAngle.INTAKE, coralSubsystem));
+        .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L2, coralSubsystem));
 
     /*
      * Coral Intake Buttons
      */
-    new Trigger(() -> driverController.getLeftTriggerAxis() > 0.5)
+    new Trigger(() -> driverController.getRightTriggerAxis() > 0.5)
         .onTrue(new IntakeCoralCommand(coralSubsystem));
   }
 
@@ -104,7 +106,7 @@ public class OperatorInput extends SubsystemBase {
    * Do not end the command while the button is pressed
    */
   public boolean isCancel() {
-    return driverController.getStartButton() && !driverController.getBackButton();
+    return (driverController.getStartButton() && !driverController.getBackButton()) || (operatorController.getStartButton());
   }
 
   public boolean isZeroGyro() {
@@ -133,10 +135,6 @@ public class OperatorInput extends SubsystemBase {
     return driverController.getRightBumperButton();
   }
 
-  public boolean isFaceSpeaker() {
-    return driverController.getYButton();
-  }
-
   public double getDriverControllerAxis(Stick stick, Axis axis) {
     switch (stick) {
       case LEFT:
@@ -162,19 +160,19 @@ public class OperatorInput extends SubsystemBase {
    * Default Coral Command
    */
   public double getElevatorInput() {
-    return driverController.getRightY();
+    return operatorController.getRightY();
   }
 
   public double getArmStick() {
-    return driverController.getLeftY();
+    return operatorController.getRightX();
   }
 
   public boolean getEjectButton() {
-    return driverController.getRightBumperButton();
+    return operatorController.getLeftBumperButton();
   }
 
   public boolean getInjectButton() {
-    return driverController.getLeftBumperButton();
+    return operatorController.getBButton();
   }
 
   /*
