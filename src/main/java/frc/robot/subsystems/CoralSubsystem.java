@@ -145,6 +145,7 @@ public class CoralSubsystem extends SubsystemBase {
 
     armAboveThreshold =
         armAngleEncoder.getPosition() > CoralConstants.ARM_CAMERA_THRESHOLD_POSITION;
+    setCamStream();
 
     /*
      * Intake Motor Config
