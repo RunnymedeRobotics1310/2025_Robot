@@ -19,6 +19,7 @@ import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.CoralConstants.ArmAngle;
 import frc.robot.Constants.CoralConstants.ElevatorHeight;
 import frc.robot.Robot;
+import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 
 public class CoralSubsystem extends SubsystemBase {
 
@@ -66,6 +67,7 @@ public class CoralSubsystem extends SubsystemBase {
   private SparkAbsoluteEncoder armAngleEncoder = armMotor.getAbsoluteEncoder();
 
   private double armEncoderOffset = 0;
+  private boolean armAboveThreshold;
 
   // Intake
 
@@ -94,7 +96,10 @@ public class CoralSubsystem extends SubsystemBase {
   private double simulationPreviousIntakeSpeed = 0;
   private int simulationIntakeEncoder = 0;
 
-  public CoralSubsystem() {
+  private LimelightVisionSubsystem visionSubsystem;
+
+  public CoralSubsystem(LimelightVisionSubsystem visionSubsystem) {
+    this.visionSubsystem = visionSubsystem;
 
     /*
      * Elevator Motor Config
@@ -137,6 +142,9 @@ public class CoralSubsystem extends SubsystemBase {
 
     armMotor.configure(
         sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+    armAboveThreshold =
+        armAngleEncoder.getPosition() > CoralConstants.ARM_CAMERA_THRESHOLD_POSITION;
 
     /*
      * Intake Motor Config
@@ -196,6 +204,14 @@ public class CoralSubsystem extends SubsystemBase {
     sensorCache.coralDetected = intakeCoralDetector.isPressed();
   }
 
+  private void updateVision() {
+    boolean newAboveThreshold = getArmAngle() > CoralConstants.ARM_CAMERA_THRESHOLD_POSITION;
+    if (newAboveThreshold != armAboveThreshold) {
+      armAboveThreshold = newAboveThreshold;
+      setCamStream();
+    }
+  }
+
   /*
    * Elevator Routines
    */
@@ -223,9 +239,9 @@ public class CoralSubsystem extends SubsystemBase {
 
   public boolean isAtElevatorHeight(ElevatorHeight height) {
 
-        if (height == ElevatorHeight.COMPACT) {
-            return isElevatorAtLowerLimit();
-        }
+    if (height == ElevatorHeight.COMPACT) {
+      return isElevatorAtLowerLimit();
+    }
 
     return (Math.abs(height.encoderCount - getElevatorEncoder())
         <= CoralConstants.ELEVATOR_TOLERANCE);
@@ -380,6 +396,7 @@ public class CoralSubsystem extends SubsystemBase {
   public void periodic() {
 
     updateSensorCache();
+    updateVision();
 
     if (isSimulation) {
       simulate();
@@ -546,6 +563,13 @@ public class CoralSubsystem extends SubsystemBase {
         }
       }
     }
+  }
+
+  private void setCamStream() {
+    visionSubsystem.setCameraView(
+        armAboveThreshold
+            ? LimelightVisionSubsystem.CamStreamType.WEBCAM
+            : LimelightVisionSubsystem.CamStreamType.LIMELIGHT);
   }
 
   @Override

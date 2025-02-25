@@ -27,8 +27,7 @@ public class RobotContainer {
       new LimelightVisionSubsystem(Constants.VISION_CONFIG);
   private final SwerveSubsystem swerveDriveSubsystem =
       new SwerveSubsystem(Swerve.SUBSYSTEM_CONFIG, visionSubsystem);
-
-  private final CoralSubsystem coralSubsystem = new CoralSubsystem();
+  private final CoralSubsystem coralSubsystem = new CoralSubsystem(visionSubsystem);
 
   // Driver and operator controllers
   private final OperatorInput operatorInput =

@@ -22,7 +22,7 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   private final NetworkTable lowRiderVision =
       NetworkTableInstance.getDefault().getTable("limelight-hugh");
   private final NetworkTable elevateVision =
-      NetworkTableInstance.getDefault().getTable("limelight-jackman");
+      NetworkTableInstance.getDefault().getTable("limelight-hugh");
 
   // inputs/configs
   private final NetworkTableEntry lr_camMode = lowRiderVision.getEntry("camMode");

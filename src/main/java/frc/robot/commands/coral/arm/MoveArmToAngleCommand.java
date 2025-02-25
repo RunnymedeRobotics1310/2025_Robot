@@ -27,18 +27,12 @@ public class MoveArmToAngleCommand extends LoggingCommand {
 
   @Override
   public void execute() {
-
     atAngle = coralSubsystem.moveArmToAngle(armAngle);
   }
 
   @Override
   public boolean isFinished() {
-
-    // Check if the arm is at the requested position.
-    if (atAngle) {
-      return true;
-    }
-    return false;
+    return atAngle;
   }
 
   @Override
