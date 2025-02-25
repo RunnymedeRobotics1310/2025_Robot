@@ -214,9 +214,17 @@ public class CoralSubsystem extends SubsystemBase {
       setElevatorSpeed(0);
       return true;
     }
+    double speed = 0;
 
     double error = targetHeight.encoderCount - getElevatorEncoder();
-    setElevatorSpeed(error * CoralConstants.ELEVATOR_P * CoralConstants.ELEVATOR_MAX_SPEED);
+
+    if (Math.abs(error) >= 10) {
+      speed = CoralConstants.ELEVATOR_MAX_SPEED;
+    } else {
+      speed = CoralConstants.ELEVATOR_SLOW_ZONE_SPEED;
+    }
+    speed *=Math.signum(error);
+    setElevatorSpeed(speed);
 
     return false;
   }

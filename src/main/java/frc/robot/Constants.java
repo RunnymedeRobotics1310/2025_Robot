@@ -374,7 +374,7 @@ public final class Constants {
     /*
      * Elevator Constants
      */
-    public static final double ELEVATOR_MAX_SPEED = 0.7;
+    public static final double ELEVATOR_MAX_SPEED = 1;
     public static final double ELEVATOR_MAX_HEIGHT = 180;
 
     public static final double ELEVATOR_TOLERANCE = 2.5;
@@ -384,7 +384,7 @@ public final class Constants {
     public static final double ELEVATOR_TUNE_MAX_SPEED = 0.2;
 
     // Safety constants near the limits
-    public static final double ELEVATOR_SLOW_ZONE_SPEED = 0.05;
+    public static final double ELEVATOR_SLOW_ZONE_SPEED = 0.2;
     public static final double ELEVATOR_SLOW_ZONE = 10; // encoder counts
 
     /*
