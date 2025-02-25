@@ -100,7 +100,7 @@ public class OperatorInput extends SubsystemBase {
     /*
      * Coral Intake Buttons
      */
-    new Trigger(() -> driverController.getRightTriggerAxis() > 0.5)
+    new Trigger(() -> operatorController.getRightTriggerAxis() > 0.5)
         .onTrue(new IntakeCoralCommand(coralSubsystem));
   }
 
