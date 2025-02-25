@@ -20,9 +20,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class LimelightVisionSubsystem extends SubsystemBase implements VisionPoseCallback {
 
   private final NetworkTable lowRiderVision =
-      NetworkTableInstance.getDefault().getTable("limelight-hugh");
+      NetworkTableInstance.getDefault().getTable("limelight-nikola");
   private final NetworkTable elevateVision =
-      NetworkTableInstance.getDefault().getTable("limelight-hugh");
+      NetworkTableInstance.getDefault().getTable("limelight-thomas");
 
   // inputs/configs
   private final NetworkTableEntry lr_camMode = lowRiderVision.getEntry("camMode");
