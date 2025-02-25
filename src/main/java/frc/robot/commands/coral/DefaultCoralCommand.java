@@ -26,25 +26,29 @@ public class DefaultCoralCommand extends LoggingCommand {
   public void execute() {
 
     double elevatorInput = operatorInput.getElevatorInput();
+    double armInput = operatorInput.getArmStick();
     boolean ejectButton = operatorInput.getEjectButton();
     boolean injectButton = operatorInput.getInjectButton();
+    boolean plant = operatorInput.getPlant();
 
     // Elevator commands
     coralSubsystem.setElevatorSpeed(elevatorInput * CoralConstants.ELEVATOR_TUNE_MAX_SPEED);
 
-    double armStick = operatorInput.getArmStick();
-    if (Math.abs(armStick) > 0) {
-      coralSubsystem.setArmSpeed(armStick * CoralConstants.ARM_TUNE_MAX_SPEED);
-    } else {
-      coralSubsystem.setArmSpeed(0);
-    }
+    coralSubsystem.setArmSpeed(armInput * CoralConstants.ARM_TUNE_MAX_SPEED);
 
     // Intake commands
-    if (ejectButton) {
-      coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_OUTAKE_SPEED);
+    if (plant) {
+      if (coralSubsystem.getArmAngle() <= 70) {
+        coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_OUTAKE_SPEED);
+      } else {
+        coralSubsystem.setIntakeSpeed(-CoralConstants.CORAL_OUTAKE_SPEED);
+      }
+    }
+    else if (ejectButton) {
+      coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_EJECT_SPEED);
     } else if (injectButton) {
       // Intake & outtake are in the same direction
-      coralSubsystem.setIntakeSpeed(-CoralConstants.CORAL_INTAKE_SPEED);
+      coralSubsystem.setIntakeSpeed(-CoralConstants.CORAL_EJECT_SPEED);
     } else {
       coralSubsystem.setIntakeSpeed(0);
     }

@@ -72,7 +72,7 @@ public class OperatorInput extends SubsystemBase {
     new Trigger(() -> driverController.getBackButton()).onTrue(new ZeroGyroCommand(driveSubsystem));
 
     /*
-     * Reset Odometry and Compact (X button)
+     * Reset Odometry
      */
     //TODO: Fixme: put on better button
     // new Trigger(driverController::getXButton)
@@ -80,19 +80,22 @@ public class OperatorInput extends SubsystemBase {
     //         new ResetOdometryCommand(
     //             driveSubsystem, new Pose2d(1.83, 0.40, Rotation2d.fromDegrees(0))));
 
+    // Compact (X button)
     new Trigger(() -> driverController.getXButton() ||operatorController.getXButton())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.COMPACT, coralSubsystem));
 
     /*
-     * Arm Buttons
+     * Set Score Height (POV)
      */
     // Y (delivery), A (intake) for arm position
-    new Trigger(() -> driverController.getYButton())
+    new Trigger(() -> operatorController.getPOV() == 0)
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coralSubsystem));
-    new Trigger(() -> driverController.getBButton())
+    new Trigger(() -> operatorController.getPOV() == 270)
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L3, coralSubsystem));
-    new Trigger(() -> driverController.getAButton())
+    new Trigger(() -> operatorController.getPOV() == 180)
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L2, coralSubsystem));
+    new Trigger(() -> operatorController.getPOV() == 90)
+            .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L1, coralSubsystem));
 
     /*
      * Coral Intake Buttons
@@ -128,7 +131,11 @@ public class OperatorInput extends SubsystemBase {
   }
 
   public boolean getRotate180Val() {
-    return driverController.getLeftBumperButton();
+    return driverController.getAButton();
+  }
+
+  public boolean getAlignReefTag() {
+    return driverController.getBButton();
   }
 
   public boolean isFastMode() {
@@ -174,6 +181,35 @@ public class OperatorInput extends SubsystemBase {
   public boolean getInjectButton() {
     return operatorController.getBButton();
   }
+
+  public boolean getPlant() {
+    return driverController.getLeftBumperButton();
+  }
+
+
+  /*
+   * Default Algae Command
+   */
+  public boolean getIntakeAlgae() {
+    return driverController.getLeftTriggerAxis() <= 0.5;
+  }
+
+  public boolean getOuttakeAlgae() {
+    return driverController.getRightTriggerAxis() <= 0.5;
+  }
+
+
+  /*
+   * Default Climb Command
+   */
+  public boolean getClimb() {
+    return driverController.getPOV() == 0;
+  }
+
+  public boolean getAntiClimb() {
+    return driverController.getPOV() == 180;
+  }
+
 
   /*
    * Support for haptic feedback to the driver

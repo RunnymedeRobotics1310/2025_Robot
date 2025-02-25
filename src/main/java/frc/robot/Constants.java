@@ -417,8 +417,8 @@ public final class Constants {
      */
     public static final double CORAL_INTAKE_SPEED = 0.5;
     public static final double CORAL_OUTAKE_SPEED = 0.8;
+    public static final double CORAL_EJECT_SPEED = 0.7;
     public static final double PLANT_ROTATIONS = 15;
-    public static final double INTAKE_ROTATIONS = 0;
   }
 
   public static final class LightsConstants {
