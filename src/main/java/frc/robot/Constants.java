@@ -53,7 +53,7 @@ public final class Constants {
      * Slow mode drive speed factor. When running in slow mode, this factor will be multiplied
      * against the max translational speed.
      */
-    public static final double SLOW_SPEED_FACTOR = .1;
+    public static final double SLOW_SPEED_FACTOR = .05;
   }
 
   public static final class FieldConstants {

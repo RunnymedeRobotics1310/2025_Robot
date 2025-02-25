@@ -72,6 +72,12 @@ public class TeleopDriveCommand extends BaseDriveCommand {
     // Thus, negative x stick axis maps to positive y translation on the field.
     final double vY = oi.getDriverControllerAxis(LEFT, X);
 
+    // Operator x for fine-tuning robot oriented
+    final double oX = -oi.getOperatorControllerAxis(LEFT, Y) * SLOW_SPEED_FACTOR;
+
+    // Operator y for fine-tuning robot oriented
+    final double oY = oi.getOperatorControllerAxis(LEFT, X) * SLOW_SPEED_FACTOR;
+
     // Left and right on the right stick will change the direction the robot is facing - its
     // heading. Positive x values on the stick translate to clockwise motion, and vice versa.
     // The coordinate system has positive motion as CCW.
@@ -138,12 +144,18 @@ public class TeleopDriveCommand extends BaseDriveCommand {
       }
     }
 
-    if (fieldOriented) {
-      // Field-oriented mode
-      swerve.driveFieldOriented(velocity.getX(), velocity.getY(), omegaRadiansPerSecond);
+    // if driver isn't driving, operator has control
+    if ((vX == 0 && vY == 0 && ccwRotAngularVelPct == 0) && (oX !=0 || oY !=0)) {
+      swerve.driveRobotOriented(oX * TRANSLATION_CONFIG.maxSpeedMPS(), oY * TRANSLATION_CONFIG.maxSpeedMPS(), omegaRadiansPerSecond);
+    // driver gets priority otherwise
     } else {
-      // Robot-oriented mode
-      swerve.driveRobotOriented(velocity.getX(), velocity.getY(), omegaRadiansPerSecond);
+      if (fieldOriented) {
+        // Field-oriented mode
+        swerve.driveFieldOriented(velocity.getX(), velocity.getY(), omegaRadiansPerSecond);
+      } else {
+        // Robot-oriented mode
+        swerve.driveRobotOriented(velocity.getX(), velocity.getY(), omegaRadiansPerSecond);
+      }
     }
   }
 

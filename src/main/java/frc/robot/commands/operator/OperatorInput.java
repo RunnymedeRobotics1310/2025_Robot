@@ -163,6 +163,26 @@ public class OperatorInput extends SubsystemBase {
     return 0;
   }
 
+  public double getOperatorControllerAxis(Stick stick, Axis axis) {
+    switch (stick) {
+      case LEFT:
+        switch (axis) {
+          case X:
+            return operatorController.getLeftX();
+          case Y:
+            return operatorController.getLeftY();
+        }
+        break;
+      case RIGHT:
+        switch (axis) {
+          case X:
+            return operatorController.getRightX();
+        }
+        break;
+    }
+
+    return 0;
+  }
   /*
    * Default Coral Command
    */
