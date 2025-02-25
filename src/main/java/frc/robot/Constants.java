@@ -310,10 +310,10 @@ public final class Constants {
     public enum ElevatorHeight {
       COMPACT(0),
       INTAKE(26),
-      LEVEL_1(20),
-      LEVEL_2(80),
-      LEVEL_3(120),
-      LEVEL_4(183),
+      LEVEL_1(0),
+      LEVEL_2(0),
+      LEVEL_3(72),
+      LEVEL_4(187.5),
       REMOVE_LOW_ALGAE(60),
       REMOVE_HIGH_ALGAE(130);
 
@@ -331,7 +331,7 @@ public final class Constants {
       LEVEL_1(0),
       LEVEL_2(120),
       LEVEL_3(120),
-      LEVEL_4(115),
+      LEVEL_4(125),
       REMOVE_ALGAE(40);
 
       public final double angle;
