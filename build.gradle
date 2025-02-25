@@ -34,7 +34,6 @@ deploy {
                     jvmArgs.add("-Dcom.sun.management.jmxremote.local.only=false")
                     jvmArgs.add("-Dcom.sun.management.jmxremote.ssl=false")
                     jvmArgs.add("-Dcom.sun.management.jmxremote.authenticate=false")
-//                  jvmArgs.add("-Djava.rmi.server.hostname=10.TE.AM.2") // Replace TE.AM with team number
                     jvmArgs.add("-Djava.rmi.server.hostname=10.13.10.2") // Replace TE.AM with team number
                 }
                 // Static files artifact
@@ -42,7 +41,7 @@ deploy {
                     files = project.fileTree('src/main/deploy')
                     directory = '/home/lvuser/deploy'
                     deleteOldFiles = false // Change to true to delete files on roboRIO that no
-                                           // longer exist in deploy directory of this project
+                    // longer exist in deploy directory of this project
                 }
             }
         }
