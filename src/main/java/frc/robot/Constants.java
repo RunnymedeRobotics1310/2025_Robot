@@ -394,12 +394,13 @@ public final class Constants {
 
     public static final double ARM_LOWER_LIMIT_POSITION = 0;
     public static final double ARM_UPPER_LIMIT_POSITION = 126;
+    public static final double ARM_CAMERA_THRESHOLD_POSITION = 100;
 
     public static final boolean ARM_ANGLE_ENCODER_INVERTED = false;
     // Set the encoder offset so that the encoder reads 0.1 rotations against the hard stop
     // This is so that the angle can go negative instead of back to 360 deg when slightly
     // less than zero. This constant was read off the REV Hardware Client Absolute Encoder page
-        public static final double  ARM_ANGLE_ENCODER_OFFSET   = 0.0296887;
+    public static final double ARM_ANGLE_ENCODER_OFFSET = 0.0296887;
 
     // Maximum manual tuning speed
     public static final double ARM_TUNE_MAX_SPEED = 0.2;
