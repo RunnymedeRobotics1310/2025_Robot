@@ -100,7 +100,7 @@ public class OperatorInput extends SubsystemBase {
     /*
      * Coral Intake Buttons
      */
-    new Trigger(() -> operatorController.getRightTriggerAxis() > 0.5)
+    new Trigger(() -> driverController.getLeftBumperButton())
         .onTrue(new IntakeCoralCommand(coralSubsystem));
   }
 
@@ -203,7 +203,7 @@ public class OperatorInput extends SubsystemBase {
   }
 
   public boolean getPlant() {
-    return driverController.getLeftBumperButton();
+    return operatorController.getRightTriggerAxis() > 0.5;
   }
 
 
