@@ -11,13 +11,17 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoralConstants.ArmAngle;
 import frc.robot.Constants.CoralConstants.CoralPose;
 import frc.robot.commands.CancelCommand;
+import frc.robot.commands.climb.ClimbCommand;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.arm.MoveArmToAngleCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
+import frc.robot.commands.pneumatics.ToggleCompressorCommand;
 import frc.robot.commands.swervedrive.ResetOdometryCommand;
 import frc.robot.commands.swervedrive.ZeroGyroCommand;
 import frc.robot.commands.test.SystemTestCommand;
+import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
+import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 /** The DriverController exposes all driver functions */
@@ -55,7 +59,7 @@ public class OperatorInput extends SubsystemBase {
    * <p>NOTE: This routine must only be called once from the RobotContainer
    */
   public void configureButtonBindings(
-      SwerveSubsystem driveSubsystem, CoralSubsystem coralSubsystem) {
+          SwerveSubsystem driveSubsystem, CoralSubsystem coralSubsystem, PneumaticsSubsystem pneumaticsSubsystem, ClimbSubsystem climbSubsystem) {
 
     // System Test Command
     new Trigger(
@@ -102,6 +106,22 @@ public class OperatorInput extends SubsystemBase {
      */
     new Trigger(() -> driverController.getLeftBumperButton())
         .onTrue(new IntakeCoralCommand(coralSubsystem));
+
+    /*
+     * Climb Buttons
+     */
+
+    // climb
+    new Trigger(() -> driverController.getPOV() == 0)
+            .onTrue(new ClimbCommand(true, climbSubsystem));
+
+    // anti-climb
+    new Trigger(() -> driverController.getPOV() == 180)
+            .onTrue(new ClimbCommand(false, climbSubsystem));
+
+    new Trigger(this::isToggleCompressor)
+            .onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
+
   }
 
   /*
@@ -218,18 +238,12 @@ public class OperatorInput extends SubsystemBase {
     return driverController.getRightTriggerAxis() <= 0.5;
   }
 
-
   /*
-   * Default Climb Command
+   * Compressor enable/disable
    */
-  public boolean getClimb() {
-    return driverController.getPOV() == 0;
+  public boolean isToggleCompressor() {
+    return operatorController.getRightBumperButton() && operatorController.getAButton();
   }
-
-  public boolean getAntiClimb() {
-    return driverController.getPOV() == 180;
-  }
-
 
   /*
    * Support for haptic feedback to the driver

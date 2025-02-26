@@ -421,6 +421,11 @@ public final class Constants {
     public static final double PLANT_ROTATIONS = 15;
   }
 
+  public static final class ClimbConstants {
+    public static final int CLIMB_FIRST_PNEUMATIC_PORT = 2;
+    public static final int CLIMB_SECOND_PNEUMATIC_PORT = 3;
+  }
+
   public static final class LightsConstants {
 
     public static final int LED_STRING_PWM_PORT = 9;
