@@ -15,18 +15,12 @@
 	  "**/*~": true
 	},
 	"[java]": {
-		"editor.formatOnPaste": true,
+	  "editor.defaultFormatter": "josevseb.google-java-format-for-vs-code",
+	  "editor.formatOnPaste": true,
 	  "editor.formatOnSave": true,
 	  "editor.formatOnType": true,
 	},
-  "java.configuration.updateBuildConfiguration": "automatic",
-  "workbench.tree.indent": 14,
-  "java.format.enabled": true,
-  "[java]": {
-    "editor.defaultFormatter": "josevseb.google-java-format-for-vs-code"
+	"workbench.tree.indent": 14,
+	"java.format.enabled": true,
+	"git.allowForcePush": true
   }
-  "git.allowForcePush": true,
-  "gitlens.telemetry.enabled": false,
-  "gitlens.codeLens.dateFormat": "",
-  "todo-tree.regex.regex": "(//|#|<!--|;|/\\*{1,2}|^\\s*\\*|^|^\\s*(-|\\d+.))\\s*($TAGS)"
-}
