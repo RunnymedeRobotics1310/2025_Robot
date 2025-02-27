@@ -206,6 +206,5 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public double computeOmega(double desiredHeadingDegrees) {
     return headingPIDController.calculate(drive.getYaw(), desiredHeadingDegrees);
-    // return (desiredHeadingDegrees - drive.getYaw()) * config.rotationConfig().headingP();
   }
 }

@@ -65,12 +65,12 @@ public class TeleopDriveCommand extends BaseDriveCommand {
     // its y value, but that should convert into positive x movement on the field. The
     // Runnymede Controller inverts stick y-axis values, so "forward" on stick is positive.
     // Thus, positive y stick axis maps to positive x translation on the field.
-    final double vX = -oi.getDriverControllerAxis(LEFT, Y);
+    final double vX = oi.getDriverControllerAxis(LEFT, Y);
 
     // Left and right movement on the left stick (the stick's x-axis) maps to the y-axis on the
     // field. Left on the stick (negative x) maps to positive y on the field, and vice versa.
     // Thus, negative x stick axis maps to positive y translation on the field.
-    final double vY = oi.getDriverControllerAxis(LEFT, X);
+    final double vY = -oi.getDriverControllerAxis(LEFT, X);
 
     // Operator x for fine-tuning robot oriented
     final double oX = -oi.getOperatorControllerAxis(LEFT, Y) * SLOW_SPEED_FACTOR;
@@ -82,7 +82,7 @@ public class TeleopDriveCommand extends BaseDriveCommand {
     // heading. Positive x values on the stick translate to clockwise motion, and vice versa.
     // The coordinate system has positive motion as CCW.
     // Therefore, negative x stick value maps to positive rotation on the field.
-    final double ccwRotAngularVelPct = oi.getDriverControllerAxis(RIGHT, X) * 0.65;
+    final double ccwRotAngularVelPct = -oi.getDriverControllerAxis(RIGHT, X) * 0.65;
 
     final boolean rotate180Val = oi.getRotate180Val();
 
@@ -140,7 +140,7 @@ public class TeleopDriveCommand extends BaseDriveCommand {
         omegaRadiansPerSecond = 0;
       } else {
         headingSetpointDeg = normalizeDegrees(headingSetpointDeg);
-        omegaRadiansPerSecond = -swerve.computeOmega(headingSetpointDeg);
+        omegaRadiansPerSecond = swerve.computeOmega(headingSetpointDeg);
       }
     }
 
