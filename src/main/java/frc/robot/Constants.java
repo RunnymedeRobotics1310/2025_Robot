@@ -309,7 +309,8 @@ public final class Constants {
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
       COMPACT(0),
-      INTAKE(26),
+      CLOSE_INTAKE(42),
+      FAR_INTAKE(21),
       LEVEL_1(0),
       LEVEL_2(0),
       LEVEL_3(72),
@@ -326,8 +327,8 @@ public final class Constants {
 
     // Arm Angles in degrees
     public enum ArmAngle {
-      COMPACT(0),
-      INTAKE(28),
+      COMPACT(-1),
+      INTAKE(20),
       LEVEL_1(0),
       LEVEL_2(120),
       LEVEL_3(120),
@@ -408,7 +409,7 @@ public final class Constants {
     // Pseudo PID and safe zone constants
     public static final double ARM_ANGLE_TOLERANCE = 1.5;
 
-    public static final double ARM_FAST_SPEED = 0.4;
+    public static final double ARM_FAST_SPEED = 0.5;
     public static final double ARM_SLOW_ZONE_SPEED = 0.15;
     public static final double ARM_SLOW_ZONE_ANGLE = 10;
 
