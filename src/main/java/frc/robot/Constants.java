@@ -422,9 +422,15 @@ public final class Constants {
   }
 
   public static final class ClimbConstants {
-    public static final int CLIMB_FIRST_PNEUMATIC_PORT = 2;
-    public static final int CLIMB_SECOND_PNEUMATIC_PORT = 3;
+    public static final int CLIMB_FORWARDS_PNEUMATIC_PORT = 7;
+    public static final int CLIMB_REVERSE_PNEUMATIC_PORT = 0;
   }
+
+  public static final class AlgaeConstants {
+    public static final int ALGAE_FORWARDS_PNEUMATIC_PORT = 6;
+    public static final int ALGAE_REVERSE_PNEUMATIC_PORT = 1;
+  }
+
 
   public static final class LightsConstants {
 

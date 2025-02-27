@@ -1,22 +1,21 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.Constants.*;
 import frc.robot.Constants.DriveConstants;
 
 public class ClimbSubsystem extends SubsystemBase {
 
-    private Solenoid              firstClimbPiston = new Solenoid(PneumaticsModuleType.CTREPCM,
-            Constants.ClimbConstants.CLIMB_FIRST_PNEUMATIC_PORT);
-    private Solenoid              secondClimbPiston = new Solenoid(PneumaticsModuleType.CTREPCM,
-            Constants.ClimbConstants.CLIMB_SECOND_PNEUMATIC_PORT);
+    private DoubleSolenoid climbPiston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM,
+            ClimbConstants.CLIMB_FORWARDS_PNEUMATIC_PORT, ClimbConstants.CLIMB_REVERSE_PNEUMATIC_PORT);
 
 
     public ClimbSubsystem() {
-
+        setClimbDeployed(false);
     }
 
     /**
@@ -31,12 +30,15 @@ public class ClimbSubsystem extends SubsystemBase {
      */
 
     public void setClimbDeployed(boolean deployClimb) {
-        firstClimbPiston.set(deployClimb);
-        secondClimbPiston.set(deployClimb);
+        if (deployClimb) {
+            climbPiston.set(DoubleSolenoid.Value.kForward);
+        } else {
+            climbPiston.set(DoubleSolenoid.Value.kReverse);
+        }
     }
 
     public boolean isClimbDeployed() {
-        return firstClimbPiston.get();
+        return climbPiston.get() == DoubleSolenoid.Value.kForward;
     }
 
 
