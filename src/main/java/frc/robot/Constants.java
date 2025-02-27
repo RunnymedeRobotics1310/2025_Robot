@@ -87,8 +87,8 @@ public final class Constants {
         new SwerveTranslationConfig(
             /* tolerance (m) */ 0.02,
             /* min speed (m/s) */ 1.0,
-            /* max speed (m/s) */ 20,
-            /* max module speed (m/s) */ 20,
+            /* max speed (m/s) */ 4.8,
+            /* max module speed (m/s) */ 5.3,
             /* max acceleration (m/s/s) */ 42.0,
             /* velocity PID p */ 1.2,
             /* velocity PID i */ 0,
@@ -119,7 +119,7 @@ public final class Constants {
     private static final MotorConfig DRIVE_MOTOR_CONFIG =
         new MotorConfig(
             /* motor hardware type */ MotorType.NEO_SPARK_FLEX,
-            /* inverted? */ true,
+            /* inverted? */ false,
             /* current limit (A) */ 40,
             /* current limit (A) */ 12,
             /* ramp rate 0 to full power (s) */ 0.25,
@@ -437,7 +437,6 @@ public final class Constants {
     public static final int ALGAE_FORWARDS_PNEUMATIC_PORT = 6;
     public static final int ALGAE_REVERSE_PNEUMATIC_PORT = 1;
   }
-
 
   public static final class LightsConstants {
 
