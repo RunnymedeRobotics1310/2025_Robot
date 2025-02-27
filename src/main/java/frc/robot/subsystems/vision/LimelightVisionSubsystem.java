@@ -29,6 +29,8 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   private final NetworkTableEntry lr_pipeline = lowRiderVision.getEntry("pipeline");
   private final DoubleArrayPublisher lr_robotOrientation =
       lowRiderVision.getDoubleArrayTopic("robot_orientation_set").publish();
+  private final DoubleArrayPublisher eV_cameraLocation =
+          elevateVision.getDoubleArrayTopic("camerapose_robotspace_set").publish();
 
   private final NetworkTableEntry elevate_camMode = lowRiderVision.getEntry("camMode");
   private final NetworkTableEntry elevate_pipeline = lowRiderVision.getEntry("pipeline");

@@ -313,7 +313,7 @@ public final class Constants {
       LEVEL_1(0),
       LEVEL_2(0),
       LEVEL_3(72),
-      LEVEL_4(187.5),
+      LEVEL_4(ELEVATOR_MAX_HEIGHT),
       REMOVE_LOW_ALGAE(60),
       REMOVE_HIGH_ALGAE(130);
 
@@ -375,7 +375,7 @@ public final class Constants {
      * Elevator Constants
      */
     public static final double ELEVATOR_MAX_SPEED = 1;
-    public static final double ELEVATOR_MAX_HEIGHT = 180;
+    public static final double ELEVATOR_MAX_HEIGHT = 188;
 
     public static final double ELEVATOR_TOLERANCE = 2.5;
     public static final double ELEVATOR_P = 0.05;

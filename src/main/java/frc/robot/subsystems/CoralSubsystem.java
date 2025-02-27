@@ -251,6 +251,9 @@ public class CoralSubsystem extends SubsystemBase {
     if (height == ElevatorHeight.COMPACT) {
       return isElevatorAtLowerLimit();
     }
+    if (height == ElevatorHeight.LEVEL_4) {
+      return isElevatorAtUpperLimit();
+    }
 
     return (Math.abs(height.encoderCount - getElevatorEncoder())
         <= CoralConstants.ELEVATOR_TOLERANCE);
