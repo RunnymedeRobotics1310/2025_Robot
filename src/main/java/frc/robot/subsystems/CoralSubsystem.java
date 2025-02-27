@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -20,6 +21,8 @@ import frc.robot.Constants.CoralConstants.ArmAngle;
 import frc.robot.Constants.CoralConstants.ElevatorHeight;
 import frc.robot.Robot;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
+
+import static frc.robot.Constants.CoralConstants.*;
 
 public class CoralSubsystem extends SubsystemBase {
 
@@ -51,6 +54,9 @@ public class CoralSubsystem extends SubsystemBase {
   private double elevatorSpeed = 0;
   private double armSpeed = 0;
   private double intakeSpeed = 0;
+// ultrasonic
+  private final AnalogInput ultrasonicDistanceSensor = new AnalogInput(ULTRASONIC_SENSOR_PORT);
+
 
   // Elevator
 
@@ -395,6 +401,12 @@ public class CoralSubsystem extends SubsystemBase {
     return sensorCache.intakeEncoderPosition;
   }
 
+  public double getUltrasonicDistanceCm() {
+    double ultrasonicVoltage = ultrasonicDistanceSensor.getVoltage();
+    double distanceCm = ULTRASONIC_M * ultrasonicVoltage + ULTRASONIC_B;
+    return Math.round(distanceCm);
+  }
+
   public void stop() {
     setElevatorSpeed(0);
     setArmSpeed(0);
@@ -428,6 +440,9 @@ public class CoralSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("Coral/Intake Speed", intakeSpeed);
     SmartDashboard.putBoolean("Coral/Coral Detected", isCoralDetected());
+
+    SmartDashboard.putNumber("Coral/Ultrasonic Distance Cm", getUltrasonicDistanceCm());
+    SmartDashboard.putNumber("Coral/Ultrasonic Voltage", ultrasonicDistanceSensor.getVoltage());
   }
 
   private void simulate() {

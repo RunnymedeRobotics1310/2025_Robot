@@ -344,7 +344,8 @@ public final class Constants {
 
     public enum CoralPose {
       COMPACT(ElevatorHeight.COMPACT, ArmAngle.COMPACT),
-      INTAKE(ElevatorHeight.INTAKE, ArmAngle.INTAKE),
+      CLOSE_INTAKE(ElevatorHeight.CLOSE_INTAKE, ArmAngle.INTAKE),
+      FAR_INTAKE(ElevatorHeight.FAR_INTAKE, ArmAngle.INTAKE),
       SCORE_L1(ElevatorHeight.LEVEL_1, ArmAngle.LEVEL_1),
       SCORE_L2(ElevatorHeight.LEVEL_2, ArmAngle.LEVEL_2),
       SCORE_L3(ElevatorHeight.LEVEL_3, ArmAngle.LEVEL_3),
@@ -371,6 +372,11 @@ public final class Constants {
     public static final boolean ELEVATOR_MOTOR_INVERTED = true;
     public static final boolean ARM_MOTOR_INVERTED = false;
     public static final boolean INTAKE_MOTOR_INVERTED = false;
+
+    // Ultrasonic port
+    public static final int ULTRASONIC_SENSOR_PORT = 0;
+    public static final double ULTRASONIC_M = (609.6 - 30.5) / (2.245 - 0.12);
+    public static final double ULTRASONIC_B = 609.6 - ULTRASONIC_M * 2.245;
 
     /*
      * Elevator Constants
