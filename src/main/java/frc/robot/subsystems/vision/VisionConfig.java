@@ -13,6 +13,7 @@ package frc.robot.subsystems.vision;
  *     quality
  * @param maxVisposeDeltaDistanceMetres the maximum distance between two vispose measurements to be
  *     considered the same
+ * @param telemetryEnabled whether telemetry is enabled
  */
 public record VisionConfig(
     long pipelineAprilTagDetect,
@@ -22,4 +23,4 @@ public record VisionConfig(
     double maxAmbiguity,
     double highQualityAmbiguity,
     double maxVisposeDeltaDistanceMetres,
-    String limelightName) {}
+    boolean telemetryEnabled) {}

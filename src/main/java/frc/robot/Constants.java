@@ -41,7 +41,7 @@ public final class Constants {
      * Standard drive speed factor. Regular teleop drive will use this factor of the max
      * translational speed.
      */
-    public static final double GENERAL_SPEED_FACTOR = .6;
+    public static final double GENERAL_SPEED_FACTOR = .65;
 
     /**
      * Maximum drive speed factor. When boosting, this factor will be multiplied against the max
@@ -71,7 +71,7 @@ public final class Constants {
           0.7,
           0.1,
           .5,
-          "hugh");
+          true);
 
   public static final class Swerve {
 
@@ -87,8 +87,8 @@ public final class Constants {
         new SwerveTranslationConfig(
             /* tolerance (m) */ 0.02,
             /* min speed (m/s) */ 1.0,
-            /* max speed (m/s) */ 20,
-            /* max module speed (m/s) */ 20,
+            /* max speed (m/s) */ 4.8,
+            /* max module speed (m/s) */ 5.36,
             /* max acceleration (m/s/s) */ 42.0,
             /* velocity PID p */ 1.2,
             /* velocity PID i */ 0,
@@ -119,7 +119,7 @@ public final class Constants {
     private static final MotorConfig DRIVE_MOTOR_CONFIG =
         new MotorConfig(
             /* motor hardware type */ MotorType.NEO_SPARK_FLEX,
-            /* inverted? */ true,
+            /* inverted? */ false,
             /* current limit (A) */ 40,
             /* current limit (A) */ 12,
             /* ramp rate 0 to full power (s) */ 0.25,
@@ -309,7 +309,8 @@ public final class Constants {
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
       COMPACT(0),
-      INTAKE(26),
+      CLOSE_INTAKE(42),
+      FAR_INTAKE(21),
       LEVEL_1(0),
       LEVEL_2(0),
       LEVEL_3(72),
@@ -326,8 +327,8 @@ public final class Constants {
 
     // Arm Angles in degrees
     public enum ArmAngle {
-      COMPACT(0),
-      INTAKE(28),
+      COMPACT(-1),
+      INTAKE(20),
       LEVEL_1(0),
       LEVEL_2(120),
       LEVEL_3(120),
@@ -343,7 +344,8 @@ public final class Constants {
 
     public enum CoralPose {
       COMPACT(ElevatorHeight.COMPACT, ArmAngle.COMPACT),
-      INTAKE(ElevatorHeight.INTAKE, ArmAngle.INTAKE),
+      CLOSE_INTAKE(ElevatorHeight.CLOSE_INTAKE, ArmAngle.INTAKE),
+      FAR_INTAKE(ElevatorHeight.FAR_INTAKE, ArmAngle.INTAKE),
       SCORE_L1(ElevatorHeight.LEVEL_1, ArmAngle.LEVEL_1),
       SCORE_L2(ElevatorHeight.LEVEL_2, ArmAngle.LEVEL_2),
       SCORE_L3(ElevatorHeight.LEVEL_3, ArmAngle.LEVEL_3),
@@ -370,6 +372,11 @@ public final class Constants {
     public static final boolean ELEVATOR_MOTOR_INVERTED = true;
     public static final boolean ARM_MOTOR_INVERTED = false;
     public static final boolean INTAKE_MOTOR_INVERTED = false;
+
+    // Ultrasonic port
+    public static final int ULTRASONIC_SENSOR_PORT = 0;
+    public static final double ULTRASONIC_M = (609.6 - 30.5) / (2.245 - 0.12);
+    public static final double ULTRASONIC_B = 609.6 - ULTRASONIC_M * 2.245;
 
     /*
      * Elevator Constants
@@ -411,7 +418,7 @@ public final class Constants {
     // Pseudo PID and safe zone constants
     public static final double ARM_ANGLE_TOLERANCE = 1.5;
 
-    public static final double ARM_FAST_SPEED = 0.4;
+    public static final double ARM_FAST_SPEED = 0.5;
     public static final double ARM_SLOW_ZONE_SPEED = 0.15;
     public static final double ARM_SLOW_ZONE_ANGLE = 10;
 
@@ -433,7 +440,6 @@ public final class Constants {
     public static final int ALGAE_FORWARDS_PNEUMATIC_PORT = 6;
     public static final int ALGAE_REVERSE_PNEUMATIC_PORT = 1;
   }
-
 
   public static final class LightsConstants {
 
