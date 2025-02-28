@@ -95,16 +95,11 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
     }
   }
 
-  private Matrix<N3, N1> poseDeviationMegaTag1 = VecBuilder.fill(0.01, 0.01, 0.05);
-  private Matrix<N3, N1> poseDeviationMegaTag2 = VecBuilder.fill(0.06, 0.06, 9999999);
+  private static final Matrix<N3, N1> POSE_DEVIATION_MEGATAG1 = VecBuilder.fill(0.01, 0.01, 0.05);
+  private static final Matrix<N3, N1> POSE_DEVIATION_MEGATAG2 =
+      VecBuilder.fill(0.06, 0.06, 9999999);
 
   private final LimelightBotPose limelightBotPose = new LimelightBotPose(null, 0);
-  LimelightPoseEstimate currentPoseEstimate =
-      new LimelightPoseEstimate(
-          limelightBotPose.getPose(),
-          limelightBotPose.getTimestampSeconds(),
-          poseDeviationMegaTag1,
-          LimelightPoseEstimate.PoseConfidence.NONE);
 
   private double[] orientationSet = new double[] {0, 0, 0, 0, 0, 0};
 
@@ -142,8 +137,6 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   public void periodic() {
     TimestampedDoubleArray botPoseBlueMegaTag1 = lr_MegaTag1.getAtomic();
     limelightBotPose.update(botPoseBlueMegaTag1.value, botPoseBlueMegaTag1.timestamp);
-    currentPoseEstimate.setPose(limelightBotPose.getPose());
-    currentPoseEstimate.setTimestamp(limelightBotPose.getTimestampSeconds());
   }
 
   /* Public API */
@@ -192,6 +185,20 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   /**
    * Get the pose estimate from the vision system, for callback via VisionPoseCallback
    *
+   * <p>Logic In This Function:
+   *
+   * <ol>
+   *   <li>Set the orientation of the robot from odometry into the limelight for MegaTag2 to work
+   *   <li>Ensure the latest vision pose data is valid (on field, >=1 tags visible, robot not
+   *       spinning like crazy
+   *   <li>Check tag ambiguity - if it's very low (<0.1) it means we've got a very very high
+   *       confidence set of data, and we therefore use MegaTag1 data to update pose and heading
+   *       data, which will keep MegaTag 2 honest.
+   *   <li>If ambiguity is medium (0.1-0.7), we can trust MegaTag2 as a high confidence source
+   *   <li>Otherwise, let's not use high ambiguity data at all and let Odometry do its thing
+   * </ol>
+   *
+   * @param odometryPose the current odometry pose of the robot
    * @param yaw the current yaw of the robot
    * @param yawRate the current yaw rate of the robot
    * @return the pose estimate
@@ -207,65 +214,60 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
     double compareDistance = -1;
     double compareHeading = -1;
     double tagAmbiguity = -1;
-
-    // Telemetry Handling
-    if (Telemetry.vision.enabled) {
-      Telemetry.vision.poseMetresX = odometryPose.getX();
-      Telemetry.vision.poseMetresY = odometryPose.getY();
-      Telemetry.vision.poseHeadingDegrees = odometryPose.getRotation().getDegrees();
-      Telemetry.vision.visionPoseX = currentPoseEstimate.getPose().getX();
-      Telemetry.vision.visionPoseY = currentPoseEstimate.getPose().getY();
-      Telemetry.vision.visionPoseHeading = currentPoseEstimate.getPose().getRotation().getDegrees();
-    }
-
-    // Reset some values in PoseEstimate
-    currentPoseEstimate.setPoseConfidence(LimelightPoseEstimate.PoseConfidence.NONE);
+    LimelightPoseEstimate.PoseConfidence poseConfidence = LimelightPoseEstimate.PoseConfidence.NONE;
 
     // If pose is 0,0 or no tags in view, we don't actually have data - return null
-    if (currentPoseEstimate.getPose().getX() > 0
-        && currentPoseEstimate.getPose().getY() > 0
-        && limelightBotPose.getTagCount() > 0
-        && currentPoseEstimate.getPose().getX() < fieldExtentMetresX
-        && currentPoseEstimate.getPose().getY() < fieldExtentMetresY
+    if (limelightBotPose.getTagCount() > 0
+        && limelightBotPose.isPoseXInBounds(0, fieldExtentMetresX)
+        && limelightBotPose.isPoseYInBounds(0, fieldExtentMetresY)
         && yawRate <= 720) {
+
+      LimelightPoseEstimate currentPoseEstimate =
+          new LimelightPoseEstimate(
+              limelightBotPose.getPose(),
+              limelightBotPose.getTimestampSeconds(),
+              POSE_DEVIATION_MEGATAG1);
 
       // Get the "best" tag - assuming the first one is the best - TBD TODO
       tagAmbiguity = limelightBotPose.getTagAmbiguity(0);
 
-      compareDistance =
-          currentPoseEstimate.getPose().getTranslation().getDistance(odometryPose.getTranslation());
-      compareHeading = currentPoseEstimate.getPose().getRotation().getDegrees() - yaw;
+      if (Telemetry.vision.enabled) {
+        compareDistance =
+            currentPoseEstimate
+                .getPose()
+                .getTranslation()
+                .getDistance(odometryPose.getTranslation());
+        compareHeading = currentPoseEstimate.getPose().getRotation().getDegrees() - yaw;
+      }
 
+      // Do we have a decent signal?  i.e. Ambiguity < 0.7
       if (tagAmbiguity < maxAmbiguity) {
-        // If the ambiguity is very low, use the data as is (or when disabled, to allow for
-        // bot repositioning
+        // Check for super good signal - ambiguity < 0.1, or we're disabled (field setup)
         if (tagAmbiguity < highQualityAmbiguity || DriverStation.isDisabled()) {
-          currentPoseEstimate.setStandardDeviations(poseDeviationMegaTag1);
-          currentPoseEstimate.setPoseConfidence(LimelightPoseEstimate.PoseConfidence.HIGH);
-          returnVal = currentPoseEstimate;
+          // use megatag1 as is, it's rock solid
+          poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG1;
+          currentPoseEstimate.setStandardDeviations(POSE_DEVIATION_MEGATAG1);
         } else {
-          // We need to be careful with this data set. If the location is too far off,
-          // don't use it. Otherwise, scale confidence by distance.
-          if (compareDistance < maxVisposDeltaDistanceMetres) {
-            double stdDevRatio = Math.pow(limelightBotPose.getTagDistToCamera(0), 2) / 2;
-            double stdDevRatio2 = 5 * stdDevRatio;
-
-            Matrix<N3, N1> deviation = VecBuilder.fill(stdDevRatio, stdDevRatio, stdDevRatio2);
-            currentPoseEstimate.setStandardDeviations(deviation);
-            currentPoseEstimate.setPoseConfidence(LimelightPoseEstimate.PoseConfidence.MEDIUM);
-            returnVal = currentPoseEstimate;
-          } else {
-            currentPoseEstimate.setPoseConfidence(LimelightPoseEstimate.PoseConfidence.LOW);
-          }
+          // Use MegaTag 2
+          poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG2;
+          currentPoseEstimate.setStandardDeviations(POSE_DEVIATION_MEGATAG2);
         }
+        returnVal = currentPoseEstimate;
       }
     }
 
+    // Telemetry Handling
     if (Telemetry.vision.enabled) {
       Telemetry.vision.tagAmbiguity = tagAmbiguity;
-      Telemetry.vision.poseConfidence = currentPoseEstimate.getPoseConfidence();
+      Telemetry.vision.poseConfidence = poseConfidence;
       Telemetry.vision.poseDeltaMetres = compareDistance;
       Telemetry.vision.headingDeltaDegrees = compareHeading;
+      Telemetry.vision.poseMetresX = odometryPose.getX();
+      Telemetry.vision.poseMetresY = odometryPose.getY();
+      Telemetry.vision.poseHeadingDegrees = odometryPose.getRotation().getDegrees();
+      Telemetry.vision.visionPoseX = limelightBotPose.getPoseX();
+      Telemetry.vision.visionPoseY = limelightBotPose.getPoseY();
+      Telemetry.vision.visionPoseHeading = limelightBotPose.getPoseRotationYaw();
     }
 
     return returnVal;
