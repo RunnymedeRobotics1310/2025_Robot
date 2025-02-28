@@ -47,6 +47,9 @@ public class VisionTelemetry {
   /** The distance offset of vision pose to odometry */
   public double poseDeltaMetres = Double.MIN_VALUE;
 
+  /** The heading offset of vision pose to odometry */
+  public double headingDeltaDegrees = Double.MIN_VALUE;
+
   /** The confidence of the pose estimate */
   public LimelightPoseEstimate.PoseConfidence poseConfidence =
       LimelightPoseEstimate.PoseConfidence.NONE;
@@ -60,18 +63,15 @@ public class VisionTelemetry {
       return;
     }
 
+    SmartDashboard.putNumber(PREFIX + "Vision/heading_delta", headingDeltaDegrees);
     String poseOdo =
         String.format("(%.2f, %.2f) m %.1f deg", poseMetresX, poseMetresY, poseHeadingDegrees);
     SmartDashboard.putString(PREFIX + "Vision/pose_odo", poseOdo);
-
     String poseVis =
         String.format("(%.2f, %.2f) m %.1f deg", visionPoseX, visionPoseY, visionPoseHeading);
     SmartDashboard.putString(PREFIX + "Vision/pose_vis", poseVis);
-
     SmartDashboard.putNumber(PREFIX + "Vision/pose_delta", poseDeltaMetres);
-
     SmartDashboard.putString(PREFIX + "Vision/pose_confidence", poseConfidence.toString());
-
     SmartDashboard.putNumber(PREFIX + "Vision/tag_ambiguity", tagAmbiguity);
   }
 }

@@ -197,6 +197,7 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
 
     // Get the current pose delta
     double compareDistance = -1;
+    double compareHeading = -1;
     double tagAmbiguity = -1;
 
     // Telemetry Handling
@@ -225,6 +226,7 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
 
       compareDistance =
           currentPoseEstimate.getPose().getTranslation().getDistance(odometryPose.getTranslation());
+      compareHeading = currentPoseEstimate.getPose().getRotation().getDegrees() - yaw;
 
       if (tagAmbiguity < maxAmbiguity) {
         // If the ambiguity is very low, use the data as is (or when disabled, to allow for
@@ -255,6 +257,7 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
       Telemetry.vision.tagAmbiguity = tagAmbiguity;
       Telemetry.vision.poseConfidence = currentPoseEstimate.getPoseConfidence();
       Telemetry.vision.poseDeltaMetres = compareDistance;
+      Telemetry.vision.headingDeltaDegrees = compareHeading;
     }
 
     return returnVal;
