@@ -70,8 +70,7 @@ public final class Constants {
           FieldConstants.FIELD_EXTENT_METRES_Y,
           0.7,
           0.1,
-          .5,
-          "hugh");
+          .5);
 
   public static final class Swerve {
 

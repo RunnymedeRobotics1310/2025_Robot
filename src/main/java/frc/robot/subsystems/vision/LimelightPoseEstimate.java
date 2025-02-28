@@ -8,14 +8,27 @@ import edu.wpi.first.math.numbers.N3;
 
 public class LimelightPoseEstimate implements PoseEstimate {
 
+  public enum PoseConfidence {
+    NONE,
+    LOW,
+    MEDIUM,
+    HIGH,
+  }
+
   private Pose2d pose;
   private double timestamp;
   private Matrix<N3, N1> standardDeviations;
+  private PoseConfidence poseConfidence = PoseConfidence.NONE;
 
-  public LimelightPoseEstimate(Pose2d pose, double timestamp, Matrix<N3, N1> standardDeviations) {
+  public LimelightPoseEstimate(
+      Pose2d pose,
+      double timestamp,
+      Matrix<N3, N1> standardDeviations,
+      PoseConfidence poseConfidence) {
     this.pose = pose;
     this.timestamp = timestamp;
     this.standardDeviations = standardDeviations;
+    this.poseConfidence = poseConfidence;
   }
 
   @Override
@@ -33,6 +46,10 @@ public class LimelightPoseEstimate implements PoseEstimate {
     return standardDeviations;
   }
 
+  public PoseConfidence getPoseConfidence() {
+    return poseConfidence;
+  }
+
   public void setPose(Pose2d pose) {
     this.pose = pose;
   }
@@ -43,5 +60,9 @@ public class LimelightPoseEstimate implements PoseEstimate {
 
   public void setStandardDeviations(Matrix<N3, N1> standardDeviations) {
     this.standardDeviations = standardDeviations;
+  }
+
+  public void setPoseConfidence(PoseConfidence poseConfidence) {
+    this.poseConfidence = poseConfidence;
   }
 }
