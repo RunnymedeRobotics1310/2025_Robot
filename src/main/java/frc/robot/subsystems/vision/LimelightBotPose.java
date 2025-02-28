@@ -139,7 +139,7 @@ public class LimelightBotPose {
   }
 
   public double getTimestampSeconds() {
-    return timestamp;
+    return timestamp / 1000.0; // Convert from millis to seconds
   }
 
   private double getElement(int index) {
