@@ -192,7 +192,7 @@ public class CoralSubsystem extends SubsystemBase {
      * Elevator
      */
     sensorCache.elevatorEncoderSpeed = elevatorEncoder.getVelocity();
-    sensorCache.elevatorEncoderPosition = elevatorEncoder.getPosition();
+    sensorCache.elevatorEncoderPosition = elevatorEncoder.getPosition() + elevatorEncoderOffset;
 
     sensorCache.elevatorLowerLimitReached = elevatorLowerLimitSwitch.isPressed();
     sensorCache.elevatorUpperLimitReached = elevatorUpperLimitSwitch.isPressed();
@@ -247,6 +247,12 @@ public class CoralSubsystem extends SubsystemBase {
       speed = CoralConstants.ELEVATOR_SLOW_ZONE_SPEED;
     }
     speed *=Math.signum(error);
+
+    // if you deployed code with the elevator up, go down slowly
+    if (targetHeight == ElevatorHeight.COMPACT && getElevatorEncoder() <=0) {
+      speed = -ELEVATOR_SLOW_ZONE_SPEED;
+    }
+
     setElevatorSpeed(speed);
 
     return false;
@@ -299,6 +305,7 @@ public class CoralSubsystem extends SubsystemBase {
 
   public void resetElevatorEncoder() {
     setElevatorEncoder(0);
+    System.out.println("Resetting elevator encoder!");
   }
 
   public void setElevatorEncoder(double encoderValue) {

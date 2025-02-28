@@ -41,7 +41,7 @@ public final class Constants {
      * Standard drive speed factor. Regular teleop drive will use this factor of the max
      * translational speed.
      */
-    public static final double GENERAL_SPEED_FACTOR = .6;
+    public static final double GENERAL_SPEED_FACTOR = .65;
 
     /**
      * Maximum drive speed factor. When boosting, this factor will be multiplied against the max
@@ -88,7 +88,7 @@ public final class Constants {
             /* tolerance (m) */ 0.02,
             /* min speed (m/s) */ 1.0,
             /* max speed (m/s) */ 4.8,
-            /* max module speed (m/s) */ 5.3,
+            /* max module speed (m/s) */ 5.36,
             /* max acceleration (m/s/s) */ 42.0,
             /* velocity PID p */ 1.2,
             /* velocity PID i */ 0,

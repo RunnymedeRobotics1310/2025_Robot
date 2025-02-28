@@ -73,10 +73,10 @@ public class TeleopDriveCommand extends BaseDriveCommand {
     final double vY = -oi.getDriverControllerAxis(LEFT, X);
 
     // Operator x for fine-tuning robot oriented
-    final double oX = -oi.getOperatorControllerAxis(LEFT, Y) * SLOW_SPEED_FACTOR;
+    final double oX = oi.getOperatorControllerAxis(LEFT, Y) * SLOW_SPEED_FACTOR;
 
     // Operator y for fine-tuning robot oriented
-    final double oY = oi.getOperatorControllerAxis(LEFT, X) * SLOW_SPEED_FACTOR;
+    final double oY = -oi.getOperatorControllerAxis(LEFT, X) * SLOW_SPEED_FACTOR;
 
     // Left and right on the right stick will change the direction the robot is facing - its
     // heading. Positive x values on the stick translate to clockwise motion, and vice versa.
