@@ -14,6 +14,9 @@ import frc.robot.subsystems.vision.LimelightPoseEstimate;
  */
 public class VisionTelemetry {
 
+  /** Whether the vision telemetry is enabled */
+  public boolean enabled = false;
+
   // Pose
   /** The x location of the robot with respect to the field in metres */
   public double poseMetresX = Double.MIN_VALUE;
@@ -52,6 +55,11 @@ public class VisionTelemetry {
   public double tagAmbiguity = Double.MIN_VALUE;
 
   void post() {
+    // Do nothing if not enabled
+    if (!enabled) {
+      return;
+    }
+
     String poseOdo =
         String.format("(%.2f, %.2f) m %.1f deg", poseMetresX, poseMetresY, poseHeadingDegrees);
     SmartDashboard.putString(PREFIX + "Vision/pose_odo", poseOdo);

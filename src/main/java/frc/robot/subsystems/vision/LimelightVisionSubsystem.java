@@ -126,6 +126,8 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
     this.lr_camMode.setNumber(visionConfig.camModeVision());
     this.elevate_pipeline.setNumber(visionConfig.pipelineAprilTagDetect());
     this.elevate_camMode.setNumber(visionConfig.camModeVision());
+
+    Telemetry.vision.enabled = visionConfig.telemetryEnabled();
   }
 
   @Override
@@ -198,12 +200,14 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
     double tagAmbiguity = -1;
 
     // Telemetry Handling
-    Telemetry.vision.poseMetresX = odometryPose.getX();
-    Telemetry.vision.poseMetresY = odometryPose.getY();
-    Telemetry.vision.poseHeadingDegrees = odometryPose.getRotation().getDegrees();
-    Telemetry.vision.visionPoseX = currentPoseEstimate.getPose().getX();
-    Telemetry.vision.visionPoseY = currentPoseEstimate.getPose().getY();
-    Telemetry.vision.visionPoseHeading = currentPoseEstimate.getPose().getRotation().getDegrees();
+    if (Telemetry.vision.enabled) {
+      Telemetry.vision.poseMetresX = odometryPose.getX();
+      Telemetry.vision.poseMetresY = odometryPose.getY();
+      Telemetry.vision.poseHeadingDegrees = odometryPose.getRotation().getDegrees();
+      Telemetry.vision.visionPoseX = currentPoseEstimate.getPose().getX();
+      Telemetry.vision.visionPoseY = currentPoseEstimate.getPose().getY();
+      Telemetry.vision.visionPoseHeading = currentPoseEstimate.getPose().getRotation().getDegrees();
+    }
 
     // Reset some values in PoseEstimate
     currentPoseEstimate.setPoseConfidence(LimelightPoseEstimate.PoseConfidence.NONE);
@@ -247,9 +251,11 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
       }
     }
 
-    Telemetry.vision.tagAmbiguity = tagAmbiguity;
-    Telemetry.vision.poseConfidence = currentPoseEstimate.getPoseConfidence();
-    Telemetry.vision.poseDeltaMetres = compareDistance;
+    if (Telemetry.vision.enabled) {
+      Telemetry.vision.tagAmbiguity = tagAmbiguity;
+      Telemetry.vision.poseConfidence = currentPoseEstimate.getPoseConfidence();
+      Telemetry.vision.poseDeltaMetres = compareDistance;
+    }
 
     return returnVal;
   }
