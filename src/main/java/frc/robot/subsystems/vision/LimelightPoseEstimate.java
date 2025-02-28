@@ -10,9 +10,8 @@ public class LimelightPoseEstimate implements PoseEstimate {
 
   public enum PoseConfidence {
     NONE,
-    LOW,
-    MEDIUM,
-    HIGH,
+    MEGATAG1,
+    MEGATAG2
   }
 
   private Pose2d pose;
