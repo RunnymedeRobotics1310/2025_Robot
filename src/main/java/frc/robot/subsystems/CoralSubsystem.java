@@ -211,6 +211,7 @@ public class CoralSubsystem extends SubsystemBase {
       armAboveThreshold = newAboveThreshold;
       setCamStream();
     }
+    visionSubsystem.setThomasHeight(getThomasHeightCM());
   }
 
   /*
@@ -257,6 +258,15 @@ public class CoralSubsystem extends SubsystemBase {
 
     return (Math.abs(height.encoderCount - getElevatorEncoder())
         <= CoralConstants.ELEVATOR_TOLERANCE);
+  }
+
+  public double getThomasHeightCM() {
+    if (isElevatorAtLowerLimit())  {
+      return CoralConstants.THOMAS_STARTING_HEIGHT;
+    }
+
+    double  encoderCount = getElevatorEncoder();
+    return CoralConstants.ELEVATOR_CENTIMETERS_PER_ENCODER_COUNT * encoderCount + CoralConstants.THOMAS_STARTING_HEIGHT;
   }
 
   public boolean isElevatorAtLowerLimit() {
@@ -413,6 +423,8 @@ public class CoralSubsystem extends SubsystemBase {
     if (isSimulation) {
       simulate();
     }
+
+
 
     checkSafety();
 

@@ -16,6 +16,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.TimestampedDoubleArray;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.CoralSubsystem;
 
 public class LimelightVisionSubsystem extends SubsystemBase implements VisionPoseCallback {
 
@@ -29,8 +30,8 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   private final NetworkTableEntry lr_pipeline = lowRiderVision.getEntry("pipeline");
   private final DoubleArrayPublisher lr_robotOrientation =
       lowRiderVision.getDoubleArrayTopic("robot_orientation_set").publish();
-  private final DoubleArrayPublisher eV_cameraLocation =
-          elevateVision.getDoubleArrayTopic("camerapose_robotspace_set").publish();
+  private final DoubleArrayPublisher thomas_cameraLocation =
+       elevateVision.getDoubleArrayTopic("camerapose_robotspace_set").publish();
 
   private final NetworkTableEntry elevate_camMode = lowRiderVision.getEntry("camMode");
   private final NetworkTableEntry elevate_pipeline = lowRiderVision.getEntry("pipeline");
@@ -104,6 +105,13 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
           poseDeviationMegaTag1);
 
   private double[] orientationSet = new double[] {0, 0, 0, 0, 0, 0};
+
+  private double[] thomasPositionSet = new double[] {0, 0, 0, 0, 0, 0};
+
+  public void setThomasHeight(double height){
+    thomasPositionSet[2] = height;
+    thomas_cameraLocation.set(thomasPositionSet);
+  }
 
   private final double fieldExtentMetresX;
   private final double fieldExtentMetresY;
