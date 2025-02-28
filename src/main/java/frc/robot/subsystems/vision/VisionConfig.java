@@ -21,5 +21,4 @@ public record VisionConfig(
     double fieldExtentMetresY,
     double maxAmbiguity,
     double highQualityAmbiguity,
-    double maxVisposeDeltaDistanceMetres,
-    String limelightName) {}
+    double maxVisposeDeltaDistanceMetres) {}

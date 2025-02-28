@@ -16,6 +16,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.TimestampedDoubleArray;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.telemetry.Telemetry;
 
 public class LimelightVisionSubsystem extends SubsystemBase implements VisionPoseCallback {
 
@@ -30,7 +31,7 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   private final DoubleArrayPublisher lr_robotOrientation =
       lowRiderVision.getDoubleArrayTopic("robot_orientation_set").publish();
   private final DoubleArrayPublisher eV_cameraLocation =
-          elevateVision.getDoubleArrayTopic("camerapose_robotspace_set").publish();
+      elevateVision.getDoubleArrayTopic("camerapose_robotspace_set").publish();
 
   private final NetworkTableEntry elevate_camMode = lowRiderVision.getEntry("camMode");
   private final NetworkTableEntry elevate_pipeline = lowRiderVision.getEntry("pipeline");
@@ -101,7 +102,8 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
       new LimelightPoseEstimate(
           limelightBotPose.getPose(),
           limelightBotPose.getTimestampSeconds(),
-          poseDeviationMegaTag1);
+          poseDeviationMegaTag1,
+          LimelightPoseEstimate.PoseConfidence.NONE);
 
   private double[] orientationSet = new double[] {0, 0, 0, 0, 0, 0};
 
@@ -189,11 +191,22 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
     orientationSet[0] = yaw;
     lr_robotOrientation.set(orientationSet);
 
-    // System.out.println("Poser: yaw["+yaw+"], yawRate["+yawRate+"],
-    // llX["+currentPoseEstimate.getPose().getX()+"],
-    // llY["+currentPoseEstimate.getPose().getY()+"],
-    // llY["+currentPoseEstimate.getPose().getRotation().getDegrees()+"],
-    // ambg["+limelightBotPose.getTagAmbiguity(0)+"]");
+    PoseEstimate returnVal = null;
+
+    // Get the current pose delta
+    double compareDistance = -1;
+    double tagAmbiguity = -1;
+
+    // Telemetry Handling
+    Telemetry.vision.poseMetresX = odometryPose.getX();
+    Telemetry.vision.poseMetresY = odometryPose.getY();
+    Telemetry.vision.poseHeadingDegrees = odometryPose.getRotation().getDegrees();
+    Telemetry.vision.visionPoseX = currentPoseEstimate.getPose().getX();
+    Telemetry.vision.visionPoseY = currentPoseEstimate.getPose().getY();
+    Telemetry.vision.visionPoseHeading = currentPoseEstimate.getPose().getRotation().getDegrees();
+
+    // Reset some values in PoseEstimate
+    currentPoseEstimate.setPoseConfidence(LimelightPoseEstimate.PoseConfidence.NONE);
 
     // If pose is 0,0 or no tags in view, we don't actually have data - return null
     if (currentPoseEstimate.getPose().getX() > 0
@@ -202,21 +215,21 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
         && currentPoseEstimate.getPose().getX() < fieldExtentMetresX
         && currentPoseEstimate.getPose().getY() < fieldExtentMetresY
         && yawRate <= 720) {
+
       // Get the "best" tag - assuming the first one is the best - TBD TODO
-      double tagAmbiguity = limelightBotPose.getTagAmbiguity(0);
+      tagAmbiguity = limelightBotPose.getTagAmbiguity(0);
+
+      compareDistance =
+          currentPoseEstimate.getPose().getTranslation().getDistance(odometryPose.getTranslation());
+
       if (tagAmbiguity < maxAmbiguity) {
         // If the ambiguity is very low, use the data as is (or when disabled, to allow for
         // bot repositioning
         if (tagAmbiguity < highQualityAmbiguity || DriverStation.isDisabled()) {
           currentPoseEstimate.setStandardDeviations(poseDeviationMegaTag1);
-          return currentPoseEstimate;
+          currentPoseEstimate.setPoseConfidence(LimelightPoseEstimate.PoseConfidence.HIGH);
+          returnVal = currentPoseEstimate;
         } else {
-          double compareDistance =
-              currentPoseEstimate
-                  .getPose()
-                  .getTranslation()
-                  .getDistance(odometryPose.getTranslation());
-
           // We need to be careful with this data set. If the location is too far off,
           // don't use it. Otherwise, scale confidence by distance.
           if (compareDistance < maxVisposDeltaDistanceMetres) {
@@ -225,18 +238,24 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
 
             Matrix<N3, N1> deviation = VecBuilder.fill(stdDevRatio, stdDevRatio, stdDevRatio2);
             currentPoseEstimate.setStandardDeviations(deviation);
-
-            return currentPoseEstimate;
+            currentPoseEstimate.setPoseConfidence(LimelightPoseEstimate.PoseConfidence.MEDIUM);
+            returnVal = currentPoseEstimate;
+          } else {
+            currentPoseEstimate.setPoseConfidence(LimelightPoseEstimate.PoseConfidence.LOW);
           }
         }
       }
     }
 
-    return null;
+    Telemetry.vision.tagAmbiguity = tagAmbiguity;
+    Telemetry.vision.poseConfidence = currentPoseEstimate.getPoseConfidence();
+    Telemetry.vision.poseDeltaMetres = compareDistance;
+
+    return returnVal;
   }
 
   @Override
   public String toString() {
-    return "Hugh Vision Subsystem";
+    return "ACDC Vision Subsystem";
   }
 }
