@@ -108,7 +108,14 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
 
   private double[] orientationSet = new double[] {0, 0, 0, 0, 0, 0};
 
-  private double[] thomasPositionSet = new double[] {0.155, 0.13, 0.88, 179, 0, 0};
+  //Hard coded position for the limelight
+  private double[] thomasPositionSet = new double[] {
+          /*Forward*/ 0.155,
+          /*Right*/ 0.13,
+          /*Up*/ 0.88,
+          /*Roll*/ 179,
+          /*Pitch*/ 0,
+          /*Yaw*/ 0};
 
   public void setThomasHeight(double height){
     thomasPositionSet[2] = height;

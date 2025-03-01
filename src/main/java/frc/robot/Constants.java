@@ -394,8 +394,8 @@ public final class Constants {
     public static final double ELEVATOR_SLOW_ZONE_SPEED = 0.2;
     public static final double ELEVATOR_SLOW_ZONE = 10; // encoder counts
 
-    public static final double ELEVATOR_CENTIMETERS_PER_ENCODER_COUNT = 74.5/122.13;
-    public static final double THOMAS_STARTING_HEIGHT = 88; //cm
+    public static final double ELEVATOR_METERS_PER_ENCODER_COUNT = 0.745/122.13;
+    public static final double THOMAS_STARTING_HEIGHT = 0.88; //m
 
     /*
      * Arm Constants
