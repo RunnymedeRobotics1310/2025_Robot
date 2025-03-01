@@ -342,6 +342,22 @@ public final class Constants {
       }
     }
 
+    public enum DesiredDistanceToTargetCM {
+      INTAKE(20),
+      LEVEL_1(20),
+      LEVEL_2(20),
+      LEVEL_3(20),
+      LEVEL_4(20),
+      REMOVE_ALGAE(20);
+
+      public final double distance;
+      DesiredDistanceToTargetCM(double distance) {this.distance = distance;}
+
+      public double getDistance() {
+        return distance;
+      }
+    }
+
     public enum CoralPose {
       COMPACT(ElevatorHeight.COMPACT, ArmAngle.COMPACT),
       CLOSE_INTAKE(ElevatorHeight.CLOSE_INTAKE, ArmAngle.INTAKE),
@@ -378,6 +394,7 @@ public final class Constants {
     public static final double ULTRASONIC_M = (609.6 - 30.5) / (2.245 - 0.12);
     public static final double ULTRASONIC_B = 609.6 - ULTRASONIC_M * 2.245;
 
+    public static final double SCORING_DISTANCE_TOLERANCE = 3;
     /*
      * Elevator Constants
      */
