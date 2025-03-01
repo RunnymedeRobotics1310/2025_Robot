@@ -134,20 +134,20 @@ public class CoralSubsystem extends SubsystemBase {
     /*
      * Arm Motor Config
      */
-    SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
+    SparkFlexConfig sparkFlexConfig = new SparkFlexConfig();
 
-    sparkMaxConfig.disableFollowerMode();
-    sparkMaxConfig.idleMode(IdleMode.kBrake);
-    sparkMaxConfig.inverted(CoralConstants.ARM_MOTOR_INVERTED);
+    sparkFlexConfig.disableFollowerMode();
+    sparkFlexConfig.idleMode(IdleMode.kBrake);
+    sparkFlexConfig.inverted(CoralConstants.ARM_MOTOR_INVERTED);
 
     // Limit the current to 20A max
     // flexConfig.smartCurrentLimit(20);
 
-    sparkMaxConfig.absoluteEncoder.inverted(CoralConstants.ARM_ANGLE_ENCODER_INVERTED);
-    sparkMaxConfig.absoluteEncoder.zeroOffset(CoralConstants.ARM_ANGLE_ENCODER_OFFSET);
+    sparkFlexConfig.absoluteEncoder.inverted(CoralConstants.ARM_ANGLE_ENCODER_INVERTED);
+    sparkFlexConfig.absoluteEncoder.zeroOffset(CoralConstants.ARM_ANGLE_ENCODER_OFFSET);
 
     armMotor.configure(
-        sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        sparkFlexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     armAboveThreshold =
         armAngleEncoder.getPosition() > CoralConstants.ARM_CAMERA_THRESHOLD_POSITION;
@@ -156,7 +156,7 @@ public class CoralSubsystem extends SubsystemBase {
     /*
      * Intake Motor Config
      */
-    sparkMaxConfig = new SparkMaxConfig();
+    SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
 
     sparkMaxConfig.disableFollowerMode();
     sparkMaxConfig.idleMode(IdleMode.kBrake);
@@ -169,7 +169,7 @@ public class CoralSubsystem extends SubsystemBase {
     sparkMaxConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyOpen);
 
     intakeMotor.configure(
-        sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     /*
      * Simulation
