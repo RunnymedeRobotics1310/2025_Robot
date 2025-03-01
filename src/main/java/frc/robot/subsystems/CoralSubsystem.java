@@ -46,8 +46,8 @@ public class CoralSubsystem extends SubsystemBase {
   // Coral Subsystem Motors
   private final SparkFlex elevatorMotor =
       new SparkFlex(CoralConstants.ELEVATOR_MOTOR_CAN_ID, MotorType.kBrushless);
-  private final SparkMax armMotor =
-      new SparkMax(CoralConstants.ARM_MOTOR_CAN_ID, MotorType.kBrushless);
+  private final SparkFlex armMotor =
+      new SparkFlex(CoralConstants.ARM_MOTOR_CAN_ID, MotorType.kBrushless);
   private final SparkMax intakeMotor =
       new SparkMax(CoralConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
 
