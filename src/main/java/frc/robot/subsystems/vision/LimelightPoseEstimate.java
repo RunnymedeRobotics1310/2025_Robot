@@ -1,34 +1,24 @@
 package frc.robot.subsystems.vision;
 
 import ca.team1310.swerve.vision.PoseEstimate;
-import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 
 public class LimelightPoseEstimate implements PoseEstimate {
 
   public enum PoseConfidence {
     NONE,
-    LOW,
-    MEDIUM,
-    HIGH,
+    MEGATAG1,
+    MEGATAG2
   }
 
   private Pose2d pose;
   private double timestamp;
-  private Matrix<N3, N1> standardDeviations;
-  private PoseConfidence poseConfidence = PoseConfidence.NONE;
+  private double[] standardDeviations;
 
-  public LimelightPoseEstimate(
-      Pose2d pose,
-      double timestamp,
-      Matrix<N3, N1> standardDeviations,
-      PoseConfidence poseConfidence) {
+  public LimelightPoseEstimate(Pose2d pose, double timestamp, double[] standardDeviations) {
     this.pose = pose;
     this.timestamp = timestamp;
     this.standardDeviations = standardDeviations;
-    this.poseConfidence = poseConfidence;
   }
 
   @Override
@@ -42,12 +32,8 @@ public class LimelightPoseEstimate implements PoseEstimate {
   }
 
   @Override
-  public Matrix<N3, N1> getStandardDeviations() {
+  public double[] getStandardDeviations() {
     return standardDeviations;
-  }
-
-  public PoseConfidence getPoseConfidence() {
-    return poseConfidence;
   }
 
   public void setPose(Pose2d pose) {
@@ -58,11 +44,7 @@ public class LimelightPoseEstimate implements PoseEstimate {
     this.timestamp = timestamp;
   }
 
-  public void setStandardDeviations(Matrix<N3, N1> standardDeviations) {
+  public void setStandardDeviations(double[] standardDeviations) {
     this.standardDeviations = standardDeviations;
-  }
-
-  public void setPoseConfidence(PoseConfidence poseConfidence) {
-    this.poseConfidence = poseConfidence;
   }
 }
