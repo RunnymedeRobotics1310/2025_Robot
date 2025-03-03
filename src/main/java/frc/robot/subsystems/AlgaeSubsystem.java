@@ -1,19 +1,18 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import static frc.robot.Constants.AlgaeConstants.*;
+import static frc.robot.Constants.AlgaeConstants.ALGAE_FORWARDS_PNEUMATIC_PORT;
+import static frc.robot.Constants.AlgaeConstants.ALGAE_REVERSE_PNEUMATIC_PORT;
 
 
 public class AlgaeSubsystem extends SubsystemBase {
 
     // Algae Subsystem Motors
-    private final SparkMax intakeMotor = new SparkMax(INTAKE_MOTOR_CAN_ID, SparkLowLevel.MotorType.kBrushless);
+//    private final SparkMax intakeMotor = new SparkMax(INTAKE_MOTOR_CAN_ID, SparkLowLevel.MotorType.kBrushless);
 
     private double intakeSpeed = 0;
 
@@ -36,7 +35,7 @@ public class AlgaeSubsystem extends SubsystemBase {
 
         checkSafety();
 
-        intakeMotor.set(intakeSpeed);
+//        intakeMotor.set(intakeSpeed);
 
     }
 
