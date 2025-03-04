@@ -146,7 +146,8 @@ public class TeleopDriveCommand extends BaseDriveCommand {
 
     // if driver isn't driving, operator has control
     if ((vX == 0 && vY == 0 && ccwRotAngularVelPct == 0) && (oX !=0 || oY !=0)) {
-      swerve.driveRobotOriented(oX * TRANSLATION_CONFIG.maxSpeedMPS(), oY * TRANSLATION_CONFIG.maxSpeedMPS(), omegaRadiansPerSecond);
+      swerve.driveRobotOriented(oX * TRANSLATION_CONFIG.maxSpeedMPS(), oY * TRANSLATION_CONFIG.maxSpeedMPS(), 0);
+      rotationSettleTimer.reset();
     // driver gets priority otherwise
     } else {
       if (fieldOriented) {

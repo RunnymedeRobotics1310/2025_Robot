@@ -482,7 +482,7 @@ public final class Constants {
       LEVEL_1(0),
       LEVEL_2(120),
       LEVEL_3(120),
-      LEVEL_4(125),
+      LEVEL_4(112),
       REMOVE_ALGAE(40);
 
       public final double angle;
@@ -497,7 +497,7 @@ public final class Constants {
       LEVEL_1(20),
       LEVEL_2(20),
       LEVEL_3(20),
-      LEVEL_4(20),
+      LEVEL_4(25),
       REMOVE_ALGAE(20);
 
       public final double distance;

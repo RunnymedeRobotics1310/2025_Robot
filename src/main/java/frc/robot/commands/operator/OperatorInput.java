@@ -6,10 +6,12 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
 import frc.robot.Constants.CoralConstants.CoralPose;
 import frc.robot.commands.CancelCommand;
 import frc.robot.commands.climb.ClimbCommand;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
+import frc.robot.commands.coral.SetupScoreCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.pneumatics.ToggleCompressorCommand;
 import frc.robot.commands.swervedrive.ZeroGyroCommand;
@@ -100,6 +102,9 @@ public class OperatorInput extends SubsystemBase {
 
         new Trigger(this::isToggleCompressor)
                 .onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
+
+        new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
+                .onTrue(new SetupScoreCommand(CoralPose.SCORE_L4, Constants.CoralConstants.DesiredDistanceToTargetCM.LEVEL_4, coralSubsystem, driveSubsystem));
 
     }
 

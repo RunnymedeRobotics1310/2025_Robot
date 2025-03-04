@@ -51,7 +51,7 @@ public class SetupScoreCommand extends LoggingCommand {
         atArmAngle = coralSubsystem.moveArmToAngle(coralPose.armAngle);
 
         currentDistance = coralSubsystem.getUltrasonicDistanceCm();
-        deltaDistance = distanceToTarget.getDistance() - currentDistance;
+        deltaDistance = currentDistance - distanceToTarget.getDistance();
 
 
 
@@ -60,6 +60,7 @@ public class SetupScoreCommand extends LoggingCommand {
             swerveSubsystem.stop();
         } else {
             swerveSubsystem.driveRobotOriented(0.25 * Math.signum(deltaDistance),0,0);
+            atCorrectDistance = false;
         }
     }
 
