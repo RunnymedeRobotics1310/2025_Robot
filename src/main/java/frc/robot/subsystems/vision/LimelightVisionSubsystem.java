@@ -37,10 +37,14 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   private final NetworkTableEntry thomsPipeline = thomasVision.getEntry("pipeline");
   private final DoubleEntry thomasStream = thomasVision.getDoubleTopic("stream").getEntry(-1);
 
-  // output
+  // MegaTags
   private final DoubleArraySubscriber nikolaMegaTag1 =
-      thomasVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
+      nikolaVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
   private final DoubleArraySubscriber nikolaStddevs =
+      nikolaVision.getDoubleArrayTopic("stddevs").subscribe(new double[0]);
+  private final DoubleArraySubscriber thomasMegaTag1 =
+      thomasVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
+  private final DoubleArraySubscriber thomasStddevs =
       thomasVision.getDoubleArrayTopic("stddevs").subscribe(new double[0]);
 
   //  private final DoubleArraySubscriber nikolaMegaTag2 =
