@@ -140,9 +140,9 @@ public class TeleopDriveCommand extends BaseDriveCommand {
       }
 
       if (faceTarget) {
-        double tagId = visionSubsystem.getVisibleTargetTagId();
+        int tagId = (int) visionSubsystem.getVisibleTargetTagId();
         if (tagId > 0 && tagId <= Constants.FieldConstants.TARGET_HEADINGS.length) {
-          headingSetpointDeg = Constants.FieldConstants.TARGET_HEADINGS[(int) tagId - 1];
+          headingSetpointDeg = Constants.FieldConstants.TARGET_HEADINGS[tagId - 1];
         }
       }
 

@@ -68,6 +68,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // return new Score3L4AutoCommand(swerveDriveSubsystem, 0);
     //    return new DriveToLeftCenterPointAutoCommand(swerveDriveSubsystem);
-    return new Score1CoralCenterAutoCommand(swerveDriveSubsystem, 0);
+    return new Score1CoralCenterAutoCommand(swerveDriveSubsystem, coralSubsystem, 0);
   }
 }

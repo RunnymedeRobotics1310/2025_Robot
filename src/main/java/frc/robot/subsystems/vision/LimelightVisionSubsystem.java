@@ -39,9 +39,9 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
 
   // output
   private final DoubleArraySubscriber nikolaMegaTag1 =
-      nikolaVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
+      thomasVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
   private final DoubleArraySubscriber nikolaStddevs =
-      nikolaVision.getDoubleArrayTopic("stddevs").subscribe(new double[0]);
+      thomasVision.getDoubleArrayTopic("stddevs").subscribe(new double[0]);
 
   //  private final DoubleArraySubscriber nikolaMegaTag2 =
   //          nikolaVision.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);

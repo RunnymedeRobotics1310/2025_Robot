@@ -152,10 +152,6 @@ public class OperatorInput extends SubsystemBase {
    * robot elements.
    */
 
-  public boolean getAlignReefTag() {
-    return driverController.getBButton();
-  }
-
   public boolean isFastMode() {
     return driverController.getRightBumperButton();
   }
