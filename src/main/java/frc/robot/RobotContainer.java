@@ -49,7 +49,7 @@ public class RobotContainer {
 
     // Initialize all Subsystem default commands
     swerveDriveSubsystem.setDefaultCommand(
-        new TeleopDriveCommand(swerveDriveSubsystem, operatorInput));
+        new TeleopDriveCommand(swerveDriveSubsystem, visionSubsystem, operatorInput));
 
     coralSubsystem.setDefaultCommand(new DefaultCoralCommand(coralSubsystem, operatorInput));
 

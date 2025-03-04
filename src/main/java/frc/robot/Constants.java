@@ -119,6 +119,12 @@ public final class Constants {
 
     public static final double FIELD_EXTENT_METRES_Y = 8.211;
     public static final double FIELD_EXTENT_METRES_X = 16.541;
+
+    public static final double[] TARGET_HEADINGS =
+        new double[] {
+          126, -126, 90, 0, 0, -60, 0, 60, 120, 180, -120, 126, -126, 90, 0, 0, -60, 0, 60, 120,
+          180, -120
+        };
   }
 
   public static final class Swerve {
@@ -501,7 +507,10 @@ public final class Constants {
       REMOVE_ALGAE(20);
 
       public final double distance;
-      DesiredDistanceToTargetCM(double distance) {this.distance = distance;}
+
+      DesiredDistanceToTargetCM(double distance) {
+        this.distance = distance;
+      }
 
       public double getDistance() {
         return distance;

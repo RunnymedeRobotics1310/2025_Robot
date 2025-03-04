@@ -22,236 +22,254 @@ import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
-/**
- * The DriverController exposes all driver functions
- */
+/** The DriverController exposes all driver functions */
 public class OperatorInput extends SubsystemBase {
 
-    private final XboxController driverController;
-    private final XboxController operatorController;
+  private final XboxController driverController;
+  private final XboxController operatorController;
 
-    /**
-     * Construct an OperatorInput class that is fed by a DriverController and an OperatorController.
-     *
-     * @param driverControllerPort   on the driver station which the driver joystick is plugged into
-     * @param operatorControllerPort on the driver station which the aux joystick is plugged into
-     */
-    public OperatorInput(int driverControllerPort, int operatorControllerPort, double deadband) {
-        driverController = new GameController(driverControllerPort, deadband);
-        operatorController = new GameController(operatorControllerPort, deadband);
-    }
+  /**
+   * Construct an OperatorInput class that is fed by a DriverController and an OperatorController.
+   *
+   * @param driverControllerPort on the driver station which the driver joystick is plugged into
+   * @param operatorControllerPort on the driver station which the aux joystick is plugged into
+   */
+  public OperatorInput(int driverControllerPort, int operatorControllerPort, double deadband) {
+    driverController = new GameController(driverControllerPort, deadband);
+    operatorController = new GameController(operatorControllerPort, deadband);
+  }
 
-    /**
-     * Configure the button bindings for all operator commands
-     *
-     * <p>NOTE: This routine requires all subsystems to be passed in
-     *
-     * <p>NOTE: This routine must only be called once from the RobotContainer
-     */
-    public void configureButtonBindings(
-            SwerveSubsystem driveSubsystem, CoralSubsystem coralSubsystem, PneumaticsSubsystem pneumaticsSubsystem, ClimbSubsystem climbSubsystem, AlgaeSubsystem algaeSubsystem) {
+  /**
+   * Configure the button bindings for all operator commands
+   *
+   * <p>NOTE: This routine requires all subsystems to be passed in
+   *
+   * <p>NOTE: This routine must only be called once from the RobotContainer
+   */
+  public void configureButtonBindings(
+      SwerveSubsystem driveSubsystem,
+      CoralSubsystem coralSubsystem,
+      PneumaticsSubsystem pneumaticsSubsystem,
+      ClimbSubsystem climbSubsystem,
+      AlgaeSubsystem algaeSubsystem) {
 
-        // System Test Command
-        new Trigger(
-                () ->
-                        driverController.getStartButton()
-                                && driverController.getBackButton()
-                                && !DriverStation.isFMSAttached())
-                .onTrue(new SystemTestCommand(this, driveSubsystem, coralSubsystem));
+    // System Test Command
+    new Trigger(
+            () ->
+                driverController.getStartButton()
+                    && driverController.getBackButton()
+                    && !DriverStation.isFMSAttached())
+        .onTrue(new SystemTestCommand(this, driveSubsystem, coralSubsystem));
 
-        // Cancel Command
-        new Trigger(this::isCancel).whileTrue(new CancelCommand(this, driveSubsystem, coralSubsystem, pneumaticsSubsystem, climbSubsystem, algaeSubsystem));
+    // Cancel Command
+    new Trigger(this::isCancel)
+        .whileTrue(
+            new CancelCommand(
+                this,
+                driveSubsystem,
+                coralSubsystem,
+                pneumaticsSubsystem,
+                climbSubsystem,
+                algaeSubsystem));
 
-        // Reset Gyro
-        new Trigger(() -> driverController.getBackButton()).onTrue(new ZeroGyroCommand(driveSubsystem));
+    // Reset Gyro
+    new Trigger(() -> driverController.getBackButton()).onTrue(new ZeroGyroCommand(driveSubsystem));
 
-        // Compact (X button)
-        new Trigger(() -> driverController.getXButton() || operatorController.getXButton())
-                .onTrue(new MoveToCoralPoseCommand(CoralPose.COMPACT, coralSubsystem));
-
-        /*
-         * Set Score Height (POV)
-         */
-        // Y (delivery), A (intake) for arm position
-        new Trigger(() -> operatorController.getPOV() == 0)
-                .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coralSubsystem));
-        new Trigger(() -> operatorController.getPOV() == 270)
-                .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L3, coralSubsystem));
-        new Trigger(() -> operatorController.getPOV() == 180)
-                .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L2, coralSubsystem));
-        new Trigger(() -> operatorController.getPOV() == 90)
-                .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L1, coralSubsystem));
-
-        /*
-         * Coral Intake Buttons
-         */
-        new Trigger(() -> driverController.getLeftBumperButton())
-                .onTrue(new IntakeCoralCommand(coralSubsystem));
-
-        /*
-         * Climb Buttons
-         */
-
-        // climb
-        new Trigger(() -> driverController.getPOV() == 0)
-                .onTrue(new ClimbCommand(true, climbSubsystem));
-
-        // anti-climb
-        new Trigger(() -> driverController.getPOV() == 180)
-                .onTrue(new ClimbCommand(false, climbSubsystem));
-
-        new Trigger(this::isToggleCompressor)
-                .onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
-
-        new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
-                .onTrue(new SetupScoreCommand(CoralPose.SCORE_L4, Constants.CoralConstants.DesiredDistanceToTargetCM.LEVEL_4, coralSubsystem, driveSubsystem));
-
-    }
+    // Compact (X button)
+    new Trigger(() -> driverController.getXButton() || operatorController.getXButton())
+        .onTrue(new MoveToCoralPoseCommand(CoralPose.COMPACT, coralSubsystem));
 
     /*
-     * Cancel Command support
-     * Do not end the command while the button is pressed
+     * Set Score Height (POV)
      */
-    public boolean isCancel() {
-        return (driverController.getStartButton() && !driverController.getBackButton()) || (operatorController.getStartButton());
-    }
-
-    public boolean isZeroGyro() {
-        return driverController.getBackButton();
-    }
+    // Y (delivery), A (intake) for arm position
+    new Trigger(() -> operatorController.getPOV() == 0)
+        .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coralSubsystem));
+    new Trigger(() -> operatorController.getPOV() == 270)
+        .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L3, coralSubsystem));
+    new Trigger(() -> operatorController.getPOV() == 180)
+        .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L2, coralSubsystem));
+    new Trigger(() -> operatorController.getPOV() == 90)
+        .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L1, coralSubsystem));
 
     /*
-     * Default Drive Command Buttons
+     * Coral Intake Buttons
      */
-    public XboxController getRawDriverController() {
-        return driverController;
-    }
-
-    public boolean getRotate180Val() {
-        return driverController.getAButton();
-    }
+    new Trigger(() -> driverController.getLeftBumperButton())
+        .onTrue(new IntakeCoralCommand(coralSubsystem));
 
     /*
-     * The following routines are used by the default commands for each subsystem
-     *
-     * They allow the default commands to get user input to manually move the
-     * robot elements.
+     * Climb Buttons
      */
 
-    public boolean getAlignReefTag() {
-        return driverController.getBButton();
-    }
+    // climb
+    new Trigger(() -> driverController.getPOV() == 0)
+        .onTrue(new ClimbCommand(true, climbSubsystem));
 
-    public boolean isFastMode() {
-        return driverController.getRightBumperButton();
-    }
+    // anti-climb
+    new Trigger(() -> driverController.getPOV() == 180)
+        .onTrue(new ClimbCommand(false, climbSubsystem));
 
-    public double getDriverControllerAxis(Stick stick, Axis axis) {
-        switch (stick) {
-            case LEFT:
-                switch (axis) {
-                    case X:
-                        return driverController.getLeftX();
-                    case Y:
-                        return driverController.getLeftY();
-                }
-                break;
-            case RIGHT:
-                switch (axis) {
-                    case X:
-                        return driverController.getRightX();
-                }
-                break;
+    new Trigger(this::isToggleCompressor).onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
+
+    new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
+        .onTrue(
+            new SetupScoreCommand(
+                CoralPose.SCORE_L4,
+                Constants.CoralConstants.DesiredDistanceToTargetCM.LEVEL_4,
+                coralSubsystem,
+                driveSubsystem));
+  }
+
+  /*
+   * Cancel Command support
+   * Do not end the command while the button is pressed
+   */
+  public boolean isCancel() {
+    return (driverController.getStartButton() && !driverController.getBackButton())
+        || (operatorController.getStartButton());
+  }
+
+  public boolean isZeroGyro() {
+    return driverController.getBackButton();
+  }
+
+  /*
+   * Default Drive Command Buttons
+   */
+  public XboxController getRawDriverController() {
+    return driverController;
+  }
+
+  public boolean getRotate180Val() {
+    return driverController.getAButton();
+  }
+
+  /*
+   * The following routines are used by the default commands for each subsystem
+   *
+   * They allow the default commands to get user input to manually move the
+   * robot elements.
+   */
+
+  public boolean getAlignReefTag() {
+    return driverController.getBButton();
+  }
+
+  public boolean isFastMode() {
+    return driverController.getRightBumperButton();
+  }
+
+  public boolean isFaceTarget() {
+    return driverController.getBButton();
+  }
+
+  public double getDriverControllerAxis(Stick stick, Axis axis) {
+    switch (stick) {
+      case LEFT:
+        switch (axis) {
+          case X:
+            return driverController.getLeftX();
+          case Y:
+            return driverController.getLeftY();
         }
-
-        return 0;
-    }
-
-    public double getOperatorControllerAxis(Stick stick, Axis axis) {
-        switch (stick) {
-            case LEFT:
-                switch (axis) {
-                    case X:
-                        return operatorController.getLeftX();
-                    case Y:
-                        return operatorController.getLeftY();
-                }
-                break;
-            case RIGHT:
-                switch (axis) {
-                    case X:
-                        return operatorController.getRightX();
-                }
-                break;
+        break;
+      case RIGHT:
+        switch (axis) {
+          case X:
+            return driverController.getRightX();
         }
-
-        return 0;
+        break;
     }
 
-    /*
-     * Default Coral Command
-     */
-    public double getElevatorInput() {
-        return operatorController.getRightY();
+    return 0;
+  }
+
+  public double getOperatorControllerAxis(Stick stick, Axis axis) {
+    switch (stick) {
+      case LEFT:
+        switch (axis) {
+          case X:
+            return operatorController.getLeftX();
+          case Y:
+            return operatorController.getLeftY();
+        }
+        break;
+      case RIGHT:
+        switch (axis) {
+          case X:
+            return operatorController.getRightX();
+        }
+        break;
     }
 
-    public double getArmStick() {
-        return operatorController.getRightX();
-    }
+    return 0;
+  }
 
-    public boolean getEjectButton() {
-        return operatorController.getLeftBumperButton();
-    }
+  /*
+   * Default Coral Command
+   */
+  public double getElevatorInput() {
+    return operatorController.getRightY();
+  }
 
-    public boolean getInjectButton() {
-        return operatorController.getBButton();
-    }
+  public double getArmStick() {
+    return operatorController.getRightX();
+  }
 
-    public boolean getPlant() {
-        return operatorController.getRightTriggerAxis() > 0.5;
-    }
+  public boolean getEjectButton() {
+    return operatorController.getLeftBumperButton();
+  }
 
-    /*
-     * Default Algae Command
-     */
-    public boolean getIntakeAlgae() {
-        return driverController.getLeftTriggerAxis() <= 0.5;
-    }
+  public boolean getInjectButton() {
+    return operatorController.getBButton();
+  }
 
-    public boolean getOuttakeAlgae() {
-        return driverController.getRightTriggerAxis() <= 0.5;
-    }
+  public boolean getPlant() {
+    return operatorController.getRightTriggerAxis() > 0.5;
+  }
 
-    /*
-     * Compressor enable/disable
-     */
-    public boolean isToggleCompressor() {
-        return operatorController.getRightBumperButton() && operatorController.getAButton();
-    }
+  /*
+   * Default Algae Command
+   */
+  public boolean getIntakeAlgae() {
+    return driverController.getLeftTriggerAxis() <= 0.5;
+  }
 
-    /*
-     * Support for haptic feedback to the driver
-     */
-    public void startVibrate() {
-        driverController.setRumble(GenericHID.RumbleType.kBothRumble, 1);
-    }
+  public boolean getOuttakeAlgae() {
+    return driverController.getRightTriggerAxis() <= 0.5;
+  }
 
-    public void stopVibrate() {
-        driverController.setRumble(GenericHID.RumbleType.kBothRumble, 0);
-    }
+  /*
+   * Compressor enable/disable
+   */
+  public boolean isToggleCompressor() {
+    return operatorController.getRightBumperButton() && operatorController.getAButton();
+  }
 
-    @Override
-    public void periodic() {
-        SmartDashboard.putString("Driver Controller", driverController.toString());
-    }
+  /*
+   * Support for haptic feedback to the driver
+   */
+  public void startVibrate() {
+    driverController.setRumble(GenericHID.RumbleType.kBothRumble, 1);
+  }
 
-    public enum Stick {
-        LEFT,
-        RIGHT
-    }
+  public void stopVibrate() {
+    driverController.setRumble(GenericHID.RumbleType.kBothRumble, 0);
+  }
 
-    public enum Axis {
-        X,
-        Y
-    }
+  @Override
+  public void periodic() {
+    SmartDashboard.putString("Driver Controller", driverController.toString());
+  }
+
+  public enum Stick {
+    LEFT,
+    RIGHT
+  }
+
+  public enum Axis {
+    X,
+    Y
+  }
 }

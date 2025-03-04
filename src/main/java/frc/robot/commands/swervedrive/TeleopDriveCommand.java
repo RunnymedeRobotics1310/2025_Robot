@@ -18,12 +18,15 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants;
 import frc.robot.commands.operator.OperatorInput;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 
 public class TeleopDriveCommand extends BaseDriveCommand {
 
   private final OperatorInput oi;
+  private final LimelightVisionSubsystem visionSubsystem;
   private boolean invert;
   private Double headingSetpointDeg = null;
   private boolean fieldOriented = true;
@@ -31,8 +34,12 @@ public class TeleopDriveCommand extends BaseDriveCommand {
   private boolean prevRotate180Val = false;
 
   /** Used to drive a swerve robot in full field-centric mode. */
-  public TeleopDriveCommand(SwerveSubsystem swerve, OperatorInput operatorInput) {
+  public TeleopDriveCommand(
+      SwerveSubsystem swerve,
+      LimelightVisionSubsystem visionSubsystem,
+      OperatorInput operatorInput) {
     super(swerve);
+    this.visionSubsystem = visionSubsystem;
     this.oi = operatorInput;
   }
 
@@ -86,6 +93,8 @@ public class TeleopDriveCommand extends BaseDriveCommand {
 
     final boolean rotate180Val = oi.getRotate180Val();
 
+    final boolean faceTarget = oi.isFaceTarget();
+
     // Compute boost factor
     // final boolean isSlow = oi.isDriverLeftBumper();
     final boolean isSlow = false;
@@ -130,6 +139,13 @@ public class TeleopDriveCommand extends BaseDriveCommand {
         }
       }
 
+      if (faceTarget) {
+        double tagId = visionSubsystem.getVisibleTargetTagId();
+        if (tagId > 0 && tagId <= Constants.FieldConstants.TARGET_HEADINGS.length) {
+          headingSetpointDeg = Constants.FieldConstants.TARGET_HEADINGS[(int) tagId - 1];
+        }
+      }
+
       // Don't spin around on zero gyro!
       if (isZeroGyro) {
         headingSetpointDeg = null;
@@ -145,10 +161,11 @@ public class TeleopDriveCommand extends BaseDriveCommand {
     }
 
     // if driver isn't driving, operator has control
-    if ((vX == 0 && vY == 0 && ccwRotAngularVelPct == 0) && (oX !=0 || oY !=0)) {
-      swerve.driveRobotOriented(oX * TRANSLATION_CONFIG.maxSpeedMPS(), oY * TRANSLATION_CONFIG.maxSpeedMPS(), 0);
+    if ((vX == 0 && vY == 0 && ccwRotAngularVelPct == 0) && (oX != 0 || oY != 0)) {
+      swerve.driveRobotOriented(
+          oX * TRANSLATION_CONFIG.maxSpeedMPS(), oY * TRANSLATION_CONFIG.maxSpeedMPS(), 0);
       rotationSettleTimer.reset();
-    // driver gets priority otherwise
+      // driver gets priority otherwise
     } else {
       if (fieldOriented) {
         // Field-oriented mode
