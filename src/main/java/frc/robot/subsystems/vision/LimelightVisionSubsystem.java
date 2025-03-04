@@ -272,6 +272,8 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
       Telemetry.vision.visionPoseY = botPose.getPoseY();
       Telemetry.vision.visionPoseHeading = botPose.getPoseRotationYaw();
       Telemetry.vision.standardDeviations = deviations;
+      Telemetry.vision.navxYaw = yaw;
+      Telemetry.vision.navxYawDelta = odometryPose.getRotation().getDegrees() - yaw;
     }
 
     return returnVal;
