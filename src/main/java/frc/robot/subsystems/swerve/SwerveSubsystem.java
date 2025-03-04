@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.telemetry.Telemetry;
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -206,5 +207,36 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public double computeOmega(double desiredHeadingDegrees) {
     return headingPIDController.calculate(drive.getYaw(), desiredHeadingDegrees);
+  }
+
+  public double computeTranslateVelocity(double distance, double tolerance) {
+    final double decelZoneMetres = 1.5;
+    final double verySlowZone = 0.10;
+    final double verySlowSpeed = 0.15;
+    double maxSpeedMPS = Constants.Swerve.TRANSLATION_CONFIG.maxSpeedMPS();
+    maxSpeedMPS = 3;
+    double speed;
+
+    final double absDist = Math.abs(distance);
+
+    if (absDist < tolerance) {
+      return 0;
+    }
+    // Very slow zone
+    if (absDist < verySlowZone) {
+      speed = verySlowSpeed;
+    }
+    // Full speed ahead!
+    else if (absDist >= decelZoneMetres) {
+      speed = maxSpeedMPS;
+    }
+    // Decel Zone
+    else {
+      speed = (absDist / decelZoneMetres) * maxSpeedMPS;
+    }
+
+    speed *= Math.signum(distance);
+
+    return speed;
   }
 }
