@@ -55,7 +55,7 @@ public class SetupScoreCommand extends LoggingCommand {
     atArmAngle = coralSubsystem.moveArmToAngle(coralPose.armAngle);
 
     currentDistance = coralSubsystem.getUltrasonicDistanceCm();
-    deltaDistance = distanceToTarget.getDistance() - currentDistance;
+    deltaDistance =currentDistance - distanceToTarget.getDistance();
 
     if (Math.abs(deltaDistance) < Constants.CoralConstants.SCORING_DISTANCE_TOLERANCE) {
       atCorrectDistance = true;
