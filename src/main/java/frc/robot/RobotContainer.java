@@ -7,9 +7,12 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.OiConstants;
 import frc.robot.Constants.Swerve;
+import frc.robot.commands.algae.DefaultAlgaeCommand;
+import frc.robot.commands.auto.Score1CoralCenterAutoCommand;
 import frc.robot.commands.coral.DefaultCoralCommand;
 import frc.robot.commands.operator.OperatorInput;
 import frc.robot.commands.swervedrive.TeleopDriveCommand;
+import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
@@ -32,6 +35,7 @@ public class RobotContainer {
   private final CoralSubsystem coralSubsystem = new CoralSubsystem(visionSubsystem);
   private final PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
   private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
+  private final AlgaeSubsystem algaeSubsystem = new AlgaeSubsystem();
 
   // Driver and operator controllers
   private final OperatorInput operatorInput =
@@ -46,10 +50,14 @@ public class RobotContainer {
     // Initialize all Subsystem default commands
     swerveDriveSubsystem.setDefaultCommand(
         new TeleopDriveCommand(swerveDriveSubsystem, operatorInput));
+
     coralSubsystem.setDefaultCommand(new DefaultCoralCommand(coralSubsystem, operatorInput));
 
+    algaeSubsystem.setDefaultCommand(new DefaultAlgaeCommand(algaeSubsystem, operatorInput));
+
     // Configure the button bindings - pass in all subsystems
-    operatorInput.configureButtonBindings(swerveDriveSubsystem, coralSubsystem, pneumaticsSubsystem, climbSubsystem);
+    operatorInput.configureButtonBindings(
+        swerveDriveSubsystem, coralSubsystem, pneumaticsSubsystem, climbSubsystem, algaeSubsystem);
   }
 
   /**
@@ -58,6 +66,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return null;
+    // return new Score3L4AutoCommand(swerveDriveSubsystem, 0);
+    //    return new DriveToLeftCenterPointAutoCommand(swerveDriveSubsystem);
+    return new Score1CoralCenterAutoCommand(swerveDriveSubsystem, 0);
   }
 }

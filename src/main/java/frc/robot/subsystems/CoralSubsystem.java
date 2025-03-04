@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.AnalogInput;
+import static frc.robot.Constants.CoralConstants.*;
+
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkAbsoluteEncoder;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -13,6 +14,7 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,8 +23,6 @@ import frc.robot.Constants.CoralConstants.ArmAngle;
 import frc.robot.Constants.CoralConstants.ElevatorHeight;
 import frc.robot.Robot;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
-
-import static frc.robot.Constants.CoralConstants.*;
 
 public class CoralSubsystem extends SubsystemBase {
 
@@ -46,17 +46,18 @@ public class CoralSubsystem extends SubsystemBase {
   // Coral Subsystem Motors
   private final SparkFlex elevatorMotor =
       new SparkFlex(CoralConstants.ELEVATOR_MOTOR_CAN_ID, MotorType.kBrushless);
-  private final SparkMax armMotor =
-      new SparkMax(CoralConstants.ARM_MOTOR_CAN_ID, MotorType.kBrushless);
+  private final SparkFlex armMotor =
+      new SparkFlex(CoralConstants.ARM_MOTOR_CAN_ID, MotorType.kBrushless);
   private final SparkMax intakeMotor =
       new SparkMax(CoralConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
 
   private double elevatorSpeed = 0;
   private double armSpeed = 0;
   private double intakeSpeed = 0;
-// ultrasonic
-  private final AnalogInput ultrasonicDistanceSensor = new AnalogInput(ULTRASONIC_SENSOR_PORT);
+  private double lastKnownElevatorHeight = -1;
 
+  // ultrasonic
+  private final AnalogInput ultrasonicDistanceSensor = new AnalogInput(ULTRASONIC_SENSOR_PORT);
 
   // Elevator
 
@@ -134,20 +135,20 @@ public class CoralSubsystem extends SubsystemBase {
     /*
      * Arm Motor Config
      */
-    SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
+    SparkFlexConfig sparkFlexConfig = new SparkFlexConfig();
 
-    sparkMaxConfig.disableFollowerMode();
-    sparkMaxConfig.idleMode(IdleMode.kBrake);
-    sparkMaxConfig.inverted(CoralConstants.ARM_MOTOR_INVERTED);
+    sparkFlexConfig.disableFollowerMode();
+    sparkFlexConfig.idleMode(IdleMode.kBrake);
+    sparkFlexConfig.inverted(CoralConstants.ARM_MOTOR_INVERTED);
 
     // Limit the current to 20A max
     // flexConfig.smartCurrentLimit(20);
 
-    sparkMaxConfig.absoluteEncoder.inverted(CoralConstants.ARM_ANGLE_ENCODER_INVERTED);
-    sparkMaxConfig.absoluteEncoder.zeroOffset(CoralConstants.ARM_ANGLE_ENCODER_OFFSET);
+    sparkFlexConfig.absoluteEncoder.inverted(CoralConstants.ARM_ANGLE_ENCODER_INVERTED);
+    sparkFlexConfig.absoluteEncoder.zeroOffset(CoralConstants.ARM_ANGLE_ENCODER_OFFSET);
 
     armMotor.configure(
-        sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        sparkFlexConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     armAboveThreshold =
         armAngleEncoder.getPosition() > CoralConstants.ARM_CAMERA_THRESHOLD_POSITION;
@@ -156,7 +157,7 @@ public class CoralSubsystem extends SubsystemBase {
     /*
      * Intake Motor Config
      */
-    sparkMaxConfig = new SparkMaxConfig();
+    SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
 
     sparkMaxConfig.disableFollowerMode();
     sparkMaxConfig.idleMode(IdleMode.kBrake);
@@ -169,7 +170,7 @@ public class CoralSubsystem extends SubsystemBase {
     sparkMaxConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyOpen);
 
     intakeMotor.configure(
-        sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+            sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     /*
      * Simulation
@@ -212,12 +213,20 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   private void updateVision() {
+    // Update CamStream if the Arm Angle has crossed the threshold
     boolean newAboveThreshold = getArmAngle() > CoralConstants.ARM_CAMERA_THRESHOLD_POSITION;
     if (newAboveThreshold != armAboveThreshold) {
       armAboveThreshold = newAboveThreshold;
       setCamStream();
     }
-    visionSubsystem.setThomasHeight(getThomasHeightM());
+
+    // Update the Thomas Height if the elevator has moved at least 2 encoder counts
+    double newThomasHeight = getThomasHeightM();
+    if (Math.abs(newThomasHeight - lastKnownElevatorHeight)
+        >= ELEVATOR_METERS_PER_ENCODER_COUNT * 2) {
+      lastKnownElevatorHeight = newThomasHeight;
+      visionSubsystem.setThomasHeight(newThomasHeight);
+    }
   }
 
   /*
@@ -247,10 +256,10 @@ public class CoralSubsystem extends SubsystemBase {
     } else {
       speed = CoralConstants.ELEVATOR_SLOW_ZONE_SPEED;
     }
-    speed *=Math.signum(error);
+    speed *= Math.signum(error);
 
     // if you deployed code with the elevator up, go down slowly
-    if (targetHeight == ElevatorHeight.COMPACT && getElevatorEncoder() <=0) {
+    if (targetHeight == ElevatorHeight.COMPACT && getElevatorEncoder() <= 0) {
       speed = -ELEVATOR_SLOW_ZONE_SPEED;
     }
 
@@ -273,12 +282,13 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public double getThomasHeightM() {
-    if (isElevatorAtLowerLimit())  {
+    if (isElevatorAtLowerLimit()) {
       return CoralConstants.THOMAS_STARTING_HEIGHT;
     }
 
-    double  encoderCount = getElevatorEncoder();
-    return CoralConstants.ELEVATOR_METERS_PER_ENCODER_COUNT * encoderCount + CoralConstants.THOMAS_STARTING_HEIGHT;
+    double encoderCount = getElevatorEncoder();
+    return CoralConstants.ELEVATOR_METERS_PER_ENCODER_COUNT * encoderCount
+        + CoralConstants.THOMAS_STARTING_HEIGHT;
   }
 
   public boolean isElevatorAtLowerLimit() {
@@ -442,8 +452,6 @@ public class CoralSubsystem extends SubsystemBase {
     if (isSimulation) {
       simulate();
     }
-
-
 
     checkSafety();
 

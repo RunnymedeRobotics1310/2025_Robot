@@ -57,21 +57,33 @@ public class VisionTelemetry {
   /** The tag ambiguity of the currently in focus tag */
   public double tagAmbiguity = Double.MIN_VALUE;
 
+  public double[] standardDeviations = new double[] {-1, -1, -1};
+
   void post() {
     // Do nothing if not enabled
     if (!enabled) {
       return;
     }
 
-    SmartDashboard.putNumber(PREFIX + "Vision/heading_delta", headingDeltaDegrees);
     String poseOdo =
-        String.format("(%.2f, %.2f) m %.1f deg", poseMetresX, poseMetresY, poseHeadingDegrees);
+        String.format("(%.2f, %.2f)m %.1f°", poseMetresX, poseMetresY, poseHeadingDegrees);
     SmartDashboard.putString(PREFIX + "Vision/pose_odo", poseOdo);
+
     String poseVis =
-        String.format("(%.2f, %.2f) m %.1f deg", visionPoseX, visionPoseY, visionPoseHeading);
+        String.format("(%.2f, %.2f)m %.1f°", visionPoseX, visionPoseY, visionPoseHeading);
     SmartDashboard.putString(PREFIX + "Vision/pose_vis", poseVis);
-    SmartDashboard.putNumber(PREFIX + "Vision/pose_delta", poseDeltaMetres);
+
+    String poseDelta = String.format("%.2fm, %.1f°", poseDeltaMetres, headingDeltaDegrees);
+    SmartDashboard.putString(PREFIX + "Vision/pose_delta", poseDelta);
+
     SmartDashboard.putString(PREFIX + "Vision/pose_confidence", poseConfidence.toString());
+
     SmartDashboard.putNumber(PREFIX + "Vision/tag_ambiguity", tagAmbiguity);
+
+    String stdDevs =
+        String.format(
+            "(%.2fx, %.2fy) %.1f°",
+            standardDeviations[0], standardDeviations[1], standardDeviations[2]);
+    SmartDashboard.putString(PREFIX + "Vision/std_devs", stdDevs);
   }
 }

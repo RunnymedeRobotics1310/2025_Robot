@@ -20,29 +20,31 @@ import frc.robot.telemetry.Telemetry;
 
 public class LimelightVisionSubsystem extends SubsystemBase implements VisionPoseCallback {
 
-  private final NetworkTable lowRiderVision =
+  private final NetworkTable nikolaVision =
       NetworkTableInstance.getDefault().getTable("limelight-nikola");
-  private final NetworkTable elevateVision =
+  private final NetworkTable thomasVision =
       NetworkTableInstance.getDefault().getTable("limelight-thomas");
 
   // inputs/configs
-  private final NetworkTableEntry lr_camMode = lowRiderVision.getEntry("camMode");
-  private final NetworkTableEntry lr_pipeline = lowRiderVision.getEntry("pipeline");
-  private final DoubleArrayPublisher lr_robotOrientation =
-      lowRiderVision.getDoubleArrayTopic("robot_orientation_set").publish();
-  private final DoubleArrayPublisher thomas_cameraLocation =
-       elevateVision.getDoubleArrayTopic("camerapose_robotspace_set").publish();
+  private final NetworkTableEntry nikolaCamMode = nikolaVision.getEntry("camMode");
+  private final NetworkTableEntry nikolaPipeline = nikolaVision.getEntry("pipeline");
+  private final DoubleArrayPublisher nikolaRobotOrientation =
+      nikolaVision.getDoubleArrayTopic("robot_orientation_set").publish();
+  private final DoubleArrayPublisher thomasCameraLocation =
+      thomasVision.getDoubleArrayTopic("camerapose_robotspace_set").publish();
 
-
-  private final NetworkTableEntry elevate_camMode = lowRiderVision.getEntry("camMode");
-  private final NetworkTableEntry elevate_pipeline = lowRiderVision.getEntry("pipeline");
-  private final DoubleEntry elevate_stream = elevateVision.getDoubleTopic("stream").getEntry(-1);
+  private final NetworkTableEntry thomasCamMode = thomasVision.getEntry("camMode");
+  private final NetworkTableEntry thomsPipeline = thomasVision.getEntry("pipeline");
+  private final DoubleEntry thomasStream = thomasVision.getDoubleTopic("stream").getEntry(-1);
 
   // output
-  private final DoubleArraySubscriber lr_MegaTag1 =
-      lowRiderVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
-  private final DoubleArraySubscriber lr_MegaTag2 =
-      lowRiderVision.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
+  private final DoubleArraySubscriber nikolaMegaTag1 =
+      nikolaVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
+  private final DoubleArraySubscriber nikolaStddevs =
+      nikolaVision.getDoubleArrayTopic("stddevs").subscribe(new double[0]);
+
+  //  private final DoubleArraySubscriber nikolaMegaTag2 =
+  //          nikolaVision.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
 
   public enum CamStreamType {
     SIDE_BY_SIDE(0),
@@ -95,32 +97,16 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
     }
   }
 
-  private Matrix<N3, N1> poseDeviationMegaTag1 = VecBuilder.fill(0.01, 0.01, 0.05);
-  private Matrix<N3, N1> poseDeviationMegaTag2 = VecBuilder.fill(0.06, 0.06, 9999999);
+  private static final Matrix<N3, N1> POSE_DEVIATION_MEGATAG1 = VecBuilder.fill(0.01, 0.01, 0.05);
+  private static final Matrix<N3, N1> POSE_DEVIATION_MEGATAG2 =
+      VecBuilder.fill(0.06, 0.06, 9999999);
 
-  private final LimelightBotPose limelightBotPose = new LimelightBotPose(null, 0);
-  LimelightPoseEstimate currentPoseEstimate =
-      new LimelightPoseEstimate(
-          limelightBotPose.getPose(),
-          limelightBotPose.getTimestampSeconds(),
-          poseDeviationMegaTag1,
-          LimelightPoseEstimate.PoseConfidence.NONE);
+  private final LimelightBotPose botPoseMegaTag1 = new LimelightBotPose(null, 0);
+  //  private final LimelightBotPose botPoseMegaTag2 = new LimelightBotPose(null, 0);
 
   private double[] orientationSet = new double[] {0, 0, 0, 0, 0, 0};
-
-  //Hard coded position for the limelight
-  private double[] thomasPositionSet = new double[] {
-          /*Forward*/ 0.155,
-          /*Right*/ 0.13,
-          /*Up*/ 0.88,
-          /*Roll*/ 179,
-          /*Pitch*/ 0,
-          /*Yaw*/ 0};
-
-  public void setThomasHeight(double height){
-    thomasPositionSet[2] = height;
-    thomas_cameraLocation.set(thomasPositionSet);
-  }
+  private double[] thomasPositionSet = new double[] {0.155, 0.13, 0.88, 179, 0, 0};
+  private double[] stddevs = new double[] {0.1, 0.1, 0, 0, 0, 0.5};
 
   private final double fieldExtentMetresX;
   private final double fieldExtentMetresY;
@@ -137,23 +123,28 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
     this.highQualityAmbiguity = visionConfig.highQualityAmbiguity();
     this.maxVisposDeltaDistanceMetres = visionConfig.maxVisposeDeltaDistanceMetres();
 
-    this.lr_pipeline.setNumber(visionConfig.pipelineAprilTagDetect());
-    this.lr_camMode.setNumber(visionConfig.camModeVision());
-    this.elevate_pipeline.setNumber(visionConfig.pipelineAprilTagDetect());
-    this.elevate_camMode.setNumber(visionConfig.camModeVision());
+    this.nikolaPipeline.setNumber(visionConfig.pipelineAprilTagDetect());
+    this.nikolaCamMode.setNumber(visionConfig.camModeVision());
+    this.thomsPipeline.setNumber(visionConfig.pipelineAprilTagDetect());
+    this.thomasCamMode.setNumber(visionConfig.camModeVision());
 
     Telemetry.vision.enabled = visionConfig.telemetryEnabled();
   }
 
   @Override
   public void periodic() {
-    TimestampedDoubleArray botPoseBlueMegaTag1 = lr_MegaTag1.getAtomic();
-    limelightBotPose.update(botPoseBlueMegaTag1.value, botPoseBlueMegaTag1.timestamp);
-    currentPoseEstimate.setPose(limelightBotPose.getPose());
-    currentPoseEstimate.setTimestamp(limelightBotPose.getTimestampSeconds());
+    TimestampedDoubleArray botPoseBlueMegaTag1 = nikolaMegaTag1.getAtomic();
+    botPoseMegaTag1.update(botPoseBlueMegaTag1.value, botPoseBlueMegaTag1.timestamp);
+    //    TimestampedDoubleArray botPoseBlueMegaTag2 = nikolaMegaTag2.getAtomic();
+    //    botPoseMegaTag2.update(botPoseBlueMegaTag2.value, botPoseBlueMegaTag2.timestamp);
   }
 
   /* Public API */
+
+  public void setThomasHeight(double height) {
+    thomasPositionSet[2] = height;
+    thomasCameraLocation.set(thomasPositionSet);
+  }
 
   public void setTargetTagId(TagType tag) {
     this.targetTagId = tag.getIndex();
@@ -164,23 +155,23 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   }
 
   public double getVisibleTargetTagId() {
-    return limelightBotPose.getTagId(0);
+    return botPoseMegaTag1.getTagId(0);
   }
 
   public double distanceToTarget() {
     int index = 0;
     if (targetTagId > 0) {
-      index = limelightBotPose.getTagIndex(targetTagId);
+      index = botPoseMegaTag1.getTagIndex(targetTagId);
     }
-    return limelightBotPose.getTagDistToRobot(index);
+    return botPoseMegaTag1.getTagDistToRobot(index);
   }
 
   public double angleToTarget() {
     int index = 0;
     if (targetTagId > 0) {
-      index = limelightBotPose.getTagIndex(targetTagId);
+      index = botPoseMegaTag1.getTagIndex(targetTagId);
     }
-    return limelightBotPose.getTagTxnc(index);
+    return botPoseMegaTag1.getTagTxnc(index);
   }
 
   /**
@@ -189,90 +180,97 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
    * @param stream the camera stream to set the view to
    */
   public void setCameraView(CamStreamType stream) {
-    elevate_stream.set(stream.getIndex());
+    thomasStream.set(stream.getIndex());
   }
 
   public LimelightBotPose getBotPose() {
-    return limelightBotPose;
+    return botPoseMegaTag1;
   }
 
   /**
    * Get the pose estimate from the vision system, for callback via VisionPoseCallback
    *
+   * <p>Logic In This Function:
+   *
+   * <ol>
+   *   <li>Set the orientation of the robot from odometry into the limelight for MegaTag2 to work
+   *   <li>Ensure the latest vision pose data is valid (on field, >=1 tags visible, robot not
+   *       spinning like crazy
+   *   <li>Check tag ambiguity - if it's very low (<0.1) it means we've got a very very high
+   *       confidence set of data, and we therefore use MegaTag1 data to update pose and heading
+   *       data, which will keep MegaTag 2 honest.
+   *   <li>If ambiguity is medium (0.1-0.7), we can trust MegaTag2 as a high confidence source
+   *   <li>Otherwise, let's not use high ambiguity data at all and let Odometry do its thing
+   * </ol>
+   *
+   * @param odometryPose the current odometry pose of the robot
    * @param yaw the current yaw of the robot
    * @param yawRate the current yaw rate of the robot
    * @return the pose estimate
    */
   public PoseEstimate getPoseEstimate(Pose2d odometryPose, double yaw, double yawRate) {
+    TimestampedDoubleArray botPoseBlueMegaTag1 = nikolaMegaTag1.getAtomic();
+    botPoseMegaTag1.update(botPoseBlueMegaTag1.value, botPoseBlueMegaTag1.timestamp);
+    stddevs = nikolaStddevs.get();
+
     // First, update the limelight and let it know our orientation
-    orientationSet[0] = yaw;
-    lr_robotOrientation.set(orientationSet);
+    orientationSet[0] = odometryPose.getRotation().getDegrees();
+    nikolaRobotOrientation.set(orientationSet);
 
     PoseEstimate returnVal = null;
 
     // Get the current pose delta
     double compareDistance = -1;
     double compareHeading = -1;
-    double tagAmbiguity = -1;
+    double tagAmbiguity = botPoseMegaTag1.getTagAmbiguity(0);
+    double[] deviations = new double[] {-1, -1, -1};
 
-    // Telemetry Handling
-    if (Telemetry.vision.enabled) {
-      Telemetry.vision.poseMetresX = odometryPose.getX();
-      Telemetry.vision.poseMetresY = odometryPose.getY();
-      Telemetry.vision.poseHeadingDegrees = odometryPose.getRotation().getDegrees();
-      Telemetry.vision.visionPoseX = currentPoseEstimate.getPose().getX();
-      Telemetry.vision.visionPoseY = currentPoseEstimate.getPose().getY();
-      Telemetry.vision.visionPoseHeading = currentPoseEstimate.getPose().getRotation().getDegrees();
-    }
-
-    // Reset some values in PoseEstimate
-    currentPoseEstimate.setPoseConfidence(LimelightPoseEstimate.PoseConfidence.NONE);
+    LimelightPoseEstimate.PoseConfidence poseConfidence = LimelightPoseEstimate.PoseConfidence.NONE;
+    LimelightBotPose botPose = botPoseMegaTag1; // default to MT1 for telemetry
 
     // If pose is 0,0 or no tags in view, we don't actually have data - return null
-    if (currentPoseEstimate.getPose().getX() > 0
-        && currentPoseEstimate.getPose().getY() > 0
-        && limelightBotPose.getTagCount() > 0
-        && currentPoseEstimate.getPose().getX() < fieldExtentMetresX
-        && currentPoseEstimate.getPose().getY() < fieldExtentMetresY
-        && yawRate <= 720) {
+    if (botPoseMegaTag1.getTagCount() > 0
+        && botPoseMegaTag1.isPoseXInBounds(0, fieldExtentMetresX)
+        && botPoseMegaTag1.isPoseYInBounds(0, fieldExtentMetresY)) {
 
-      // Get the "best" tag - assuming the first one is the best - TBD TODO
-      tagAmbiguity = limelightBotPose.getTagAmbiguity(0);
-
-      compareDistance =
-          currentPoseEstimate.getPose().getTranslation().getDistance(odometryPose.getTranslation());
-      compareHeading = currentPoseEstimate.getPose().getRotation().getDegrees() - yaw;
-
+      // Do we have a decent signal?  i.e. Ambiguity < 0.7
       if (tagAmbiguity < maxAmbiguity) {
-        // If the ambiguity is very low, use the data as is (or when disabled, to allow for
-        // bot repositioning
+        // Check for super good signal - ambiguity < 0.1, or we're disabled (field setup)
         if (tagAmbiguity < highQualityAmbiguity || DriverStation.isDisabled()) {
-          currentPoseEstimate.setStandardDeviations(poseDeviationMegaTag1);
-          currentPoseEstimate.setPoseConfidence(LimelightPoseEstimate.PoseConfidence.HIGH);
-          returnVal = currentPoseEstimate;
-        } else {
-          // We need to be careful with this data set. If the location is too far off,
-          // don't use it. Otherwise, scale confidence by distance.
-          if (compareDistance < maxVisposDeltaDistanceMetres) {
-            double stdDevRatio = Math.pow(limelightBotPose.getTagDistToCamera(0), 2) / 2;
-            double stdDevRatio2 = 5 * stdDevRatio;
+          // use megatag1 as is, it's rock solid
+          deviations[0] = stddevs[0]; // MegaTag1 X Standard Deviation
+          deviations[1] = stddevs[1]; // MegaTag1 Y Standard Deviation
+          deviations[2] = stddevs[5]; // MegaTag Deg Standard Deviation
+          poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG1;
 
-            Matrix<N3, N1> deviation = VecBuilder.fill(stdDevRatio, stdDevRatio, stdDevRatio2);
-            currentPoseEstimate.setStandardDeviations(deviation);
-            currentPoseEstimate.setPoseConfidence(LimelightPoseEstimate.PoseConfidence.MEDIUM);
-            returnVal = currentPoseEstimate;
-          } else {
-            currentPoseEstimate.setPoseConfidence(LimelightPoseEstimate.PoseConfidence.LOW);
-          }
+          returnVal =
+              new LimelightPoseEstimate(
+                  botPoseMegaTag1.getPose(), botPoseMegaTag1.getTimestampSeconds(), deviations);
+        }
+
+        if (Telemetry.vision.enabled) {
+          compareDistance =
+              botPose.getPose().getTranslation().getDistance(odometryPose.getTranslation());
+          compareHeading =
+              botPose.getPose().getRotation().getDegrees()
+                  - odometryPose.getRotation().getDegrees();
         }
       }
     }
 
+    // Telemetry Handling
     if (Telemetry.vision.enabled) {
       Telemetry.vision.tagAmbiguity = tagAmbiguity;
-      Telemetry.vision.poseConfidence = currentPoseEstimate.getPoseConfidence();
+      Telemetry.vision.poseConfidence = poseConfidence;
       Telemetry.vision.poseDeltaMetres = compareDistance;
       Telemetry.vision.headingDeltaDegrees = compareHeading;
+      Telemetry.vision.poseMetresX = odometryPose.getX();
+      Telemetry.vision.poseMetresY = odometryPose.getY();
+      Telemetry.vision.poseHeadingDegrees = odometryPose.getRotation().getDegrees();
+      Telemetry.vision.visionPoseX = botPose.getPoseX();
+      Telemetry.vision.visionPoseY = botPose.getPoseY();
+      Telemetry.vision.visionPoseHeading = botPose.getPoseRotationYaw();
+      Telemetry.vision.standardDeviations = deviations;
     }
 
     return returnVal;

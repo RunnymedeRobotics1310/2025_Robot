@@ -1,79 +1,89 @@
 package frc.robot.commands;
 
 import frc.robot.commands.operator.OperatorInput;
+import frc.robot.subsystems.AlgaeSubsystem;
+import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
+import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class CancelCommand extends LoggingCommand {
 
-  private final OperatorInput operatorInput;
+    private final OperatorInput operatorInput;
 
-  private final SwerveSubsystem driveSubsystem;
-  private final CoralSubsystem coralSubsystem;
+    private final SwerveSubsystem driveSubsystem;
+    private final CoralSubsystem coralSubsystem;
+    private final PneumaticsSubsystem pneumaticsSubsystem;
+    private final ClimbSubsystem climbSubsystem;
+    private final AlgaeSubsystem algaeSubsystem;
 
-  /**
-   * Cancel the commands running on all subsystems.
-   *
-   * <p>All subsystems must be passed to this command, and each subsystem should have a stop command
-   * that safely stops the robot from moving.
-   */
-  public CancelCommand(
-      OperatorInput operatorInput, SwerveSubsystem driveSubsystem, CoralSubsystem coralSubsystem) {
-
-    this.operatorInput = operatorInput;
-    this.driveSubsystem = driveSubsystem;
-    this.coralSubsystem = coralSubsystem;
-
-    addRequirements(driveSubsystem, coralSubsystem);
-  }
-
-  @Override
-  public InterruptionBehavior getInterruptionBehavior() {
-    /*
-     * The Cancel command is not interruptable and only ends when the cancel button is released.
+    /**
+     * Cancel the commands running on all subsystems.
+     *
+     * <p>All subsystems must be passed to this command, and each subsystem should have a stop command
+     * that safely stops the robot from moving.
      */
-    return InterruptionBehavior.kCancelIncoming;
-  }
+    public CancelCommand(
+            OperatorInput operatorInput, SwerveSubsystem driveSubsystem, CoralSubsystem coralSubsystem, PneumaticsSubsystem pneumaticsSubsystem, ClimbSubsystem climbSubsystem, AlgaeSubsystem algaeSubsystem) {
 
-  @Override
-  public void initialize() {
+        this.operatorInput = operatorInput;
+        this.driveSubsystem = driveSubsystem;
+        this.coralSubsystem = coralSubsystem;
+        this.pneumaticsSubsystem = pneumaticsSubsystem;
+        this.climbSubsystem = climbSubsystem;
+        this.algaeSubsystem = algaeSubsystem;
 
-    logCommandStart();
-
-    stopAll();
-  }
-
-  @Override
-  public void execute() {
-    stopAll();
-  }
-
-  @Override
-  public boolean isFinished() {
-
-    // The cancel command has a minimum timeout of .5 seconds
-    if (!hasElapsed(.5)) {
-      return false;
+        addRequirements(driveSubsystem, coralSubsystem, pneumaticsSubsystem, algaeSubsystem, climbSubsystem);
     }
 
-    // Only end once the cancel button is released after .5 seconds has elapsed
-    if (!operatorInput.isCancel()) {
-      setFinishReason("Cancel button released");
-      return true;
+    @Override
+    public InterruptionBehavior getInterruptionBehavior() {
+        /*
+         * The Cancel command is not interruptable and only ends when the cancel button is released.
+         */
+        return InterruptionBehavior.kCancelIncoming;
     }
 
-    return false;
-  }
+    @Override
+    public void initialize() {
 
-  @Override
-  public void end(boolean interrupted) {
-    logCommandEnd(interrupted);
-  }
+        logCommandStart();
 
-  private void stopAll() {
+        stopAll();
+    }
 
-    // Stop all of the robot movement
-    coralSubsystem.stop();
-    driveSubsystem.driveFieldOriented(0, 0, 0);
-  }
+    @Override
+    public void execute() {
+        stopAll();
+    }
+
+    @Override
+    public boolean isFinished() {
+
+        // The cancel command has a minimum timeout of .5 seconds
+        if (!hasElapsed(.5)) {
+            return false;
+        }
+
+        // Only end once the cancel button is released after .5 seconds has elapsed
+        if (!operatorInput.isCancel()) {
+            setFinishReason("Cancel button released");
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        logCommandEnd(interrupted);
+    }
+
+    private void stopAll() {
+
+        // Stop all of the robot movement
+        driveSubsystem.stop();
+        coralSubsystem.stop();
+        algaeSubsystem.stop();
+    }
 }
