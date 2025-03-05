@@ -314,11 +314,11 @@ public final class Constants {
       preScoreBlueLeft3(new Pose2d(3.7943, 5.5598, Rotation2d.fromDegrees(300))),
       preScoreBlueLeft4(new Pose2d(5.1843, 5.5598, Rotation2d.fromDegrees(240))),
       preScoreBlueLeft5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240))),
-      preScoreBlueLeft6(new Pose2d(6.1660, 4.1909, Rotation2d.fromDegrees(180))),
+      preScoreBlueLeft6(new Pose2d(6.1660, 4.2909, Rotation2d.fromDegrees(180))),
       preScoreBlueRight1(new Pose2d(2.8126, 3.8609, Rotation2d.fromDegrees(0))),
       preScoreBlueRight2(new Pose2d(3.5085, 2.6570, Rotation2d.fromDegrees(60))),
       preScoreBlueRight3(new Pose2d(3.92, 2.58, Rotation2d.fromDegrees(60))),
-      preScoreBlueRight4(new Pose2d(5.1843, 2.4920, Rotation2d.fromDegrees(120))),
+      preScoreBlueRight4(new Pose2d(5.25, 2.45, Rotation2d.fromDegrees(120))),
       preScoreBlueRight5(new Pose2d(5.4701, 2.6570, Rotation2d.fromDegrees(120))),
       preScoreBlueRight6(new Pose2d(6.1660, 3.8609, Rotation2d.fromDegrees(180))),
       preIntakeCentreLeftBlueStation(new Pose2d(1.139, 7.000, Rotation2d.fromDegrees(126))),
@@ -537,7 +537,7 @@ public final class Constants {
       }
     }
 
-    //How far to the left or right you need to be from a reef tag to score
+    // How far to the left or right you need to be from a reef tag to score
     public static final double OFFSET_FROM_TAG_FOR_SCORING = 14;
 
     public enum CoralPose {
@@ -559,7 +559,6 @@ public final class Constants {
         this.armAngle = armAngle;
       }
     }
-
   }
 
   public static final class ClimbConstants {

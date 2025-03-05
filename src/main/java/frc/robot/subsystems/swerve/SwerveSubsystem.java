@@ -209,8 +209,8 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public double computeTranslateVelocity(double distance, double tolerance, double maxSpeedMPS) {
-    final double decelZoneMetres = 1.5;
-    final double verySlowZone = 0.10;
+    final double decelZoneMetres = 1.2;
+    final double verySlowZone = 0.2;
     final double verySlowSpeed = 0.15;
     // TODO: fixme remove this when autos are sped up
     maxSpeedMPS = Math.min(maxSpeedMPS, 3);

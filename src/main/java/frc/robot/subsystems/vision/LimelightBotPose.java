@@ -9,6 +9,7 @@ public class LimelightBotPose {
 
   private double[] botPose;
   private long timestamp;
+  private double[] standardDeviations;
 
   /* Pose Data & Avg Tag Info */
   private static final int OFFSET_POSE_X = 0;
@@ -38,9 +39,65 @@ public class LimelightBotPose {
     update(botPose, timestamp);
   }
 
+  /**
+   * Accepts data from two limelights, however only pulls tag data from the 2nd one
+   *
+   * @param botPosePrimary Main limelight for pose and tag data
+   * @param botPoseSecondary Secondary limelight for tag data only
+   * @param timestamp Timestamp of data from main limelight
+   */
+  public void update(
+      double[] botPosePrimary,
+      long primaryTimestamp,
+      double[] primaryStdDevs,
+      double[] botPoseSecondary,
+      long secondaryTimestamp,
+      double[] secondaryStdDevs) {
+
+    boolean primaryData = botPosePrimary != null && botPosePrimary.length >= OFFSET_TAG_BASE;
+    boolean secondaryData = botPoseSecondary != null && botPoseSecondary.length >= OFFSET_TAG_BASE;
+
+    if (primaryData) {
+      if (secondaryData && ((int) botPoseSecondary[OFFSET_TAG_COUNT]) > 0) {
+        // Tags a present, build an array of both sets of data & tags
+        double[] newBotPose =
+            new double[botPosePrimary.length + botPoseSecondary.length - OFFSET_TAG_BASE];
+        System.arraycopy(botPosePrimary, 0, newBotPose, 0, botPosePrimary.length);
+        System.arraycopy(
+            botPoseSecondary,
+            OFFSET_TAG_BASE,
+            newBotPose,
+            botPosePrimary.length,
+            botPoseSecondary.length - OFFSET_TAG_BASE);
+        newBotPose[OFFSET_TAG_COUNT] =
+            botPosePrimary[OFFSET_TAG_COUNT] + botPoseSecondary[OFFSET_TAG_COUNT];
+        this.botPose = newBotPose;
+      } else {
+        // No tags in secondary, just take primary.
+        this.botPose = botPosePrimary;
+      }
+
+      this.timestamp = primaryTimestamp;
+      this.standardDeviations = primaryStdDevs;
+
+    } else if (secondaryData) {
+      this.botPose = botPoseSecondary;
+      this.timestamp = secondaryTimestamp;
+      this.standardDeviations = secondaryStdDevs;
+    } else {
+      this.botPose = new double[0];
+      this.timestamp = primaryTimestamp;
+      this.standardDeviations = primaryStdDevs;
+    }
+  }
+
   public void update(double[] botPose, long timestamp) {
     this.botPose = Objects.requireNonNullElseGet(botPose, () -> new double[0]);
     this.timestamp = timestamp;
+  }
+
+  public double[] getStandardDeviations() {
+    return standardDeviations;
   }
 
   public Translation2d getTranslation() {

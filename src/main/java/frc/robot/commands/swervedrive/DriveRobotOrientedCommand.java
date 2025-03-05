@@ -8,13 +8,13 @@ public class DriveRobotOrientedCommand extends LoggingCommand {
   private final SwerveSubsystem swerve;
   private final double x;
   private final double y;
-  private final double angle;
+  private final double omega;
 
-  public DriveRobotOrientedCommand(SwerveSubsystem swerve, double x, double y, double angle) {
+  public DriveRobotOrientedCommand(SwerveSubsystem swerve, double x, double y, double omega) {
     this.swerve = swerve;
     this.x = x;
     this.y = y;
-    this.angle = angle;
+    this.omega = omega;
   }
 
   @Override
@@ -24,7 +24,7 @@ public class DriveRobotOrientedCommand extends LoggingCommand {
 
   @Override
   public void execute() {
-    return;
+    swerve.driveRobotOriented(x, y, omega);
   }
 
   @Override
