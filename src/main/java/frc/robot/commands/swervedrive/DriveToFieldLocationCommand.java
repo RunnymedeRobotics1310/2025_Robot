@@ -53,9 +53,9 @@ public class DriveToFieldLocationCommand extends LoggingCommand {
 
     swerve.driveFieldOriented(
         swerve.computeTranslateVelocity(
-            xDif, 0.02, Constants.Swerve.TRANSLATION_CONFIG.maxSpeedMPS()),
+            xDif, 0.02),
         swerve.computeTranslateVelocity(
-            yDif, 0.02, Constants.Swerve.TRANSLATION_CONFIG.maxSpeedMPS()),
+            yDif, 0.02),
         swerve.computeOmega(targetHeadingDeg));
   }
 

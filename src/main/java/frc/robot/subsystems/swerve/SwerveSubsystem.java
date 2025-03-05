@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.telemetry.Telemetry;
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -208,12 +209,12 @@ public class SwerveSubsystem extends SubsystemBase {
     return headingPIDController.calculate(drive.getYaw(), desiredHeadingDegrees);
   }
 
-  public double computeTranslateVelocity(double distance, double tolerance, double maxSpeedMPS) {
+  public double computeTranslateVelocity(double distance, double tolerance) {
     final double decelZoneMetres = 1.2;
     final double verySlowZone = 0.2;
     final double verySlowSpeed = 0.15;
-    // TODO: fixme remove this when autos are sped up
-    maxSpeedMPS = Math.min(maxSpeedMPS, 3);
+    double maxSpeedMPS = Constants.Swerve.TRANSLATION_CONFIG.maxSpeedMPS();
+    maxSpeedMPS = 3;
     double speed;
 
     final double absDist = Math.abs(distance);

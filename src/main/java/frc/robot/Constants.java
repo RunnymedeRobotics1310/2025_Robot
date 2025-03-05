@@ -314,7 +314,7 @@ public final class Constants {
       preScoreBlueLeft3(new Pose2d(3.7943, 5.5598, Rotation2d.fromDegrees(300))),
       preScoreBlueLeft4(new Pose2d(5.1843, 5.5598, Rotation2d.fromDegrees(240))),
       preScoreBlueLeft5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240))),
-      preScoreBlueLeft6(new Pose2d(6.1660, 4.2909, Rotation2d.fromDegrees(180))),
+      preScoreBlueLeft6(new Pose2d(6.1660, 4.2409, Rotation2d.fromDegrees(180))),
       preScoreBlueRight1(new Pose2d(2.8126, 3.8609, Rotation2d.fromDegrees(0))),
       preScoreBlueRight2(new Pose2d(3.5085, 2.6570, Rotation2d.fromDegrees(60))),
       preScoreBlueRight3(new Pose2d(3.92, 2.58, Rotation2d.fromDegrees(60))),
