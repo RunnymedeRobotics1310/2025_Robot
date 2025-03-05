@@ -7,10 +7,11 @@ import frc.robot.commands.coral.SetupScoreCommand;
 import frc.robot.commands.swervedrive.DriveToFieldLocationCommand;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 
 public class Score1CoralCenterAutoCommand extends SequentialCommandGroup {
 
-  public Score1CoralCenterAutoCommand(SwerveSubsystem swerve, CoralSubsystem coral, double delay) {
+  public Score1CoralCenterAutoCommand(SwerveSubsystem swerve, CoralSubsystem coral, LimelightVisionSubsystem vision, double delay) {
 
     addCommands(new WaitCommand(delay));
 
@@ -21,10 +22,12 @@ public class Score1CoralCenterAutoCommand extends SequentialCommandGroup {
         new SetupScoreCommand(
             Constants.CoralConstants.CoralPose.SCORE_L4,
             Constants.CoralConstants.DesiredDistanceToTargetCM.LEVEL_4,
+                false,
             coral,
-            swerve));
-    //        addCommands(new PlantCoralCommand(coral));
-    //        addCommands(new SetCoralPoseCommand(coral, compact));
+            swerve,
+                vision));
+//    //        addCommands(new PlantCoralCommand(coral));
+//    //        addCommands(new SetCoralPoseCommand(coral, compact));
 
   }
 }

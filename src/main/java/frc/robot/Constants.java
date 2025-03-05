@@ -317,7 +317,7 @@ public final class Constants {
       preScoreBlueLeft6(new Pose2d(6.1660, 4.1909, Rotation2d.fromDegrees(180))),
       preScoreBlueRight1(new Pose2d(2.8126, 3.8609, Rotation2d.fromDegrees(0))),
       preScoreBlueRight2(new Pose2d(3.5085, 2.6570, Rotation2d.fromDegrees(60))),
-      preScoreBlueRight3(new Pose2d(3.7943, 2.4920, Rotation2d.fromDegrees(60))),
+      preScoreBlueRight3(new Pose2d(3.92, 2.58, Rotation2d.fromDegrees(60))),
       preScoreBlueRight4(new Pose2d(5.1843, 2.4920, Rotation2d.fromDegrees(120))),
       preScoreBlueRight5(new Pose2d(5.4701, 2.6570, Rotation2d.fromDegrees(120))),
       preScoreBlueRight6(new Pose2d(6.1660, 3.8609, Rotation2d.fromDegrees(180))),
@@ -440,7 +440,7 @@ public final class Constants {
     public static final int ULTRASONIC_SENSOR_PORT = 0;
     public static final double ULTRASONIC_M = (609.6 - 30.5) / (2.245 - 0.12);
     public static final double ULTRASONIC_B = 609.6 - ULTRASONIC_M * 2.245;
-    public static final double SCORING_DISTANCE_TOLERANCE = 3;
+    public static final double SCORING_DISTANCE_TOLERANCE = 5;
     /*
      * Elevator Constants
      */
@@ -485,7 +485,7 @@ public final class Constants {
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
       COMPACT(0),
-      CLOSE_INTAKE(42),
+      CLOSE_INTAKE(47.5),
       FAR_INTAKE(21),
       LEVEL_1(0),
       LEVEL_2(0),
@@ -523,7 +523,7 @@ public final class Constants {
       LEVEL_1(20),
       LEVEL_2(20),
       LEVEL_3(20),
-      LEVEL_4(25),
+      LEVEL_4(26),
       REMOVE_ALGAE(20);
 
       public final double distance;
@@ -536,6 +536,9 @@ public final class Constants {
         return distance;
       }
     }
+
+    //How far to the left or right you need to be from a reef tag to score
+    public static final double OFFSET_FROM_TAG_FOR_SCORING = 14;
 
     public enum CoralPose {
       COMPACT(ElevatorHeight.COMPACT, ArmAngle.COMPACT),
@@ -556,6 +559,7 @@ public final class Constants {
         this.armAngle = armAngle;
       }
     }
+
   }
 
   public static final class ClimbConstants {

@@ -12,7 +12,9 @@ import frc.robot.commands.CancelCommand;
 import frc.robot.commands.climb.ClimbCommand;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.SetupScoreCommand;
+import frc.robot.commands.coral.SetupScoreCommandBotPose;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
+import frc.robot.commands.coral.intake.PlantCoralCommand;
 import frc.robot.commands.pneumatics.ToggleCompressorCommand;
 import frc.robot.commands.swervedrive.ZeroGyroCommand;
 import frc.robot.commands.test.SystemTestCommand;
@@ -21,6 +23,7 @@ import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
+import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 
 /** The DriverController exposes all driver functions */
 public class OperatorInput extends SubsystemBase {
@@ -47,11 +50,11 @@ public class OperatorInput extends SubsystemBase {
    * <p>NOTE: This routine must only be called once from the RobotContainer
    */
   public void configureButtonBindings(
-      SwerveSubsystem driveSubsystem,
-      CoralSubsystem coralSubsystem,
-      PneumaticsSubsystem pneumaticsSubsystem,
-      ClimbSubsystem climbSubsystem,
-      AlgaeSubsystem algaeSubsystem) {
+          SwerveSubsystem driveSubsystem,
+          CoralSubsystem coralSubsystem,
+          PneumaticsSubsystem pneumaticsSubsystem,
+          ClimbSubsystem climbSubsystem,
+          AlgaeSubsystem algaeSubsystem, LimelightVisionSubsystem visionSubsystem) {
 
     // System Test Command
     new Trigger(
@@ -112,13 +115,23 @@ public class OperatorInput extends SubsystemBase {
 
     new Trigger(this::isToggleCompressor).onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
 
+    //    new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
+    //        .onTrue(
+    //            new SetupScoreCommand(
+    //                    CoralPose.SCORE_L4,
+    //                    Constants.CoralConstants.DesiredDistanceToTargetCM.LEVEL_4,
+    //                    true,
+    //                    coralSubsystem,
+    //                    driveSubsystem,
+    //                    visionSubsystem));
+
     new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
         .onTrue(
-            new SetupScoreCommand(
-                CoralPose.SCORE_L4,
-                Constants.CoralConstants.DesiredDistanceToTargetCM.LEVEL_4,
-                coralSubsystem,
-                driveSubsystem));
+            new SetupScoreCommandBotPose(
+                    coralSubsystem,
+                driveSubsystem,
+                visionSubsystem, Constants.AutoConstants.FieldLocation.preScoreBlueRight3,
+                CoralPose.SCORE_L4));
   }
 
   /*

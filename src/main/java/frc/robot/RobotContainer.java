@@ -57,7 +57,7 @@ public class RobotContainer {
 
     // Configure the button bindings - pass in all subsystems
     operatorInput.configureButtonBindings(
-        swerveDriveSubsystem, coralSubsystem, pneumaticsSubsystem, climbSubsystem, algaeSubsystem);
+        swerveDriveSubsystem, coralSubsystem, pneumaticsSubsystem, climbSubsystem, algaeSubsystem, visionSubsystem);
   }
 
   /**
@@ -68,6 +68,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // return new Score3L4AutoCommand(swerveDriveSubsystem, 0);
     //    return new DriveToLeftCenterPointAutoCommand(swerveDriveSubsystem);
-    return new Score1CoralCenterAutoCommand(swerveDriveSubsystem, coralSubsystem, 0);
+    return new Score1CoralCenterAutoCommand(swerveDriveSubsystem, coralSubsystem, visionSubsystem, 0);
   }
 }

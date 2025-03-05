@@ -176,6 +176,10 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
     return nikolaBotPoseMegaTag1.getTagTxnc(index);
   }
 
+  public double getTagAmount() {
+    return nikolaBotPoseMegaTag1.getTagCount();
+  }
+
   /**
    * Set the camera view to the specified stream.
    *
