@@ -71,53 +71,53 @@ public class SetupScoreCommand extends LoggingCommand {
   public void execute() {
     atElevatorHeight = coralSubsystem.moveElevatorToHeight(coralPose.elevatorHeight);
     atArmAngle = coralSubsystem.moveArmToAngle(coralPose.armAngle);
-//
-//    currentDistance = coralSubsystem.getUltrasonicDistanceCm();
-//    deltaDistanceForward = currentDistance - distanceToTarget.getDistance();
-//
-//    tX = limelightVisionSubsystem.angleToTarget();
-//    offsetFromTag = currentDistance * Math.tan(Math.toRadians(tX));
-//
-//    if (limelightVisionSubsystem.getTagAmount() > 0.5) {
-//      if (isLeftBranch) {
-//        deltaDistanceLeft = Constants.CoralConstants.OFFSET_FROM_TAG_FOR_SCORING - offsetFromTag;
-//      } else {
-//        deltaDistanceLeft = -Constants.CoralConstants.OFFSET_FROM_TAG_FOR_SCORING - offsetFromTag;
-//      }
-//    } else {
-//      deltaDistanceLeft = 0;
-//    }
-//
-//    if (Math.abs(deltaDistanceForward) < Constants.CoralConstants.SCORING_DISTANCE_TOLERANCE) {
-//      atCorrectDistanceForward = true;
-//    } else {
-//      atCorrectDistanceForward = false;
-//    }
-//
-//    if (Math.abs(deltaDistanceLeft) < Constants.CoralConstants.SCORING_DISTANCE_TOLERANCE) {
-//      atCorrectDistanceLeft = true;
-//    } else {
-//      atCorrectDistanceLeft = false;
-//    }
-//
-//    if (!atCorrectDistanceLeft) {
-//      vY = 0.25 * Math.signum(deltaDistanceLeft);
-//    } else {
-//      vY = 0;
-//    }
-//
-//    if (!atCorrectDistanceForward && atCorrectDistanceLeft) {
-//      vX = 0.25 * Math.signum(deltaDistanceForward);
-//    } else {
-//      vX = 0;
-//    }
-//
-//      swerveSubsystem.driveRobotOriented(vX, vY, 0);
-//
-//    SmartDashboard.putNumber("1310/SetupScoreCommand/offSetFromTag ", offsetFromTag);
-//    SmartDashboard.putNumber("1310/SetupScoreCommand/deltaDistanceLeft", deltaDistanceLeft);
-//    SmartDashboard.putBoolean("1310/SetupScoreCommand/atCorrectDistanceForward", atCorrectDistanceForward);
-//    SmartDashboard.putBoolean("1310/SetupScoreCommand/atCorrectDistanceLeft", atCorrectDistanceLeft);
+
+    currentDistance = coralSubsystem.getUltrasonicDistanceCm();
+    deltaDistanceForward = currentDistance - distanceToTarget.getDistance();
+
+    tX = limelightVisionSubsystem.angleToTarget();
+    offsetFromTag = currentDistance * Math.tan(Math.toRadians(tX));
+
+    if (limelightVisionSubsystem.getTagAmount() > 0.5) {
+      if (isLeftBranch) {
+        deltaDistanceLeft = Constants.CoralConstants.OFFSET_FROM_TAG_FOR_SCORING - offsetFromTag;
+      } else {
+        deltaDistanceLeft = -Constants.CoralConstants.OFFSET_FROM_TAG_FOR_SCORING - offsetFromTag;
+      }
+    } else {
+      deltaDistanceLeft = 0;
+    }
+
+    if (Math.abs(deltaDistanceForward) < Constants.CoralConstants.SCORING_DISTANCE_TOLERANCE) {
+      atCorrectDistanceForward = true;
+    } else {
+      atCorrectDistanceForward = false;
+    }
+
+    if (Math.abs(deltaDistanceLeft) < Constants.CoralConstants.SCORING_DISTANCE_TOLERANCE) {
+      atCorrectDistanceLeft = true;
+    } else {
+      atCorrectDistanceLeft = false;
+    }
+
+    if (!atCorrectDistanceLeft) {
+      vY = 0.25 * Math.signum(deltaDistanceLeft);
+    } else {
+      vY = 0;
+    }
+
+    if (!atCorrectDistanceForward && atCorrectDistanceLeft) {
+      vX = 0.25 * Math.signum(deltaDistanceForward);
+    } else {
+      vX = 0;
+    }
+
+      swerveSubsystem.driveRobotOriented(vX, vY, 0);
+
+    SmartDashboard.putNumber("1310/SetupScoreCommand/offSetFromTag ", offsetFromTag);
+    SmartDashboard.putNumber("1310/SetupScoreCommand/deltaDistanceLeft", deltaDistanceLeft);
+    SmartDashboard.putBoolean("1310/SetupScoreCommand/atCorrectDistanceForward", atCorrectDistanceForward);
+    SmartDashboard.putBoolean("1310/SetupScoreCommand/atCorrectDistanceLeft", atCorrectDistanceLeft);
 
 
 
@@ -136,7 +136,7 @@ public class SetupScoreCommand extends LoggingCommand {
     if (!coralSubsystem.isCoralDetected()) {
       return true;
     }
-    if (atElevatorHeight && atArmAngle && atCorrectDistanceForward) {
+    if (atElevatorHeight && atArmAngle && atCorrectDistanceForward && atCorrectDistanceLeft) {
       return true;
     }
     return false;
