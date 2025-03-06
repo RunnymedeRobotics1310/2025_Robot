@@ -30,6 +30,7 @@ public class CoralSubsystem extends SubsystemBase {
 
     double elevatorEncoderSpeed = 0;
     double elevatorEncoderPosition = 0;
+    double previousElevatorEncoderPosition = 0;
 
     boolean elevatorUpperLimitReached = false;
     boolean elevatorLowerLimitReached = false;
@@ -195,6 +196,19 @@ public class CoralSubsystem extends SubsystemBase {
     sensorCache.elevatorEncoderSpeed = elevatorEncoder.getVelocity();
     sensorCache.elevatorEncoderPosition = elevatorEncoder.getPosition() + elevatorEncoderOffset;
 
+    // The elevator encoder position can reset on SparkFlex brown out.  If the 
+    // elevator encoder jumps, then reset the position to the last known position.
+    // Typically the elevator can move 180 encoder counts in about 2 seconds, or 2 encoder counts/loop
+    if (Math.abs(sensorCache.elevatorEncoderPosition - sensorCache.previousElevatorEncoderPosition) > 5) {
+
+        System.out.println("Resetting elevator encoder from " + sensorCache.elevatorEncoderPosition + " to known position "
+            + sensorCache.previousElevatorEncoderPosition);
+
+        setElevatorEncoder(sensorCache.previousElevatorEncoderPosition);
+        sensorCache.elevatorEncoderPosition = sensorCache.previousElevatorEncoderPosition;
+    }
+    sensorCache.previousElevatorEncoderPosition = sensorCache.elevatorEncoderPosition;
+
     sensorCache.elevatorLowerLimitReached = elevatorLowerLimitSwitch.isPressed();
     sensorCache.elevatorUpperLimitReached = elevatorUpperLimitSwitch.isPressed();
 
@@ -332,6 +346,9 @@ public class CoralSubsystem extends SubsystemBase {
 
     elevatorEncoderOffset = 0;
     elevatorEncoderOffset = -getElevatorEncoder() + encoderValue;
+    
+    // Reset the previous value in the sensor cache
+    sensorCache.previousElevatorEncoderPosition = encoderValue;
   }
 
   /*
