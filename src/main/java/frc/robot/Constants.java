@@ -294,7 +294,10 @@ public final class Constants {
     public enum AutoPattern {
       DO_NOTHING,
       EXIT_ZONE,
-      OPTIMISTIC_AUTO
+      SCORE_3_LEFT,
+      SCORE_1_CENTER,
+      EMERGENCY_AUTO,
+
     }
 
     public enum Delay {

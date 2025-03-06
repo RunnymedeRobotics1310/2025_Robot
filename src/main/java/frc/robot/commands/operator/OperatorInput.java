@@ -3,18 +3,23 @@ package frc.robot.commands.operator;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.CoralConstants.CoralPose;
 import frc.robot.commands.CancelCommand;
+import frc.robot.commands.auto.Emergency1CoralAutoCommand;
+import frc.robot.commands.auto.ExitZoneAutoCommand;
+import frc.robot.commands.auto.Score1CoralCenterAutoCommand;
+import frc.robot.commands.auto.Score3L4AutoCommand;
 import frc.robot.commands.climb.ClimbCommand;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
-import frc.robot.commands.coral.SetupScoreCommand;
 import frc.robot.commands.coral.SetupScoreCommandBotPose;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
-import frc.robot.commands.coral.intake.PlantCoralCommand;
 import frc.robot.commands.pneumatics.ToggleCompressorCommand;
 import frc.robot.commands.swervedrive.ZeroGyroCommand;
 import frc.robot.commands.test.SystemTestCommand;
@@ -24,12 +29,20 @@ import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
+import frc.robot.telemetry.Telemetry;
 
 /** The DriverController exposes all driver functions */
 public class OperatorInput extends SubsystemBase {
 
   private final XboxController driverController;
   private final XboxController operatorController;
+  private final SwerveSubsystem swerve;
+  private final CoralSubsystem coral;
+  private final LimelightVisionSubsystem vision;
+
+  private final SendableChooser<Constants.AutoConstants.AutoPattern> autoPatternChooser = new SendableChooser<>();
+  private final SendableChooser<Constants.AutoConstants.Delay>       delayChooser       = new SendableChooser<>();
+
 
   /**
    * Construct an OperatorInput class that is fed by a DriverController and an OperatorController.
@@ -37,9 +50,12 @@ public class OperatorInput extends SubsystemBase {
    * @param driverControllerPort on the driver station which the driver joystick is plugged into
    * @param operatorControllerPort on the driver station which the aux joystick is plugged into
    */
-  public OperatorInput(int driverControllerPort, int operatorControllerPort, double deadband) {
+  public OperatorInput(int driverControllerPort, int operatorControllerPort, double deadband, SwerveSubsystem swerve, CoralSubsystem coral, LimelightVisionSubsystem vision) {
     driverController = new GameController(driverControllerPort, deadband);
     operatorController = new GameController(operatorControllerPort, deadband);
+    this.swerve = swerve;
+    this.coral = coral;
+    this.vision = vision;
   }
 
   /**
@@ -281,4 +297,52 @@ public class OperatorInput extends SubsystemBase {
     X,
     Y
   }
+
+  public void initAutoSelectors() {
+
+    SmartDashboard.putData("1310/auto/Auto Selector", autoPatternChooser);
+
+
+    autoPatternChooser.setDefaultOption("Do Nothing", Constants.AutoConstants.AutoPattern.DO_NOTHING);
+    autoPatternChooser.addOption("Exit Zone", Constants.AutoConstants.AutoPattern.EXIT_ZONE);
+    autoPatternChooser.addOption("Emergency Coral", Constants.AutoConstants.AutoPattern.EMERGENCY_AUTO);
+    autoPatternChooser.addOption("1 Coral Center", Constants.AutoConstants.AutoPattern.SCORE_1_CENTER);
+    autoPatternChooser.addOption("3 Coral Left", Constants.AutoConstants.AutoPattern.SCORE_3_LEFT);
+
+    SmartDashboard.putData("1310/auto/Delay Selector", delayChooser);
+
+    delayChooser.setDefaultOption("No Delay", Constants.AutoConstants.Delay.NO_DELAY);
+    delayChooser.addOption("1/2 Seconds", Constants.AutoConstants.Delay.WAIT_0_5_SECOND);
+    delayChooser.addOption("1 Second", Constants.AutoConstants.Delay.WAIT_1_SECOND);
+    delayChooser.addOption("1 1/2 Seconds", Constants.AutoConstants.Delay.WAIT_1_5_SECONDS);
+    delayChooser.addOption("2 Seconds", Constants.AutoConstants.Delay.WAIT_2_SECONDS);
+    delayChooser.addOption("2 1/2 Seconds", Constants.AutoConstants.Delay.WAIT_2_5_SECONDS);
+    delayChooser.addOption("3 Seconds", Constants.AutoConstants.Delay.WAIT_3_SECONDS);
+    delayChooser.addOption("5 Seconds", Constants.AutoConstants.Delay.WAIT_5_SECONDS);
+  }
+
+  public Command getAutonomousCommand() {
+
+    double delay = switch (delayChooser.getSelected()) {
+      case WAIT_0_5_SECOND -> 0.5;
+      case WAIT_1_SECOND -> 1;
+      case WAIT_1_5_SECONDS -> 1.5;
+      case WAIT_2_SECONDS -> 2;
+      case WAIT_2_5_SECONDS -> 2.5;
+      case WAIT_3_SECONDS -> 3;
+      case WAIT_5_SECONDS -> 5;
+      default -> 0;
+    };
+
+    return switch (autoPatternChooser.getSelected()) {
+      case EXIT_ZONE -> new ExitZoneAutoCommand(swerve, delay);
+      case SCORE_3_LEFT -> new Score3L4AutoCommand(swerve, delay);
+      case SCORE_1_CENTER ->
+          new Score1CoralCenterAutoCommand(swerve, coral, vision, delay);
+      case EMERGENCY_AUTO ->
+          new Emergency1CoralAutoCommand(swerve, coral, vision);
+      default -> new InstantCommand();
+    };
+  }
+
 }
