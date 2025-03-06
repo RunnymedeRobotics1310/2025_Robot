@@ -15,13 +15,11 @@ public class DriveToScorePositionCommand extends LoggingCommand {
   private final LimelightVisionSubsystem visionSubsystem;
   private final Constants.AutoConstants.FieldLocation location;
   private final double targetHeadingDeg;
-  private boolean doneDriving = false;
+  private final boolean isLeftBranch;
+
   private Pose2d initialRobotPose;
   private Pose2d targetPose;
-  private boolean isLeftBranch;
   private int tagId = 0;
-
-  private Pose2d tag18 = new Pose2d(3.66, 4.026, Rotation2d.fromDegrees(0));
 
   public static final double OFFSET_FROM_TAG_FOR_SCORING = 0.14;
   public static final double OFFSET_FROM_TAG_ROBOT_HALF_LENGTH = 0.50;
