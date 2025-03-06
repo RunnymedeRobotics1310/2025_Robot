@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.OiConstants;
 import frc.robot.Constants.Swerve;
 import frc.robot.commands.algae.DefaultAlgaeCommand;
+import frc.robot.commands.auto.Score3L4AutoCommand;
 import frc.robot.commands.coral.DefaultCoralCommand;
 import frc.robot.commands.operator.OperatorInput;
 import frc.robot.commands.swervedrive.TeleopDriveCommand;
@@ -41,7 +42,10 @@ public class RobotContainer {
       new OperatorInput(
           OiConstants.DRIVER_CONTROLLER_PORT,
           OiConstants.OPERATOR_CONTROLLER_PORT,
-          OiConstants.CONTROLLER_DEADBAND, swerveDriveSubsystem, coralSubsystem, visionSubsystem);
+          OiConstants.CONTROLLER_DEADBAND,
+          swerveDriveSubsystem,
+          coralSubsystem,
+          visionSubsystem);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -56,7 +60,12 @@ public class RobotContainer {
 
     // Configure the button bindings - pass in all subsystems
     operatorInput.configureButtonBindings(
-        swerveDriveSubsystem, coralSubsystem, pneumaticsSubsystem, climbSubsystem, algaeSubsystem, visionSubsystem);
+        swerveDriveSubsystem,
+        coralSubsystem,
+        pneumaticsSubsystem,
+        climbSubsystem,
+        algaeSubsystem,
+        visionSubsystem);
 
     operatorInput.initAutoSelectors();
   }
@@ -66,15 +75,14 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-//  public Command getAutonomousCommand() {
-//    // return new Score3L4AutoCommand(swerveDriveSubsystem, 0);
-//    //    return new DriveToLeftCenterPointAutoCommand(swerveDriveSubsystem);
-//    return new Score1CoralCenterAutoCommand(swerveDriveSubsystem, coralSubsystem, visionSubsystem, 0);
-//  }
+  //  public Command getAutonomousCommand() {
+  //    // return new Score3L4AutoCommand(swerveDriveSubsystem, 0);
+  //    //    return new DriveToLeftCenterPointAutoCommand(swerveDriveSubsystem);
+  //    return new Score1CoralCenterAutoCommand(swerveDriveSubsystem, coralSubsystem,
+  // visionSubsystem, 0);
+  //  }
 
   public Command getAutonomousCommand() {
     return operatorInput.getAutonomousCommand();
   }
-
-
 }

@@ -105,7 +105,7 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   private static final Matrix<N3, N1> POSE_DEVIATION_MEGATAG2 =
       VecBuilder.fill(0.06, 0.06, 9999999);
 
-  private final LimelightBotPose botPoseMegaTag1 = new LimelightBotPose(null, 0);
+  private final LimelightBotPose botPoseMegaTag1 = new LimelightBotPose(null, 0, null);
 
   private double[] orientationSet = new double[] {0, 0, 0, 0, 0, 0};
   private double[] thomasPositionSet = new double[] {0.155, 0.13, 0.88, 179, 0, 0};
@@ -137,15 +137,17 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   public void periodic() {
     TimestampedDoubleArray nikolaBotPoseBlueMegaTag1 = nikolaMegaTag1.getAtomic();
     double[] nikolaStddevData = nikolaStddevs.get();
-    TimestampedDoubleArray thomasBotPoseBlueMegaTag1 = thomasMegaTag1.getAtomic();
-    double[] thomasStdevData = thomasStddevs.get();
     botPoseMegaTag1.update(
-        nikolaBotPoseBlueMegaTag1.value,
-        nikolaBotPoseBlueMegaTag1.timestamp,
-        nikolaStddevData,
-        thomasBotPoseBlueMegaTag1.value,
-        thomasBotPoseBlueMegaTag1.timestamp,
-        thomasStdevData);
+        nikolaBotPoseBlueMegaTag1.value, nikolaBotPoseBlueMegaTag1.timestamp, nikolaStddevData);
+    //    TimestampedDoubleArray thomasBotPoseBlueMegaTag1 = thomasMegaTag1.getAtomic();
+    //    double[] thomasStdevData = thomasStddevs.get();
+    //    botPoseMegaTag1.update(
+    //        nikolaBotPoseBlueMegaTag1.value,
+    //        nikolaBotPoseBlueMegaTag1.timestamp,
+    //        nikolaStddevData,
+    //        null,
+    //        0,
+    //        thomasStdevData);
   }
 
   /* Public API */
@@ -159,12 +161,20 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
     this.targetTagId = tag.getIndex();
   }
 
+  public void setTargetTagId(int tagId) {
+    this.targetTagId = tagId;
+  }
+
   public void clearTargetTagId() {
     this.targetTagId = 0;
   }
 
   public double getVisibleTargetTagId() {
     return botPoseMegaTag1.getTagId(0);
+  }
+
+  public int getNumTagsVisible() {
+    return (int) botPoseMegaTag1.getTagCount();
   }
 
   public double distanceToTarget() {
@@ -185,6 +195,10 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
 
   public double getTagAmount() {
     return botPoseMegaTag1.getTagCount();
+  }
+
+  public boolean isTagInView(int tagId) {
+    return botPoseMegaTag1.getTagIndex(tagId) != -1;
   }
 
   /**
@@ -284,6 +298,12 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
       Telemetry.vision.standardDeviations = deviations;
       Telemetry.vision.navxYaw = yaw;
       Telemetry.vision.navxYawDelta = odometryPose.getRotation().getDegrees() - yaw;
+      Telemetry.vision.visibleTags = botPose.getVisibleTags();
+      Telemetry.vision.poseXSeries.add(botPose.getPoseX());
+      Telemetry.vision.poseYSeries.add(botPose.getPoseY());
+      Telemetry.vision.poseDegSeries.add(botPose.getPoseRotationYaw());
+      Telemetry.vision.tx = botPose.getTagTxnc(0);
+      Telemetry.vision.distance = botPose.getTagDistToRobot(0);
     }
 
     return returnVal;

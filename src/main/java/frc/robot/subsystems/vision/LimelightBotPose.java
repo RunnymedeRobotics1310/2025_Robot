@@ -3,6 +3,7 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import java.util.ArrayList;
 import java.util.Objects;
 
 public class LimelightBotPose {
@@ -35,8 +36,8 @@ public class LimelightBotPose {
   private static final int OFFSET_TAG_DIST_TO_ROBOT = 5;
   private static final int OFFSET_TAG_AMBIGUITY = 6;
 
-  public LimelightBotPose(double[] botPose, long timestamp) {
-    update(botPose, timestamp);
+  public LimelightBotPose(double[] botPose, long timestamp, double[] standardDeviations) {
+    update(botPose, timestamp, standardDeviations);
   }
 
   /**
@@ -91,9 +92,10 @@ public class LimelightBotPose {
     }
   }
 
-  public void update(double[] botPose, long timestamp) {
+  public void update(double[] botPose, long timestamp, double[] standardDeviations) {
     this.botPose = Objects.requireNonNullElseGet(botPose, () -> new double[0]);
     this.timestamp = timestamp;
+    this.standardDeviations = standardDeviations;
   }
 
   public double[] getStandardDeviations() {
@@ -160,6 +162,19 @@ public class LimelightBotPose {
 
   public double getAvgTagArea() {
     return getElement(OFFSET_AVG_TAG_AREA);
+  }
+
+  /**
+   * Get the list of tags visible
+   *
+   * @return array list of tag ids visible
+   */
+  public double[] getVisibleTags() {
+    ArrayList<Double> tags = new ArrayList<>();
+    for (int i = 0; i < getTagCount(); i++) {
+      tags.add(getTagId(i));
+    }
+    return tags.stream().mapToDouble(d -> d).toArray();
   }
 
   /**

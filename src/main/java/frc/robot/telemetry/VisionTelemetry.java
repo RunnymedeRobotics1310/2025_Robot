@@ -5,6 +5,7 @@ package frc.robot.telemetry;
 
 import static frc.robot.telemetry.Telemetry.PREFIX;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.vision.LimelightPoseEstimate;
 
@@ -63,6 +64,21 @@ public class VisionTelemetry {
 
   public double navxYawDelta = Double.MIN_VALUE;
 
+  public double[] visibleTags = new double[0];
+
+  public TimeSeriesMetric poseXSeries = new TimeSeriesMetric();
+  public TimeSeriesMetric poseYSeries = new TimeSeriesMetric();
+  public TimeSeriesMetric poseDegSeries = new TimeSeriesMetric();
+
+  public double tx = -1;
+  public double distance = -1;
+
+  public void addPoseToSeries(Pose2d pose) {
+    poseXSeries.add(pose.getTranslation().getX());
+    poseYSeries.add(pose.getTranslation().getY());
+    poseDegSeries.add(pose.getRotation().getDegrees());
+  }
+
   void post() {
     // Do nothing if not enabled
     if (!enabled) {
@@ -94,5 +110,18 @@ public class VisionTelemetry {
 
     SmartDashboard.putString(
         PREFIX + "Vision/yaw_navx_delta", String.format("%.2f°", navxYawDelta));
+
+    SmartDashboard.putNumberArray(PREFIX + "Vision/visible_tags", visibleTags);
+
+    String poseVisSeries =
+        String.format(
+            "(%.2f, %.2f)m %.1f°",
+            poseXSeries.getMaxValue() - poseXSeries.getMinValue(),
+            poseYSeries.getMaxValue() - poseYSeries.getMinValue(),
+            poseDegSeries.getMaxValue() - poseDegSeries.getMinValue());
+    SmartDashboard.putString(PREFIX + "Vision/pose_vis_range", poseVisSeries);
+
+    SmartDashboard.putNumber(PREFIX + "Vision/tx", tx);
+    SmartDashboard.putNumber(PREFIX + "Vision/distance", distance);
   }
 }

@@ -18,9 +18,9 @@ import frc.robot.commands.auto.Score1CoralCenterAutoCommand;
 import frc.robot.commands.auto.Score3L4AutoCommand;
 import frc.robot.commands.climb.ClimbCommand;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
-import frc.robot.commands.coral.SetupScoreCommandBotPose;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.pneumatics.ToggleCompressorCommand;
+import frc.robot.commands.swervedrive.DriveToScorePositionCommand;
 import frc.robot.commands.swervedrive.ZeroGyroCommand;
 import frc.robot.commands.test.SystemTestCommand;
 import frc.robot.subsystems.AlgaeSubsystem;
@@ -29,7 +29,6 @@ import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
-import frc.robot.telemetry.Telemetry;
 
 /** The DriverController exposes all driver functions */
 public class OperatorInput extends SubsystemBase {
@@ -66,11 +65,12 @@ public class OperatorInput extends SubsystemBase {
    * <p>NOTE: This routine must only be called once from the RobotContainer
    */
   public void configureButtonBindings(
-          SwerveSubsystem driveSubsystem,
-          CoralSubsystem coralSubsystem,
-          PneumaticsSubsystem pneumaticsSubsystem,
-          ClimbSubsystem climbSubsystem,
-          AlgaeSubsystem algaeSubsystem, LimelightVisionSubsystem visionSubsystem) {
+      SwerveSubsystem driveSubsystem,
+      CoralSubsystem coralSubsystem,
+      PneumaticsSubsystem pneumaticsSubsystem,
+      ClimbSubsystem climbSubsystem,
+      AlgaeSubsystem algaeSubsystem,
+      LimelightVisionSubsystem visionSubsystem) {
 
     // System Test Command
     new Trigger(
@@ -143,11 +143,11 @@ public class OperatorInput extends SubsystemBase {
 
     new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
         .onTrue(
-            new SetupScoreCommandBotPose(
-                    coralSubsystem,
+            new DriveToScorePositionCommand(
                 driveSubsystem,
-                visionSubsystem, Constants.AutoConstants.FieldLocation.preScoreBlueRight3,
-                CoralPose.SCORE_L4));
+                visionSubsystem,
+                Constants.AutoConstants.FieldLocation.tag18,
+                true));
   }
 
   /*
