@@ -34,6 +34,7 @@ public class SetupScoreCommand extends LoggingCommand {
 
   private double tX;
   private double offsetFromTag;
+  private double distanceToTag;
 
   private double vX = 0;
   private double vY = 0;
@@ -72,11 +73,15 @@ public class SetupScoreCommand extends LoggingCommand {
     atElevatorHeight = coralSubsystem.moveElevatorToHeight(coralPose.elevatorHeight);
     atArmAngle = coralSubsystem.moveArmToAngle(coralPose.armAngle);
 
-    currentDistance = coralSubsystem.getUltrasonicDistanceCm();
+    distanceToTag = limelightVisionSubsystem.distanceToTarget();
+
+//    currentDistance = coralSubsystem.getUltrasonicDistanceCm();
+
+    currentDistance = distanceToTag * Math.cos(Math.toRadians(tX));
     deltaDistanceForward = currentDistance - distanceToTarget.getDistance();
 
     tX = limelightVisionSubsystem.angleToTarget();
-    offsetFromTag = currentDistance * Math.tan(Math.toRadians(tX));
+    offsetFromTag = currentDistance * Math.sin(Math.toRadians(tX));
 
     if (limelightVisionSubsystem.getTagAmount() > 0.5) {
       if (isLeftBranch) {
