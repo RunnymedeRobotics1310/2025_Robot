@@ -17,17 +17,19 @@ public class Emergency1CoralAutoCommand extends SequentialCommandGroup {
   public Emergency1CoralAutoCommand(SwerveSubsystem swerve, CoralSubsystem coral, LimelightVisionSubsystem vision) {
 
       addCommands(new WaitCommand(1)
-              .deadlineFor(new DriveRobotOrientedCommand(swerve, 2, 0, 180)));
+              .deadlineFor(new DriveRobotOrientedCommand(swerve, 1, 0, 180)));
 
     addCommands(new DriveInlineWithTagCommand(swerve, vision)
             .alongWith(new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L4, coral)));
     addCommands(new WaitCommand(0.5)
             .deadlineFor(new DriveRobotOrientedCommand(swerve, 0, 0.25, 180)));
 
+    addCommands(new WaitCommand(0.5).deadlineFor(new DriveRobotOrientedCommand(swerve, 0.5, 0, 180)));
+
     addCommands(new PlantCoralCommand(coral));
 
     addCommands(new WaitCommand(0.25)
-            .deadlineFor(new DriveRobotOrientedCommand(swerve, -0.25, 0, 180)));
+            .deadlineFor(new DriveRobotOrientedCommand(swerve, -1, 0, 180)));
     addCommands(new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.COMPACT, coral));
   }
 }

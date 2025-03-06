@@ -21,7 +21,7 @@ public class DriveInlineWithTagCommand extends LoggingCommand {
 
     @Override
     public void execute() {
-        double tX = vision.angleToTarget();
+        double tX = -vision.angleToTarget();
 
         double speed = 0.1 * Math.signum(tX);
         swerve.driveRobotOriented(0, speed, swerve.computeOmega(180));
