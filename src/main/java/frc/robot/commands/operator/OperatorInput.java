@@ -146,7 +146,7 @@ public class OperatorInput extends SubsystemBase {
     //                        visionSubsystem));
 
     new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
-        .onTrue(new DriveToScorePositionCommand(driveSubsystem, visionSubsystem, -1, true));
+        .onTrue(new DriveToScorePositionCommand(driveSubsystem, visionSubsystem, null, true));
   }
 
   /*
