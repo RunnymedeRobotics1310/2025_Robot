@@ -10,12 +10,12 @@ import frc.robot.subsystems.CoralSubsystem;
 public class IntakeCoralCommand extends LoggingCommand {
 
   private final CoralSubsystem coralSubsystem;
-  private boolean firstDetect = true;
-  private double encoderOnFirstDetect;
+  private final boolean isFar;
 
-  public IntakeCoralCommand(CoralSubsystem coralSubsystem) {
+  public IntakeCoralCommand(CoralSubsystem coralSubsystem, boolean isFar) {
 
     this.coralSubsystem = coralSubsystem;
+    this.isFar = isFar;
 
     addRequirements(coralSubsystem);
   }
@@ -27,7 +27,8 @@ public class IntakeCoralCommand extends LoggingCommand {
 
   @Override
   public void execute() {
-    coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_INTAKE_SPEED);
+    if (isFar) coralSubsystem.moveElevatorToHeight(ElevatorHeight.FAR_INTAKE);
+    else coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_INTAKE_SPEED);
     coralSubsystem.moveElevatorToHeight(ElevatorHeight.CLOSE_INTAKE);
     coralSubsystem.moveArmToAngle(ArmAngle.INTAKE);
   }

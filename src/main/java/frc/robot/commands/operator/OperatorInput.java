@@ -119,7 +119,10 @@ public class OperatorInput extends SubsystemBase {
      * Coral Intake Buttons
      */
     new Trigger(() -> driverController.getLeftBumperButton())
-        .onTrue(new IntakeCoralCommand(coralSubsystem));
+        .onTrue(new IntakeCoralCommand(coralSubsystem, false));
+
+    new Trigger(() -> driverController.getYButton())
+            .onTrue(new IntakeCoralCommand(coralSubsystem, true));
 
     /*
      * Climb Buttons
