@@ -31,7 +31,7 @@ public class Score1CoralCenterAutoCommand extends SequentialCommandGroup {
     //            swerve,
     //                vision));
     addCommands(
-        new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L4, coral));
+        new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L4, coral).deadlineFor(new NullDriveCommand(swerve)));
 
     addCommands(new WaitCommand( 1)
             .deadlineFor(new DriveRobotOrientedCommand(swerve, 0.35, 0, Constants.AutoConstants.FieldLocation.preScoreBlueLeft6.pose.getRotation().getDegrees())));
