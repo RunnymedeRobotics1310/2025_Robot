@@ -12,10 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.CoralConstants.CoralPose;
 import frc.robot.commands.CancelCommand;
-import frc.robot.commands.auto.Emergency1CoralAutoCommand;
-import frc.robot.commands.auto.ExitZoneAutoCommand;
-import frc.robot.commands.auto.Score1CoralCenterAutoCommand;
-import frc.robot.commands.auto.Score3L4AutoCommand;
+import frc.robot.commands.auto.*;
 import frc.robot.commands.climb.ClimbCommand;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
@@ -307,6 +304,7 @@ public class OperatorInput extends SubsystemBase {
     autoPatternChooser.setDefaultOption(
         "Do Nothing", Constants.AutoConstants.AutoPattern.DO_NOTHING);
     autoPatternChooser.addOption("Exit Zone", Constants.AutoConstants.AutoPattern.EXIT_ZONE);
+    autoPatternChooser.addOption("1 Coral Pose", Constants.AutoConstants.AutoPattern.SCORE_1_POSE);
     autoPatternChooser.addOption(
         "Emergency Coral", Constants.AutoConstants.AutoPattern.EMERGENCY_AUTO);
     autoPatternChooser.addOption(
@@ -343,6 +341,7 @@ public class OperatorInput extends SubsystemBase {
       case EXIT_ZONE -> new ExitZoneAutoCommand(swerve, delay);
       case SCORE_3_LEFT -> new Score3L4AutoCommand(swerve, delay);
       case SCORE_1_CENTER -> new Score1CoralCenterAutoCommand(swerve, coral, vision, delay);
+      case SCORE_1_POSE -> new Score1DriveToPoseAutoCommand(swerve, coral, vision, delay);
       case EMERGENCY_AUTO -> new Emergency1CoralAutoCommand(swerve, coral, vision);
       default -> new InstantCommand();
     };

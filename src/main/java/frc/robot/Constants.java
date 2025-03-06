@@ -296,6 +296,7 @@ public final class Constants {
       EXIT_ZONE,
       SCORE_3_LEFT,
       SCORE_1_CENTER,
+      SCORE_1_POSE,
       EMERGENCY_AUTO,
     }
 
@@ -507,7 +508,7 @@ public final class Constants {
     public static final double CORAL_INTAKE_SPEED = 0.5;
     public static final double CORAL_OUTAKE_SPEED = 0.8;
     public static final double CORAL_EJECT_SPEED = 0.7;
-    public static final double PLANT_ROTATIONS = 15;
+    public static final double PLANT_ROTATIONS = 30;
 
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {

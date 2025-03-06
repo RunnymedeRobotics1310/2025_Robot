@@ -22,9 +22,11 @@ public class DriveToScorePositionCommand extends LoggingCommand {
   private Pose2d targetPose;
   private int tagId = 0;
   private boolean noTagsAbort = false;
+  private boolean atElevatorHeight = false;
+  private boolean atArmAngle = false;
 
   public static final double OFFSET_FROM_TAG_FOR_SCORING = 0.20;
-  public static final double OFFSET_FROM_TAG_ROBOT_HALF_LENGTH = 0.60;
+  public static final double OFFSET_FROM_TAG_ROBOT_HALF_LENGTH = 0.57;
 
   /**
    * Drive to a scoring position based on a vision target tag. If no tag is specified, it'll use the
@@ -185,6 +187,7 @@ public class DriveToScorePositionCommand extends LoggingCommand {
         (SwerveUtils.isCloseEnough(
                 swerve.getPose().getTranslation(), targetPose.getTranslation(), 0.02)
             && SwerveUtils.isCloseEnough(swerve.getYaw(), targetHeadingDeg, 2));
+
     if (done) {
       Pose2d endPose = swerve.getPose();
       SmartDashboard.putString(
