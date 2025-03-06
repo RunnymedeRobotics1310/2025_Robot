@@ -27,9 +27,13 @@ public class IntakeCoralCommand extends LoggingCommand {
 
   @Override
   public void execute() {
-    if (isFar) coralSubsystem.moveElevatorToHeight(ElevatorHeight.FAR_INTAKE);
-    else coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_INTAKE_SPEED);
-    coralSubsystem.moveElevatorToHeight(ElevatorHeight.CLOSE_INTAKE);
+    if (isFar) {
+      coralSubsystem.moveElevatorToHeight(ElevatorHeight.FAR_INTAKE);
+    } else {
+      coralSubsystem.moveElevatorToHeight(ElevatorHeight.CLOSE_INTAKE);
+    }
+    coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_INTAKE_SPEED);
+
     coralSubsystem.moveArmToAngle(ArmAngle.INTAKE);
   }
 
