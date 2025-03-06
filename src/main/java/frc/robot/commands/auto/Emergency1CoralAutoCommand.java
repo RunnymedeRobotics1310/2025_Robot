@@ -24,7 +24,7 @@ public class Emergency1CoralAutoCommand extends SequentialCommandGroup {
     addCommands(new WaitCommand(0.5)
             .deadlineFor(new DriveRobotOrientedCommand(swerve, 0, 0.25, 180)));
 
-    addCommands(new WaitCommand(0.5).deadlineFor(new DriveRobotOrientedCommand(swerve, 0.5, 0, 180)));
+    addCommands(new WaitCommand(1).deadlineFor(new DriveRobotOrientedCommand(swerve, 0.75, 0, 180)));
 
     addCommands(new PlantCoralCommand(coral));
 
