@@ -337,29 +337,29 @@ public final class Constants {
     };
 
     public enum FieldLocation {
-      preScoreBlueLeft1(new Pose2d(2.8126, 4.1909, Rotation2d.fromDegrees(0))),
-      preScoreBlueLeft2(new Pose2d(3.5085, 5.3948, Rotation2d.fromDegrees(300))),
-      preScoreBlueLeft3(new Pose2d(3.7943, 5.5598, Rotation2d.fromDegrees(300))),
-      preScoreBlueLeft4(new Pose2d(5.1843, 5.5598, Rotation2d.fromDegrees(240))),
-      preScoreBlueLeft5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240))),
-      preScoreBlueLeft6(new Pose2d(6.1660, 4.16, Rotation2d.fromDegrees(180))),
-      preScoreBlueRight1(new Pose2d(2.8126, 3.8609, Rotation2d.fromDegrees(0))),
-      preScoreBlueRight2(new Pose2d(3.5085, 2.6570, Rotation2d.fromDegrees(60))),
-      preScoreBlueRight3(new Pose2d(3.92, 2.58, Rotation2d.fromDegrees(60))),
-      preScoreBlueRight4(new Pose2d(5.25, 2.45, Rotation2d.fromDegrees(120))),
-      preScoreBlueRight5(new Pose2d(5.4701, 2.6570, Rotation2d.fromDegrees(120))),
-      preScoreBlueRight6(new Pose2d(6.1660, 3.8609, Rotation2d.fromDegrees(180))),
-      preIntakeCentreLeftBlueStation(new Pose2d(1.139, 7.000, Rotation2d.fromDegrees(126))),
-      preIntakeCentreRightBlueStation(new Pose2d(1.139, 1.052, Rotation2d.fromDegrees(234))),
+      preScoreBlueLeft1(new Pose2d(2.8126, 4.1909, Rotation2d.fromDegrees(0)), 18, 7, true),
+      preScoreBlueLeft2(new Pose2d(3.5085, 5.3948, Rotation2d.fromDegrees(300)), 19, 6, false),
+      preScoreBlueLeft3(new Pose2d(3.7943, 5.5598, Rotation2d.fromDegrees(300)), 19, 6, true),
+      preScoreBlueLeft4(new Pose2d(5.1843, 5.5598, Rotation2d.fromDegrees(240)), 20, 11, false),
+      preScoreBlueLeft5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240)), 20, 11, true),
+      preScoreBlueLeft6(new Pose2d(6.1660, 4.16, Rotation2d.fromDegrees(180)), 21, 10, false),
+      preScoreBlueRight1(new Pose2d(2.8126, 3.8609, Rotation2d.fromDegrees(0)), 18, 7, false),
+      preScoreBlueRight2(new Pose2d(3.5085, 2.6570, Rotation2d.fromDegrees(60)), 17, 8, true),
+      preScoreBlueRight3(new Pose2d(3.92, 2.58, Rotation2d.fromDegrees(60)), 17, 8, false),
+      preScoreBlueRight4(new Pose2d(5.25, 2.45, Rotation2d.fromDegrees(120)), 22, 9, true),
+      preScoreBlueRight5(new Pose2d(5.4701, 2.6570, Rotation2d.fromDegrees(120)), 22, 9, false),
+      preScoreBlueRight6(new Pose2d(6.1660, 3.8609, Rotation2d.fromDegrees(180)), 21, 10, true),
+      preIntakeCentreLeftBlueStation(new Pose2d(1.139, 7.000, Rotation2d.fromDegrees(126)), 13, 1),
+      preIntakeCentreRightBlueStation(new Pose2d(1.139, 1.052, Rotation2d.fromDegrees(234)), 12, 2),
       // Pickup Locations
       redRightOuterStation(
           new Pose2d(
-              FIELD_EXTENT_METRES_X - 100,
-              FIELD_EXTENT_METRES_Y - 70,
-              Rotation2d.fromDegrees(234))),
-      blueRightOuterStation(new Pose2d(100, 70, Rotation2d.fromDegrees(234))),
+              FIELD_EXTENT_METRES_X - 100, FIELD_EXTENT_METRES_Y - 70, Rotation2d.fromDegrees(234)),
+          12,
+          2),
+      blueRightOuterStation(new Pose2d(100, 70, Rotation2d.fromDegrees(234)), 12, 2),
 
-      blueLeftOuterStation(new Pose2d(1.15, 7.03, Rotation2d.fromDegrees(-234))),
+      blueLeftOuterStation(new Pose2d(1.15, 7.03, Rotation2d.fromDegrees(-234)), 13, 1),
 
       // Reef Score Locations (Lettered as seen in manual - counter-clockwise starting from
       // close-left)
@@ -421,9 +421,23 @@ public final class Constants {
           new Pose2d(2.80, FIELD_EXTENT_METRES_Y - 2.22, Rotation2d.fromDegrees(135)));
 
       public final Pose2d pose;
+      public final int blueTagId;
+      public final int redTagId;
+      public final boolean isLeftSide;
 
       FieldLocation(Pose2d pose) {
+        this(pose, 0, 0, false);
+      }
+
+      FieldLocation(Pose2d pose, int blueTagId, int redTagId) {
+        this(pose, blueTagId, redTagId, false);
+      }
+
+      FieldLocation(Pose2d pose, int blueTagId, int redTagId, boolean isLeftSide) {
         this.pose = pose;
+        this.blueTagId = blueTagId;
+        this.redTagId = redTagId;
+        this.isLeftSide = isLeftSide;
       }
     }
   }

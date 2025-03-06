@@ -3,8 +3,10 @@ package frc.robot.commands.swervedrive;
 import ca.team1310.swerve.utils.SwerveUtils;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.RunnymedeUtils;
 import frc.robot.commands.LoggingCommand;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
@@ -13,10 +15,10 @@ public class DriveToScorePositionCommand extends LoggingCommand {
 
   private final SwerveSubsystem swerve;
   private final LimelightVisionSubsystem visionSubsystem;
-  private final boolean isLeftBranch;
-  private final int requestedTagId;
+  private boolean isLeftBranch;
+  private final Constants.AutoConstants.FieldLocation fieldLocation;
 
-  private Pose2d location;
+  private Pose2d tagPose;
   private double targetHeadingDeg;
   private Pose2d initialRobotPose;
   private Pose2d targetPose;
@@ -34,18 +36,18 @@ public class DriveToScorePositionCommand extends LoggingCommand {
    *
    * @param swerve The swerve subsystem
    * @param visionSubsystem The vision subsystem
-   * @param tagId The tag id to target (or -1 to use the closest visible tag)
+   * @param fieldLocation The field location to drive to
    * @param isLeftBranch Should this target the left branch or right?
    */
   public DriveToScorePositionCommand(
       SwerveSubsystem swerve,
       LimelightVisionSubsystem visionSubsystem,
-      int tagId,
+      Constants.AutoConstants.FieldLocation fieldLocation,
       boolean isLeftBranch) {
     this.swerve = swerve;
     this.visionSubsystem = visionSubsystem;
     this.isLeftBranch = isLeftBranch;
-    this.requestedTagId = tagId;
+    this.fieldLocation = fieldLocation;
     addRequirements(swerve);
   }
 
@@ -85,8 +87,8 @@ public class DriveToScorePositionCommand extends LoggingCommand {
   private void computeTarget(Pose2d currentPose, boolean initalize) {
 
     if (initalize) {
-      // If tagId is set, use it, otherwise use the closest tag (later in initialize)
-      if (requestedTagId < 1 || requestedTagId > 22) {
+      // If No field location, use the closest tag
+      if (fieldLocation == null) {
         int visionClosestTagId = (int) visionSubsystem.getVisibleTargetTagId();
         if (visionClosestTagId < 1 || visionClosestTagId > 22) {
           noTagsAbort = true;
@@ -94,13 +96,18 @@ public class DriveToScorePositionCommand extends LoggingCommand {
         }
         tagId = visionClosestTagId;
       } else {
-        tagId = requestedTagId;
+        if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
+          tagId = fieldLocation.redTagId;
+        } else {
+          tagId = fieldLocation.blueTagId;
+        }
+        isLeftBranch = fieldLocation.isLeftSide;
       }
 
-      location = Constants.AutoConstants.TAG_LOCATIONS[tagId - 1];
+      tagPose = Constants.AutoConstants.TAG_LOCATIONS[tagId - 1];
       this.targetHeadingDeg =
           SwerveUtils.normalizeDegrees(
-              location.getRotation().getDegrees() + 180); // Face Tag, not the other way around
+              tagPose.getRotation().getDegrees() + 180); // Face Tag, not the other way around
 
       // Whatever tag we're looking at, it's the one we want.
       visionSubsystem.setTargetTagId(tagId);
@@ -121,7 +128,7 @@ public class DriveToScorePositionCommand extends LoggingCommand {
     double targetY = distanceToTarget * Math.sin(Math.toRadians(targetGlobalAngle));
 
     Pose2d newPose =
-        new Pose2d(location.getX() - targetX, location.getY() - targetY, currentPose.getRotation());
+        new Pose2d(tagPose.getX() - targetX, tagPose.getY() - targetY, currentPose.getRotation());
 
     swerve.resetOdometry(newPose);
 

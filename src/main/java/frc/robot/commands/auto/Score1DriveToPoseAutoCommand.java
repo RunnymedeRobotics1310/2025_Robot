@@ -24,11 +24,12 @@ public class Score1DriveToPoseAutoCommand extends SequentialCommandGroup {
             swerve, Constants.AutoConstants.FieldLocation.preScoreBlueLeft1));
 
     addCommands(
-        new DriveToScorePositionCommand(swerve, vision, 18, true)
+        new DriveToScorePositionCommand(
+                swerve, vision, Constants.AutoConstants.FieldLocation.preScoreBlueLeft1, true)
             .alongWith(
                 new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L4, coral)));
 
-    addCommands(new WaitCommand(1));
+    addCommands(new WaitCommand(0.5));
 
     addCommands(new PlantCoralCommand(coral).deadlineFor(new NullDriveCommand(swerve)));
   }
