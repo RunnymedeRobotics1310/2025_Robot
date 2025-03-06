@@ -1,12 +1,10 @@
 package frc.robot.commands.coral;
 
-import ca.team1310.swerve.utils.SwerveUtils;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.commands.LoggingCommand;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
-import frc.robot.subsystems.vision.LimelightBotPose;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 
 public class SetupScoreCommand extends LoggingCommand {
@@ -75,7 +73,7 @@ public class SetupScoreCommand extends LoggingCommand {
 
     distanceToTag = limelightVisionSubsystem.distanceToTarget();
 
-//    currentDistance = coralSubsystem.getUltrasonicDistanceCm();
+    //    currentDistance = coralSubsystem.getUltrasonicDistanceCm();
 
     currentDistance = distanceToTag * Math.cos(Math.toRadians(tX));
     deltaDistanceForward = currentDistance - distanceToTarget.getDistance();
@@ -117,17 +115,14 @@ public class SetupScoreCommand extends LoggingCommand {
       vX = 0;
     }
 
-      swerveSubsystem.driveRobotOriented(vX, vY, 0);
+    swerveSubsystem.driveRobotOriented(vX, vY, 0);
 
     SmartDashboard.putNumber("1310/SetupScoreCommand/offSetFromTag ", offsetFromTag);
     SmartDashboard.putNumber("1310/SetupScoreCommand/deltaDistanceLeft", deltaDistanceLeft);
-    SmartDashboard.putBoolean("1310/SetupScoreCommand/atCorrectDistanceForward", atCorrectDistanceForward);
-    SmartDashboard.putBoolean("1310/SetupScoreCommand/atCorrectDistanceLeft", atCorrectDistanceLeft);
-
-
-
-
-
+    SmartDashboard.putBoolean(
+        "1310/SetupScoreCommand/atCorrectDistanceForward", atCorrectDistanceForward);
+    SmartDashboard.putBoolean(
+        "1310/SetupScoreCommand/atCorrectDistanceLeft", atCorrectDistanceLeft);
   }
 
   public void end(boolean interrupted) {

@@ -116,6 +116,8 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   private final double highQualityAmbiguity;
   private final double maxVisposDeltaDistanceMetres;
 
+  private boolean poseUpdatesEnabled = true;
+
   private int targetTagId = 0;
 
   public LimelightVisionSubsystem(VisionConfig visionConfig) {
@@ -151,6 +153,10 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   }
 
   /* Public API */
+
+  public void setPoseUpdatesEnabled(boolean enabled) {
+    poseUpdatesEnabled = enabled;
+  }
 
   public void setThomasHeight(double height) {
     thomasPositionSet[2] = height;
@@ -190,7 +196,7 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
     if (targetTagId > 0) {
       index = botPoseMegaTag1.getTagIndex(targetTagId);
     }
-    return botPoseMegaTag1.getTagTxnc(index);
+    return -botPoseMegaTag1.getTagTxnc(index);
   }
 
   public double getTagAmount() {
@@ -306,7 +312,7 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
       Telemetry.vision.distance = botPose.getTagDistToRobot(0);
     }
 
-    return returnVal;
+    return poseUpdatesEnabled ? returnVal : null;
   }
 
   @Override

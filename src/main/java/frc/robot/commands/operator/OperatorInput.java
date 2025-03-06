@@ -39,9 +39,10 @@ public class OperatorInput extends SubsystemBase {
   private final CoralSubsystem coral;
   private final LimelightVisionSubsystem vision;
 
-  private final SendableChooser<Constants.AutoConstants.AutoPattern> autoPatternChooser = new SendableChooser<>();
-  private final SendableChooser<Constants.AutoConstants.Delay>       delayChooser       = new SendableChooser<>();
-
+  private final SendableChooser<Constants.AutoConstants.AutoPattern> autoPatternChooser =
+      new SendableChooser<>();
+  private final SendableChooser<Constants.AutoConstants.Delay> delayChooser =
+      new SendableChooser<>();
 
   /**
    * Construct an OperatorInput class that is fed by a DriverController and an OperatorController.
@@ -49,7 +50,13 @@ public class OperatorInput extends SubsystemBase {
    * @param driverControllerPort on the driver station which the driver joystick is plugged into
    * @param operatorControllerPort on the driver station which the aux joystick is plugged into
    */
-  public OperatorInput(int driverControllerPort, int operatorControllerPort, double deadband, SwerveSubsystem swerve, CoralSubsystem coral, LimelightVisionSubsystem vision) {
+  public OperatorInput(
+      int driverControllerPort,
+      int operatorControllerPort,
+      double deadband,
+      SwerveSubsystem swerve,
+      CoralSubsystem coral,
+      LimelightVisionSubsystem vision) {
     driverController = new GameController(driverControllerPort, deadband);
     operatorController = new GameController(operatorControllerPort, deadband);
     this.swerve = swerve;
@@ -131,23 +138,18 @@ public class OperatorInput extends SubsystemBase {
 
     new Trigger(this::isToggleCompressor).onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
 
-    //    new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
-    //        .onTrue(
-    //            new SetupScoreCommand(
-    //                    CoralPose.SCORE_L4,
-    //                    Constants.CoralConstants.DesiredDistanceToTargetCM.LEVEL_4,
-    //                    true,
-    //                    coralSubsystem,
-    //                    driveSubsystem,
-    //                    visionSubsystem));
+    //        new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
+    //            .onTrue(
+    //                new SetupScoreCommand(
+    //                        CoralPose.SCORE_L4,
+    //                        Constants.CoralConstants.DesiredDistanceToTargetCM.LEVEL_4,
+    //                        true,
+    //                        coralSubsystem,
+    //                        driveSubsystem,
+    //                        visionSubsystem));
 
     new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
-        .onTrue(
-            new DriveToScorePositionCommand(
-                driveSubsystem,
-                visionSubsystem,
-                Constants.AutoConstants.FieldLocation.tag18,
-                true));
+        .onTrue(new DriveToScorePositionCommand(driveSubsystem, visionSubsystem, -1, true));
   }
 
   /*
@@ -302,11 +304,13 @@ public class OperatorInput extends SubsystemBase {
 
     SmartDashboard.putData("1310/auto/Auto Selector", autoPatternChooser);
 
-
-    autoPatternChooser.setDefaultOption("Do Nothing", Constants.AutoConstants.AutoPattern.DO_NOTHING);
+    autoPatternChooser.setDefaultOption(
+        "Do Nothing", Constants.AutoConstants.AutoPattern.DO_NOTHING);
     autoPatternChooser.addOption("Exit Zone", Constants.AutoConstants.AutoPattern.EXIT_ZONE);
-    autoPatternChooser.addOption("Emergency Coral", Constants.AutoConstants.AutoPattern.EMERGENCY_AUTO);
-    autoPatternChooser.addOption("1 Coral Center", Constants.AutoConstants.AutoPattern.SCORE_1_CENTER);
+    autoPatternChooser.addOption(
+        "Emergency Coral", Constants.AutoConstants.AutoPattern.EMERGENCY_AUTO);
+    autoPatternChooser.addOption(
+        "1 Coral Center", Constants.AutoConstants.AutoPattern.SCORE_1_CENTER);
     autoPatternChooser.addOption("3 Coral Left", Constants.AutoConstants.AutoPattern.SCORE_3_LEFT);
 
     SmartDashboard.putData("1310/auto/Delay Selector", delayChooser);
@@ -323,26 +327,24 @@ public class OperatorInput extends SubsystemBase {
 
   public Command getAutonomousCommand() {
 
-    double delay = switch (delayChooser.getSelected()) {
-      case WAIT_0_5_SECOND -> 0.5;
-      case WAIT_1_SECOND -> 1;
-      case WAIT_1_5_SECONDS -> 1.5;
-      case WAIT_2_SECONDS -> 2;
-      case WAIT_2_5_SECONDS -> 2.5;
-      case WAIT_3_SECONDS -> 3;
-      case WAIT_5_SECONDS -> 5;
-      default -> 0;
-    };
+    double delay =
+        switch (delayChooser.getSelected()) {
+          case WAIT_0_5_SECOND -> 0.5;
+          case WAIT_1_SECOND -> 1;
+          case WAIT_1_5_SECONDS -> 1.5;
+          case WAIT_2_SECONDS -> 2;
+          case WAIT_2_5_SECONDS -> 2.5;
+          case WAIT_3_SECONDS -> 3;
+          case WAIT_5_SECONDS -> 5;
+          default -> 0;
+        };
 
     return switch (autoPatternChooser.getSelected()) {
       case EXIT_ZONE -> new ExitZoneAutoCommand(swerve, delay);
       case SCORE_3_LEFT -> new Score3L4AutoCommand(swerve, delay);
-      case SCORE_1_CENTER ->
-          new Score1CoralCenterAutoCommand(swerve, coral, vision, delay);
-      case EMERGENCY_AUTO ->
-          new Emergency1CoralAutoCommand(swerve, coral, vision);
+      case SCORE_1_CENTER -> new Score1CoralCenterAutoCommand(swerve, coral, vision, delay);
+      case EMERGENCY_AUTO -> new Emergency1CoralAutoCommand(swerve, coral, vision);
       default -> new InstantCommand();
     };
   }
-
 }

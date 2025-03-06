@@ -13,34 +13,47 @@ public class DriveToScorePositionCommand extends LoggingCommand {
 
   private final SwerveSubsystem swerve;
   private final LimelightVisionSubsystem visionSubsystem;
-  private final Constants.AutoConstants.FieldLocation location;
-  private final double targetHeadingDeg;
   private final boolean isLeftBranch;
+  private final int requestedTagId;
 
+  private Pose2d location;
+  private double targetHeadingDeg;
   private Pose2d initialRobotPose;
   private Pose2d targetPose;
   private int tagId = 0;
+  private boolean noTagsAbort = false;
 
-  public static final double OFFSET_FROM_TAG_FOR_SCORING = 0.14;
-  public static final double OFFSET_FROM_TAG_ROBOT_HALF_LENGTH = 0.50;
+  public static final double OFFSET_FROM_TAG_FOR_SCORING = 0.20;
+  public static final double OFFSET_FROM_TAG_ROBOT_HALF_LENGTH = 0.60;
 
+  /**
+   * Drive to a scoring position based on a vision target tag. If no tag is specified, it'll use the
+   * currently visible closest one
+   *
+   * @param swerve The swerve subsystem
+   * @param visionSubsystem The vision subsystem
+   * @param tagId The tag id to target (or -1 to use the closest visible tag)
+   * @param isLeftBranch Should this target the left branch or right?
+   */
   public DriveToScorePositionCommand(
       SwerveSubsystem swerve,
       LimelightVisionSubsystem visionSubsystem,
-      Constants.AutoConstants.FieldLocation location,
+      int tagId,
       boolean isLeftBranch) {
     this.swerve = swerve;
     this.visionSubsystem = visionSubsystem;
-    this.location = location;
-    this.targetHeadingDeg = SwerveUtils.normalizeDegrees(location.pose.getRotation().getDegrees());
     this.isLeftBranch = isLeftBranch;
-
+    this.requestedTagId = tagId;
     addRequirements(swerve);
   }
 
   @Override
   public void initialize() {
     logCommandStart();
+
+    // Disable vision processing
+    // visionSubsystem.setPoseUpdatesEnabled(false);
+    tagId = 0;
 
     // Setup initial pose and target based on target tag
     initialRobotPose = swerve.getPose();
@@ -49,6 +62,10 @@ public class DriveToScorePositionCommand extends LoggingCommand {
 
   @Override
   public void execute() {
+
+    if (noTagsAbort) {
+      return;
+    }
 
     // Get current pose, and recalculate our current real world pose based on target tag
     Pose2d currentPose = swerve.getPose();
@@ -66,8 +83,24 @@ public class DriveToScorePositionCommand extends LoggingCommand {
   private void computeTarget(Pose2d currentPose, boolean initalize) {
 
     if (initalize) {
+      // If tagId is set, use it, otherwise use the closest tag (later in initialize)
+      if (requestedTagId < 1 || requestedTagId > 22) {
+        int visionClosestTagId = (int) visionSubsystem.getVisibleTargetTagId();
+        if (visionClosestTagId < 1 || visionClosestTagId > 22) {
+          noTagsAbort = true;
+          return;
+        }
+        tagId = visionClosestTagId;
+      } else {
+        tagId = requestedTagId;
+      }
+
+      location = Constants.AutoConstants.TAG_LOCATIONS[tagId - 1];
+      this.targetHeadingDeg =
+          SwerveUtils.normalizeDegrees(
+              location.getRotation().getDegrees() + 180); // Face Tag, not the other way around
+
       // Whatever tag we're looking at, it's the one we want.
-      tagId = (int) visionSubsystem.getVisibleTargetTagId();
       visionSubsystem.setTargetTagId(tagId);
     } else {
       // Need to make sure target tag is in view to do this
@@ -77,7 +110,7 @@ public class DriveToScorePositionCommand extends LoggingCommand {
     }
 
     double robotHeading = currentPose.getRotation().getDegrees();
-    double targetAngleRelative = -visionSubsystem.angleToTarget();
+    double targetAngleRelative = visionSubsystem.angleToTarget();
     double distanceToTarget = visionSubsystem.distanceToTarget();
 
     // Compute target position relative to robot
@@ -86,10 +119,7 @@ public class DriveToScorePositionCommand extends LoggingCommand {
     double targetY = distanceToTarget * Math.sin(Math.toRadians(targetGlobalAngle));
 
     Pose2d newPose =
-        new Pose2d(
-            location.pose.getX() - targetX,
-            location.pose.getY() - targetY,
-            currentPose.getRotation());
+        new Pose2d(location.getX() - targetX, location.getY() - targetY, currentPose.getRotation());
 
     swerve.resetOdometry(newPose);
 
@@ -118,6 +148,7 @@ public class DriveToScorePositionCommand extends LoggingCommand {
 
       SmartDashboard.putNumber("1310/SetupScoreCommand/finalX", finalX);
       SmartDashboard.putNumber("1310/SetupScoreCommand/finalY", finalY);
+      SmartDashboard.putNumber("1310/SetupScoreCommand/targetIagId", tagId);
     }
 
     SmartDashboard.putNumber("1310/SetupScoreCommand/targetX", targetX);
@@ -140,23 +171,30 @@ public class DriveToScorePositionCommand extends LoggingCommand {
 
   public void end(boolean interrupted) {
     logCommandEnd(interrupted);
+    // visionSubsystem.setPoseUpdatesEnabled(true);
     swerve.stop();
   }
 
   @Override
   public boolean isFinished() {
+    if (noTagsAbort) {
+      return true;
+    }
+
     boolean done =
         (SwerveUtils.isCloseEnough(
                 swerve.getPose().getTranslation(), targetPose.getTranslation(), 0.02)
             && SwerveUtils.isCloseEnough(swerve.getYaw(), targetHeadingDeg, 2));
     if (done) {
-      System.out.println(
-          "REACHED DESTINATION: x["
-              + swerve.getPose().getX()
+      Pose2d endPose = swerve.getPose();
+      SmartDashboard.putString(
+          "1310/SetupScoreCommand/endPose",
+          "x["
+              + endPose.getX()
               + "] y["
-              + swerve.getPose().getY()
+              + endPose.getY()
               + "], deg["
-              + swerve.getPose().getRotation().getDegrees()
+              + endPose.getRotation().getDegrees()
               + "]");
       visionSubsystem.setTargetTagId(0);
     }
