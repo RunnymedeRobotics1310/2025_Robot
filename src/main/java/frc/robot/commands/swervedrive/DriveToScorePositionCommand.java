@@ -3,8 +3,10 @@ package frc.robot.commands.swervedrive;
 import ca.team1310.swerve.utils.SwerveUtils;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.RunnymedeUtils;
 import frc.robot.commands.LoggingCommand;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
@@ -94,7 +96,11 @@ public class DriveToScorePositionCommand extends LoggingCommand {
         }
         tagId = visionClosestTagId;
       } else {
-        tagId = fieldLocation.tagId;
+        if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
+          tagId = fieldLocation.redTagId;
+        } else {
+          tagId = fieldLocation.blueTagId;
+        }
         isLeftBranch = fieldLocation.isLeftSide;
       }
 

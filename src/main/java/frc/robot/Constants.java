@@ -337,28 +337,29 @@ public final class Constants {
     };
 
     public enum FieldLocation {
-      preScoreBlueLeft1(new Pose2d(2.8126, 4.1909, Rotation2d.fromDegrees(0)), 18, true),
-      preScoreBlueLeft2(new Pose2d(3.5085, 5.3948, Rotation2d.fromDegrees(300)), 19, false),
-      preScoreBlueLeft3(new Pose2d(3.7943, 5.5598, Rotation2d.fromDegrees(300)), 19, true),
-      preScoreBlueLeft4(new Pose2d(5.1843, 5.5598, Rotation2d.fromDegrees(240)), 20, false),
-      preScoreBlueLeft5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240)), 20, true),
-      preScoreBlueLeft6(new Pose2d(6.1660, 4.16, Rotation2d.fromDegrees(180)), 21, false),
-      preScoreBlueRight1(new Pose2d(2.8126, 3.8609, Rotation2d.fromDegrees(0)), 18, false),
-      preScoreBlueRight2(new Pose2d(3.5085, 2.6570, Rotation2d.fromDegrees(60)), 17, true),
-      preScoreBlueRight3(new Pose2d(3.92, 2.58, Rotation2d.fromDegrees(60)), 17, false),
-      preScoreBlueRight4(new Pose2d(5.25, 2.45, Rotation2d.fromDegrees(120)), 22, true),
-      preScoreBlueRight5(new Pose2d(5.4701, 2.6570, Rotation2d.fromDegrees(120)), 22, false),
-      preScoreBlueRight6(new Pose2d(6.1660, 3.8609, Rotation2d.fromDegrees(180)), 21, true),
-      preIntakeCentreLeftBlueStation(new Pose2d(1.139, 7.000, Rotation2d.fromDegrees(126)), 13),
-      preIntakeCentreRightBlueStation(new Pose2d(1.139, 1.052, Rotation2d.fromDegrees(234)), 12),
+      preScoreBlueLeft1(new Pose2d(2.8126, 4.1909, Rotation2d.fromDegrees(0)), 18, 7, true),
+      preScoreBlueLeft2(new Pose2d(3.5085, 5.3948, Rotation2d.fromDegrees(300)), 19, 6, false),
+      preScoreBlueLeft3(new Pose2d(3.7943, 5.5598, Rotation2d.fromDegrees(300)), 19, 6, true),
+      preScoreBlueLeft4(new Pose2d(5.1843, 5.5598, Rotation2d.fromDegrees(240)), 20, 11, false),
+      preScoreBlueLeft5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240)), 20, 11, true),
+      preScoreBlueLeft6(new Pose2d(6.1660, 4.16, Rotation2d.fromDegrees(180)), 21, 10, false),
+      preScoreBlueRight1(new Pose2d(2.8126, 3.8609, Rotation2d.fromDegrees(0)), 18, 7, false),
+      preScoreBlueRight2(new Pose2d(3.5085, 2.6570, Rotation2d.fromDegrees(60)), 17, 8, true),
+      preScoreBlueRight3(new Pose2d(3.92, 2.58, Rotation2d.fromDegrees(60)), 17, 8, false),
+      preScoreBlueRight4(new Pose2d(5.25, 2.45, Rotation2d.fromDegrees(120)), 22, 9, true),
+      preScoreBlueRight5(new Pose2d(5.4701, 2.6570, Rotation2d.fromDegrees(120)), 22, 9, false),
+      preScoreBlueRight6(new Pose2d(6.1660, 3.8609, Rotation2d.fromDegrees(180)), 21, 10, true),
+      preIntakeCentreLeftBlueStation(new Pose2d(1.139, 7.000, Rotation2d.fromDegrees(126)), 13, 1),
+      preIntakeCentreRightBlueStation(new Pose2d(1.139, 1.052, Rotation2d.fromDegrees(234)), 12, 2),
       // Pickup Locations
       redRightOuterStation(
           new Pose2d(
               FIELD_EXTENT_METRES_X - 100, FIELD_EXTENT_METRES_Y - 70, Rotation2d.fromDegrees(234)),
+          12,
           2),
-      blueRightOuterStation(new Pose2d(100, 70, Rotation2d.fromDegrees(234)), 12),
+      blueRightOuterStation(new Pose2d(100, 70, Rotation2d.fromDegrees(234)), 12, 2),
 
-      blueLeftOuterStation(new Pose2d(1.15, 7.03, Rotation2d.fromDegrees(-234)), 13),
+      blueLeftOuterStation(new Pose2d(1.15, 7.03, Rotation2d.fromDegrees(-234)), 13, 1),
 
       // Reef Score Locations (Lettered as seen in manual - counter-clockwise starting from
       // close-left)
@@ -384,9 +385,8 @@ public final class Constants {
           new Pose2d(
               FieldConstants.FIELD_EXTENT_METRES_X - 4.20,
               FieldConstants.FIELD_EXTENT_METRES_Y - 2.80,
-              Rotation2d.fromDegrees(60)),
-          0),
-      blueD(new Pose2d(4.20, 2.80, Rotation2d.fromDegrees(60)), 0),
+              Rotation2d.fromDegrees(60))),
+      blueD(new Pose2d(4.20, 2.80, Rotation2d.fromDegrees(60))),
       redE(
           new Pose2d(
               FieldConstants.FIELD_EXTENT_METRES_X - 5.10,
@@ -408,8 +408,7 @@ public final class Constants {
           new Pose2d(
               FIELD_EXTENT_METRES_X - 5.00,
               FIELD_EXTENT_METRES_Y - 6.00,
-              Rotation2d.fromDegrees(0)),
-          0),
+              Rotation2d.fromDegrees(0))),
       blueLeftExitTransit(new Pose2d(4.40, 6.50, Rotation2d.fromDegrees(0))),
 
       redRightPickupTransit(
@@ -422,20 +421,22 @@ public final class Constants {
           new Pose2d(2.80, FIELD_EXTENT_METRES_Y - 2.22, Rotation2d.fromDegrees(135)));
 
       public final Pose2d pose;
-      public final int tagId;
+      public final int blueTagId;
+      public final int redTagId;
       public final boolean isLeftSide;
 
       FieldLocation(Pose2d pose) {
-        this(pose, 0, false);
+        this(pose, 0, 0, false);
       }
 
-      FieldLocation(Pose2d pose, int tagId) {
-        this(pose, tagId, false);
+      FieldLocation(Pose2d pose, int blueTagId, int redTagId) {
+        this(pose, blueTagId, redTagId, false);
       }
 
-      FieldLocation(Pose2d pose, int tagId, boolean isLeftSide) {
+      FieldLocation(Pose2d pose, int blueTagId, int redTagId, boolean isLeftSide) {
         this.pose = pose;
-        this.tagId = tagId;
+        this.blueTagId = blueTagId;
+        this.redTagId = redTagId;
         this.isLeftSide = isLeftSide;
       }
     }
