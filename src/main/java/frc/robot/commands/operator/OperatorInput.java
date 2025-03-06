@@ -17,7 +17,6 @@ import frc.robot.commands.climb.ClimbCommand;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.pneumatics.ToggleCompressorCommand;
-import frc.robot.commands.swervedrive.DriveToScorePositionCommand;
 import frc.robot.commands.swervedrive.ZeroGyroCommand;
 import frc.robot.commands.test.SystemTestCommand;
 import frc.robot.subsystems.AlgaeSubsystem;
@@ -146,7 +145,9 @@ public class OperatorInput extends SubsystemBase {
     //                        visionSubsystem));
 
     new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
-        .onTrue(new DriveToScorePositionCommand(driveSubsystem, visionSubsystem, null, true));
+        .onTrue(
+            new Score1DriveToPoseAutoCommand(driveSubsystem, coralSubsystem, visionSubsystem, 0));
+    //        .onTrue(new DriveToScorePositionCommand(driveSubsystem, visionSubsystem, null, true));
   }
 
   /*
