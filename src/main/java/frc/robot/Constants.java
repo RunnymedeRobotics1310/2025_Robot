@@ -311,6 +311,69 @@ public final class Constants {
       WAIT_5_SECONDS
     }
 
+    public enum ReefLocation1 {
+      LEFT_1,
+      LEFT_2,
+      LEFT_3,
+      LEFT_4,
+      LEFT_5,
+      LEFT_6,
+      RIGHT_1,
+      RIGHT_2,
+      RIGHT_3,
+      RIGHT_4,
+      RIGHT_5,
+      RIGHT_6,
+    }
+
+    public enum ReefLocation2 {
+      LEFT_1,
+      LEFT_2,
+      LEFT_3,
+      LEFT_4,
+      LEFT_5,
+      LEFT_6,
+      RIGHT_1,
+      RIGHT_2,
+      RIGHT_3,
+      RIGHT_4,
+      RIGHT_5,
+      RIGHT_6,
+    }
+
+    public enum ReefLocation3 {
+      LEFT_1,
+      LEFT_2,
+      LEFT_3,
+      LEFT_4,
+      LEFT_5,
+      LEFT_6,
+      RIGHT_1,
+      RIGHT_2,
+      RIGHT_3,
+      RIGHT_4,
+      RIGHT_5,
+      RIGHT_6,
+    }
+
+    public enum ReefPosition1 {
+      CORAL_L4,
+      CORAL_L3,
+      CORAL_L2,
+    }
+
+    public enum ReefPosition2 {
+      CORAL_L4,
+      CORAL_L3,
+      CORAL_L2,
+    }
+
+    public enum ReefPosition3 {
+      CORAL_L4,
+      CORAL_L3,
+      CORAL_L2,
+    }
+
     public static final Pose2d[] TAG_LOCATIONS = {
       new Pose2d(16.697198, 0.655320, Rotation2d.fromDegrees(126)),
       new Pose2d(16.697198, 7.396480, Rotation2d.fromDegrees(234)),

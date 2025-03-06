@@ -17,6 +17,7 @@ import frc.robot.commands.climb.ClimbCommand;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.pneumatics.ToggleCompressorCommand;
+import frc.robot.commands.swervedrive.SetGyroCommand;
 import frc.robot.commands.swervedrive.ZeroGyroCommand;
 import frc.robot.commands.test.SystemTestCommand;
 import frc.robot.subsystems.AlgaeSubsystem;
@@ -39,6 +40,19 @@ public class OperatorInput extends SubsystemBase {
       new SendableChooser<>();
   private final SendableChooser<Constants.AutoConstants.Delay> delayChooser =
       new SendableChooser<>();
+
+  /*  private final SendableChooser<Constants.AutoConstants.ReefLocation1> reefLocation1Chooser =
+      new SendableChooser<>();
+  private final SendableChooser<Constants.AutoConstants.ReefLocation2> reefLocation2Chooser =
+      new SendableChooser<>();
+  private final SendableChooser<Constants.AutoConstants.ReefLocation3> reefLocation3Chooser =
+      new SendableChooser<>();
+  private final SendableChooser<Constants.AutoConstants.ReefPosition1> reefPosition1Chooser =
+      new SendableChooser<>();
+  private final SendableChooser<Constants.AutoConstants.ReefPosition2> reefPosition2Chooser =
+      new SendableChooser<>();
+  private final SendableChooser<Constants.AutoConstants.ReefPosition3> reefPosition3Chooser =
+      new SendableChooser<>(); */
 
   /**
    * Construct an OperatorInput class that is fed by a DriverController and an OperatorController.
@@ -97,6 +111,11 @@ public class OperatorInput extends SubsystemBase {
     // Reset Gyro
     new Trigger(() -> driverController.getBackButton()).onTrue(new ZeroGyroCommand(driveSubsystem));
 
+    // Set Yaw
+    // TODO: Remove!  Practice Field Only!
+    new Trigger(() -> operatorController.getBackButton())
+        .onTrue(new SetGyroCommand(driveSubsystem, 120));
+
     // Compact (X button)
     new Trigger(() -> driverController.getXButton() || operatorController.getXButton())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.COMPACT, coralSubsystem));
@@ -121,7 +140,7 @@ public class OperatorInput extends SubsystemBase {
         .onTrue(new IntakeCoralCommand(coralSubsystem, false));
 
     new Trigger(() -> driverController.getYButton())
-            .onTrue(new IntakeCoralCommand(coralSubsystem, true));
+        .onTrue(new IntakeCoralCommand(coralSubsystem, true));
 
     /*
      * Climb Buttons
@@ -149,7 +168,8 @@ public class OperatorInput extends SubsystemBase {
 
     new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
         .onTrue(
-            new Score1DriveToPoseAutoCommand(driveSubsystem, coralSubsystem, visionSubsystem, 0));
+            new Score1DriveToPoseAutoCommand(
+                driveSubsystem, coralSubsystem, visionSubsystem, null, CoralPose.SCORE_L4, 0));
     //        .onTrue(new DriveToScorePositionCommand(driveSubsystem, visionSubsystem, null, true));
   }
 
@@ -345,7 +365,14 @@ public class OperatorInput extends SubsystemBase {
       case EXIT_ZONE -> new ExitZoneAutoCommand(swerve, delay);
       case SCORE_3_LEFT -> new Score3L4AutoCommand(swerve, delay);
       case SCORE_1_CENTER -> new Score1CoralCenterAutoCommand(swerve, coral, vision, delay);
-      case SCORE_1_POSE -> new Score1DriveToPoseAutoCommand(swerve, coral, vision, delay);
+      case SCORE_1_POSE ->
+          new Score1DriveToPoseAutoCommand(
+              swerve,
+              coral,
+              vision,
+              Constants.AutoConstants.FieldLocation.preScoreBlueLeft1,
+              CoralPose.SCORE_L4,
+              delay);
       case EMERGENCY_AUTO -> new Emergency1CoralAutoCommand(swerve, coral, vision);
       default -> new InstantCommand();
     };

@@ -15,19 +15,20 @@ import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 public class Score1DriveToPoseAutoCommand extends SequentialCommandGroup {
 
   public Score1DriveToPoseAutoCommand(
-      SwerveSubsystem swerve, CoralSubsystem coral, LimelightVisionSubsystem vision, double delay) {
+      SwerveSubsystem swerve,
+      CoralSubsystem coral,
+      LimelightVisionSubsystem vision,
+      Constants.AutoConstants.FieldLocation fieldLocation,
+      Constants.CoralConstants.CoralPose coralPose,
+      double delay) {
 
     addCommands(new WaitCommand(delay));
 
-    addCommands(
-        new DriveToFieldLocationCommand(
-            swerve, Constants.AutoConstants.FieldLocation.preScoreBlueLeft1));
+    addCommands(new DriveToFieldLocationCommand(swerve, fieldLocation));
 
     addCommands(
-        new DriveToScorePositionCommand(
-                swerve, vision, Constants.AutoConstants.FieldLocation.preScoreBlueLeft1, true)
-            .alongWith(
-                new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L4, coral)));
+        new DriveToScorePositionCommand(swerve, vision, fieldLocation, true)
+            .alongWith(new MoveToCoralPoseCommand(coralPose, coral)));
 
     addCommands(new WaitCommand(0.5));
 

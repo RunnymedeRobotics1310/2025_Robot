@@ -154,6 +154,15 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   /**
+   * Set the gyro yaw offset of the robot, in degrees.
+   *
+   * @param yaw the yaw offset of the robot, in degrees
+   */
+  public void setYaw(double yaw) {
+    drive.setYaw(yaw);
+  }
+
+  /**
    * Resets the gyro angle to zero and resets odometry to the same position, but facing toward 0.
    */
   public void zeroGyro() {
