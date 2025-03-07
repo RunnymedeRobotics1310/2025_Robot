@@ -171,7 +171,12 @@ public class OperatorInput extends SubsystemBase {
     new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
         .onTrue(
             new Score1DriveToPoseAutoCommand(
-                driveSubsystem, coralSubsystem, visionSubsystem, preScoreBlueLeft3, CoralPose.SCORE_L4, 0));
+                driveSubsystem,
+                coralSubsystem,
+                visionSubsystem,
+                preScoreBlueLeft3,
+                CoralPose.SCORE_L4,
+                0));
     //        .onTrue(new DriveToScorePositionCommand(driveSubsystem, visionSubsystem, null, true));
   }
 
@@ -372,7 +377,7 @@ public class OperatorInput extends SubsystemBase {
               swerve,
               coral,
               vision,
-              Constants.AutoConstants.FieldLocation.preScoreBlueLeft1,
+              Constants.AutoConstants.FieldLocation.preScoreBlueRight6,
               CoralPose.SCORE_L4,
               delay);
       case EMERGENCY_AUTO -> new Emergency1CoralAutoCommand(swerve, coral, vision);
