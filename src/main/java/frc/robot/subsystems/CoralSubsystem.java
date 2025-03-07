@@ -172,7 +172,7 @@ public class CoralSubsystem extends SubsystemBase {
     sparkMaxConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyOpen);
 
     intakeMotor.configure(
-            sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     /*
      * Simulation
@@ -197,17 +197,24 @@ public class CoralSubsystem extends SubsystemBase {
     sensorCache.elevatorEncoderSpeed = elevatorEncoder.getVelocity();
     sensorCache.elevatorEncoderPosition = elevatorEncoder.getPosition();
 
-    // The elevator encoder position can reset on SparkFlex brown out.  If the 
+    // The elevator encoder position can reset on SparkFlex brown out.  If the
     // elevator encoder jumps, then reset the position to the last known position.
-    // Typically the elevator can move 180 encoder counts in about 2 seconds, or 2 encoder counts/loop
-    if (Math.abs(sensorCache.elevatorEncoderPosition - sensorCache.previousElevatorEncoderPosition) > 10) {
+    // Typically the elevator can move 180 encoder counts in about 2 seconds, or 2 encoder
+    // counts/loop
+    if (Math.abs(sensorCache.elevatorEncoderPosition - sensorCache.previousElevatorEncoderPosition)
+        > 10) {
 
-        System.out.println("*******************************************************************************");
-        System.out.println("Resetting elevator encoder from " + getElevatorEncoder() + " to known position "
-            + sensorCache.previousElevatorEncoderHeight);
-        System.out.println("*******************************************************************************");
+      System.out.println(
+          "*******************************************************************************");
+      System.out.println(
+          "Resetting elevator encoder from "
+              + getElevatorEncoder()
+              + " to known position "
+              + sensorCache.previousElevatorEncoderHeight);
+      System.out.println(
+          "*******************************************************************************");
 
-        setElevatorEncoder(sensorCache.previousElevatorEncoderHeight);
+      setElevatorEncoder(sensorCache.previousElevatorEncoderHeight);
     }
     sensorCache.previousElevatorEncoderPosition = sensorCache.elevatorEncoderPosition;
     sensorCache.previousElevatorEncoderHeight = getElevatorEncoder();
@@ -279,6 +286,9 @@ public class CoralSubsystem extends SubsystemBase {
     if (targetHeight == ElevatorHeight.COMPACT && getElevatorEncoder() <= 0) {
       speed = -ELEVATOR_SLOW_ZONE_SPEED;
     }
+    if (targetHeight == ElevatorHeight.LEVEL_4 && getElevatorEncoder() >= ELEVATOR_MAX_HEIGHT) {
+      speed = ELEVATOR_SLOW_ZONE_SPEED;
+    }
 
     setElevatorSpeed(speed);
 
@@ -349,7 +359,7 @@ public class CoralSubsystem extends SubsystemBase {
 
     elevatorEncoderOffset = 0;
     elevatorEncoderOffset = -getElevatorEncoder() + encoderValue;
-    
+
     // Reset the previous value in the sensor cache
     sensorCache.previousElevatorEncoderHeight = encoderValue;
   }
@@ -546,6 +556,7 @@ public class CoralSubsystem extends SubsystemBase {
         elevatorSpeed = 0;
         // Directly set the motor speed, do not call the setter method (recursive loop)
         elevatorMotor.set(0);
+        elevatorEncoder.setPosition(ELEVATOR_MAX_HEIGHT);
       }
     }
 
