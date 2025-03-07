@@ -27,7 +27,7 @@ public class Score1DriveToPoseAutoCommand extends SequentialCommandGroup {
     addCommands(new WaitCommand(delay));
 
     if (driveToPrePose) {
-      addCommands(new DriveRobotOrientedOmegaCommand(swerve, 1.00, 0.00, 0).withTimeout(0.5));
+      addCommands(new DriveRobotOrientedOmegaCommand(swerve, 1.00, 0.00, 0).withTimeout(0.4));
       //      addCommands(new DriveToFieldLocationCommand(swerve, fieldLocation));
     }
 
