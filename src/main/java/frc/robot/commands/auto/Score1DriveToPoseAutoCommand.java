@@ -24,17 +24,34 @@ public class Score1DriveToPoseAutoCommand extends SequentialCommandGroup {
       Constants.AutoConstants.FieldLocation fieldLocation,
       Constants.CoralConstants.CoralPose coralPose,
       double delay) {
+    this(swerve, coral, vision, fieldLocation, coralPose, delay, true, Double.MIN_VALUE);
+  }
 
-    double headingOffset = 0;
-    if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
-      headingOffset = 180;
+  public Score1DriveToPoseAutoCommand(
+      SwerveSubsystem swerve,
+      CoralSubsystem coral,
+      LimelightVisionSubsystem vision,
+      Constants.AutoConstants.FieldLocation fieldLocation,
+      Constants.CoralConstants.CoralPose coralPose,
+      double delay,
+      boolean driveToPrePose,
+      double headingOverride) {
+
+    if (headingOverride < -360 || headingOverride > 360) {
+      double headingOffset = 0;
+      if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
+        headingOffset = 180;
+      }
+      addCommands(new SetGyroCommand(swerve, 180 + headingOffset));
+    } else {
+      addCommands(new SetGyroCommand(swerve, headingOverride));
     }
-
-    addCommands(new SetGyroCommand(swerve, 180 + headingOffset));
 
     addCommands(new WaitCommand(delay));
 
-    addCommands(new DriveToFieldLocationCommand(swerve, fieldLocation));
+    if (driveToPrePose) {
+      addCommands(new DriveToFieldLocationCommand(swerve, fieldLocation));
+    }
 
     addCommands(
         new DriveToScorePositionCommand(swerve, vision, fieldLocation, true)

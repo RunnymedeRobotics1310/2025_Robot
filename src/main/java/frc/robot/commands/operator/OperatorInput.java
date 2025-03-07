@@ -176,7 +176,9 @@ public class OperatorInput extends SubsystemBase {
                 visionSubsystem,
                 preScoreBlueLeft3,
                 CoralPose.SCORE_L4,
-                0));
+                0,
+                false,
+                120));
     //        .onTrue(new DriveToScorePositionCommand(driveSubsystem, visionSubsystem, null, true));
   }
 
