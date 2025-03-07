@@ -1,13 +1,16 @@
 package frc.robot.commands.auto;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.RunnymedeUtils;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.PlantCoralCommand;
 import frc.robot.commands.swervedrive.DriveRobotOrientedCommand;
 import frc.robot.commands.swervedrive.DriveToFieldLocationCommand;
 import frc.robot.commands.swervedrive.NullDriveCommand;
+import frc.robot.commands.swervedrive.SetGyroCommand;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
@@ -18,6 +21,12 @@ public class Score1CoralCenterAutoCommand extends SequentialCommandGroup {
       SwerveSubsystem swerve, CoralSubsystem coral, LimelightVisionSubsystem vision, double delay) {
 
     addCommands(new WaitCommand(delay));
+
+    double headingOffset = 0;
+    if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
+      headingOffset = 180;
+    }
+    addCommands(new SetGyroCommand(swerve, 180 + headingOffset));
 
     addCommands(
         new DriveToFieldLocationCommand(
@@ -31,12 +40,21 @@ public class Score1CoralCenterAutoCommand extends SequentialCommandGroup {
     //            swerve,
     //                vision));
     addCommands(
-        new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L4, coral).deadlineFor(new NullDriveCommand(swerve)));
+        new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L4, coral)
+            .deadlineFor(new NullDriveCommand(swerve)));
 
-    addCommands(new WaitCommand( 1)
-            .deadlineFor(new DriveRobotOrientedCommand(swerve, 0.35, 0, Constants.AutoConstants.FieldLocation.preScoreBlueLeft6.pose.getRotation().getDegrees())));
+    addCommands(
+        new WaitCommand(1)
+            .deadlineFor(
+                new DriveRobotOrientedCommand(
+                    swerve,
+                    0.35,
+                    0,
+                    Constants.AutoConstants.FieldLocation.preScoreBlueLeft6
+                            .pose
+                            .getRotation()
+                            .getDegrees()
+                        + headingOffset)));
     addCommands(new PlantCoralCommand(coral).deadlineFor(new NullDriveCommand(swerve)));
-
-
   }
 }

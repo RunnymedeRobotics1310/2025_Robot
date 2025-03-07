@@ -13,7 +13,7 @@ public class SetGyroCommand extends InstantCommand {
   public SetGyroCommand(SwerveSubsystem driveSubsystem, double yaw) {
     super(
         () -> {
-          System.out.println("ZeroGyroCommand: Set the current heading to 0");
+          System.out.println("ZeroGyroCommand: Set the current heading to " + yaw);
 
           driveSubsystem.setYaw(yaw);
         });

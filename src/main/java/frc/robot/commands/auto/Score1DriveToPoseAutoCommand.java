@@ -1,13 +1,16 @@
 package frc.robot.commands.auto;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.RunnymedeUtils;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.PlantCoralCommand;
 import frc.robot.commands.swervedrive.DriveToFieldLocationCommand;
 import frc.robot.commands.swervedrive.DriveToScorePositionCommand;
 import frc.robot.commands.swervedrive.NullDriveCommand;
+import frc.robot.commands.swervedrive.SetGyroCommand;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
@@ -21,6 +24,13 @@ public class Score1DriveToPoseAutoCommand extends SequentialCommandGroup {
       Constants.AutoConstants.FieldLocation fieldLocation,
       Constants.CoralConstants.CoralPose coralPose,
       double delay) {
+
+    double headingOffset = 0;
+    if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
+      headingOffset = 180;
+    }
+
+    addCommands(new SetGyroCommand(swerve, 180 + headingOffset));
 
     addCommands(new WaitCommand(delay));
 

@@ -5,7 +5,6 @@ import static frc.robot.Constants.AutoConstants.FieldLocation;
 import ca.team1310.swerve.utils.SwerveUtils;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.Constants;
 import frc.robot.RunnymedeUtils;
 import frc.robot.commands.LoggingCommand;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -19,26 +18,11 @@ public class DriveToFieldLocationCommand extends LoggingCommand {
   public DriveToFieldLocationCommand(SwerveSubsystem swerve, FieldLocation location) {
     this.swerve = swerve;
     if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
-      double x = location.pose.getX();
-      double y = location.pose.getY();
-      x = Constants.FieldConstants.FIELD_EXTENT_METRES_X - x;
-      y = Constants.FieldConstants.FIELD_EXTENT_METRES_Y - y;
-      this.location = new Pose2d(x, y, location.pose.getRotation());
+      this.location = RunnymedeUtils.getRedAlliancePose(location.pose);
     } else {
       this.location = location.pose;
     }
     this.targetHeadingDeg = SwerveUtils.normalizeDegrees(location.pose.getRotation().getDegrees());
-  }
-
-  public DriveToFieldLocationCommand(
-      SwerveSubsystem swerve, FieldLocation redLocation, FieldLocation blueLocation) {
-    this.swerve = swerve;
-    if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Blue) {
-      this.location = blueLocation.pose;
-    } else {
-      this.location = redLocation.pose;
-    }
-    this.targetHeadingDeg = SwerveUtils.normalizeDegrees(location.getRotation().getDegrees());
   }
 
   @Override

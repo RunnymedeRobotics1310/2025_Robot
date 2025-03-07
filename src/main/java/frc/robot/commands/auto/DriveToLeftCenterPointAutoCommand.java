@@ -17,8 +17,6 @@ public class DriveToLeftCenterPointAutoCommand extends SequentialCommandGroup {
 
     addCommands(
         new DriveToFieldLocationCommand(
-            swerve,
-            Constants.AutoConstants.FieldLocation.redLeftExitTransit,
-            Constants.AutoConstants.FieldLocation.blueLeftExitTransit));
+            swerve, Constants.AutoConstants.FieldLocation.blueLeftExitTransit));
   }
 }
