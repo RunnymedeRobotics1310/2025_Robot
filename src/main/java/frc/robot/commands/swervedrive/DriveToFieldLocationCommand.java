@@ -13,21 +13,25 @@ public class DriveToFieldLocationCommand extends LoggingCommand {
 
   private final SwerveSubsystem swerve;
   private final Pose2d location;
-  private final double targetHeadingDeg;
+  private Pose2d allianceLocation;
+  private double targetHeadingDeg;
 
   public DriveToFieldLocationCommand(SwerveSubsystem swerve, FieldLocation location) {
     this.swerve = swerve;
-    if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
-      this.location = RunnymedeUtils.getRedAlliancePose(location.pose);
-    } else {
-      this.location = location.pose;
-    }
-    this.targetHeadingDeg = SwerveUtils.normalizeDegrees(location.pose.getRotation().getDegrees());
+    this.location = location.pose;
   }
 
   @Override
   public void initialize() {
     logCommandStart();
+
+    if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
+      this.allianceLocation = RunnymedeUtils.getRedAlliancePose(location);
+    } else {
+      this.allianceLocation = location;
+    }
+    this.targetHeadingDeg = SwerveUtils.normalizeDegrees(location.getRotation().getDegrees());
+
     log("Pose: " + swerve.getPose());
   }
 
@@ -35,8 +39,8 @@ public class DriveToFieldLocationCommand extends LoggingCommand {
   public void execute() {
     Pose2d currentPose = swerve.getPose();
 
-    double xDif = location.getX() - currentPose.getX();
-    double yDif = location.getY() - currentPose.getY();
+    double xDif = allianceLocation.getX() - currentPose.getX();
+    double yDif = allianceLocation.getY() - currentPose.getY();
 
     double angleDif =
         SwerveUtils.normalizeDegrees(targetHeadingDeg - currentPose.getRotation().getDegrees());
@@ -56,7 +60,7 @@ public class DriveToFieldLocationCommand extends LoggingCommand {
     // targetHeadingDeg, 10));
     boolean done =
         (SwerveUtils.isCloseEnough(
-                swerve.getPose().getTranslation(), location.getTranslation(), 0.05)
+                swerve.getPose().getTranslation(), allianceLocation.getTranslation(), 0.05)
             && SwerveUtils.isCloseEnough(swerve.getYaw(), targetHeadingDeg, 10));
     if (done) {
       System.out.println(

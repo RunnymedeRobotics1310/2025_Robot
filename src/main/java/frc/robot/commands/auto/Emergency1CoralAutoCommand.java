@@ -9,6 +9,7 @@ import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.PlantCoralCommand;
 import frc.robot.commands.swervedrive.DriveInlineWithTagCommand;
 import frc.robot.commands.swervedrive.DriveRobotOrientedCommand;
+import frc.robot.commands.swervedrive.SetAutoGyroCommand;
 import frc.robot.commands.swervedrive.SetGyroCommand;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -19,34 +20,24 @@ public class Emergency1CoralAutoCommand extends SequentialCommandGroup {
   public Emergency1CoralAutoCommand(
       SwerveSubsystem swerve, CoralSubsystem coral, LimelightVisionSubsystem vision) {
 
-    double headingOffset = 0;
-    if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
-      headingOffset = 180;
-    }
+    addCommands(new SetAutoGyroCommand(swerve, 180));
 
-    addCommands(new SetGyroCommand(swerve, 180 + headingOffset));
-
-    addCommands(
-        new WaitCommand(1)
-            .deadlineFor(new DriveRobotOrientedCommand(swerve, 1, 0, 180 + headingOffset)));
+    addCommands(new WaitCommand(1).deadlineFor(new DriveRobotOrientedCommand(swerve, 1, 0, 180)));
 
     addCommands(
         new DriveInlineWithTagCommand(swerve, vision)
             .alongWith(
                 new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L4, coral)));
     addCommands(
-        new WaitCommand(0.5)
-            .deadlineFor(new DriveRobotOrientedCommand(swerve, 0, 0.25, 180 + headingOffset)));
+        new WaitCommand(0.5).deadlineFor(new DriveRobotOrientedCommand(swerve, 0, 0.25, 180)));
 
     addCommands(
-        new WaitCommand(1)
-            .deadlineFor(new DriveRobotOrientedCommand(swerve, 0.75, 0, 180 + headingOffset)));
+        new WaitCommand(1).deadlineFor(new DriveRobotOrientedCommand(swerve, 0.75, 0, 180)));
 
     addCommands(new PlantCoralCommand(coral));
 
     addCommands(
-        new WaitCommand(0.25)
-            .deadlineFor(new DriveRobotOrientedCommand(swerve, -1, 0, 180 + headingOffset)));
+        new WaitCommand(0.25).deadlineFor(new DriveRobotOrientedCommand(swerve, -1, 0, 180)));
 
     addCommands(new WaitCommand(1));
 

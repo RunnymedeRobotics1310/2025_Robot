@@ -1,16 +1,11 @@
 package frc.robot.commands.auto;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
-import frc.robot.RunnymedeUtils;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.PlantCoralCommand;
-import frc.robot.commands.swervedrive.DriveRobotOrientedCommand;
-import frc.robot.commands.swervedrive.DriveToFieldLocationCommand;
-import frc.robot.commands.swervedrive.NullDriveCommand;
-import frc.robot.commands.swervedrive.SetGyroCommand;
+import frc.robot.commands.swervedrive.*;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
@@ -22,11 +17,7 @@ public class Score1CoralCenterAutoCommand extends SequentialCommandGroup {
 
     addCommands(new WaitCommand(delay));
 
-    double headingOffset = 0;
-    if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
-      headingOffset = 180;
-    }
-    addCommands(new SetGyroCommand(swerve, 180 + headingOffset));
+    addCommands(new SetAutoGyroCommand(swerve, 180));
 
     addCommands(
         new DriveToFieldLocationCommand(
@@ -51,10 +42,9 @@ public class Score1CoralCenterAutoCommand extends SequentialCommandGroup {
                     0.35,
                     0,
                     Constants.AutoConstants.FieldLocation.preScoreBlueLeft6
-                            .pose
-                            .getRotation()
-                            .getDegrees()
-                        + headingOffset)));
+                        .pose
+                        .getRotation()
+                        .getDegrees())));
     addCommands(new PlantCoralCommand(coral).deadlineFor(new NullDriveCommand(swerve)));
   }
 }

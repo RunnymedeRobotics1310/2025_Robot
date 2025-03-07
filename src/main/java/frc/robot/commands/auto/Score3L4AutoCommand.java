@@ -4,10 +4,8 @@ import static frc.robot.Constants.AutoConstants.FieldLocation.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.RunnymedeUtils;
 import frc.robot.commands.swervedrive.*;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
@@ -18,12 +16,7 @@ public class Score3L4AutoCommand extends SequentialCommandGroup {
   public Score3L4AutoCommand(SwerveSubsystem swerve, double delay) {
     super();
 
-    double headingOffset = 0;
-    if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
-      headingOffset = 180;
-    }
-
-    addCommands(new SetGyroCommand(swerve, 180 + headingOffset));
+    addCommands(new SetAutoGyroCommand(swerve, 180));
 
     addCommands(new SetPoseCommand(swerve, new Pose2d(7.2, 5.63, Rotation2d.fromDegrees(0))));
     //        addCommands(new ZeroGyroCommand(swerve));

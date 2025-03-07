@@ -375,28 +375,28 @@ public final class Constants {
     }
 
     public static final Pose2d[] TAG_LOCATIONS = {
-      new Pose2d(16.697198, 0.655320, Rotation2d.fromDegrees(126)),
-      new Pose2d(16.697198, 7.396480, Rotation2d.fromDegrees(234)),
-      new Pose2d(11.560810, 8.055610, Rotation2d.fromDegrees(270)),
-      new Pose2d(9.276080, 6.137656, Rotation2d.fromDegrees(0)),
-      new Pose2d(9.276080, 1.914906, Rotation2d.fromDegrees(0)),
-      new Pose2d(13.474446, 3.306318, Rotation2d.fromDegrees(300)),
-      new Pose2d(13.890498, 4.025900, Rotation2d.fromDegrees(0)),
-      new Pose2d(13.474446, 4.745482, Rotation2d.fromDegrees(60)),
-      new Pose2d(12.643358, 4.745482, Rotation2d.fromDegrees(120)),
-      new Pose2d(12.227306, 4.025900, Rotation2d.fromDegrees(180)),
-      new Pose2d(12.643358, 3.306318, Rotation2d.fromDegrees(240)),
-      new Pose2d(0.851154, 0.655320, Rotation2d.fromDegrees(54)),
-      new Pose2d(0.851154, 7.396480, Rotation2d.fromDegrees(306)),
-      new Pose2d(8.272272, 6.137656, Rotation2d.fromDegrees(180)),
-      new Pose2d(8.272272, 1.914906, Rotation2d.fromDegrees(180)),
-      new Pose2d(5.987542, -0.003810, Rotation2d.fromDegrees(90)),
-      new Pose2d(4.073906, 3.306318, Rotation2d.fromDegrees(240)),
-      new Pose2d(3.657600, 4.025900, Rotation2d.fromDegrees(180)),
-      new Pose2d(4.073906, 4.745482, Rotation2d.fromDegrees(120)),
-      new Pose2d(4.904740, 4.745482, Rotation2d.fromDegrees(60)),
-      new Pose2d(5.321046, 4.025900, Rotation2d.fromDegrees(0)),
-      new Pose2d(4.904740, 3.306318, Rotation2d.fromDegrees(300))
+      new Pose2d(16.697198, 0.655320, Rotation2d.fromDegrees(126)), // 1
+      new Pose2d(16.697198, 7.396480, Rotation2d.fromDegrees(234)), // 2
+      new Pose2d(11.560810, 8.055610, Rotation2d.fromDegrees(270)), // 3
+      new Pose2d(9.276080, 6.137656, Rotation2d.fromDegrees(0)), // 4
+      new Pose2d(9.276080, 1.914906, Rotation2d.fromDegrees(0)), // 5
+      new Pose2d(13.474446, 3.306318, Rotation2d.fromDegrees(300)), // 6
+      new Pose2d(13.890498, 4.025900, Rotation2d.fromDegrees(0)), // 7
+      new Pose2d(13.474446, 4.745482, Rotation2d.fromDegrees(60)), // 8
+      new Pose2d(12.643358, 4.745482, Rotation2d.fromDegrees(120)), // 9
+      new Pose2d(12.227306, 4.025900, Rotation2d.fromDegrees(180)), // 10
+      new Pose2d(12.643358, 3.306318, Rotation2d.fromDegrees(240)), // 11
+      new Pose2d(0.851154, 0.655320, Rotation2d.fromDegrees(54)), // 12
+      new Pose2d(0.851154, 7.396480, Rotation2d.fromDegrees(306)), // 13
+      new Pose2d(8.272272, 6.137656, Rotation2d.fromDegrees(180)), // 14
+      new Pose2d(8.272272, 1.914906, Rotation2d.fromDegrees(180)), // 15
+      new Pose2d(5.987542, -0.003810, Rotation2d.fromDegrees(90)), // 16
+      new Pose2d(4.073906, 3.306318, Rotation2d.fromDegrees(240)), // 17
+      new Pose2d(3.657600, 4.025900, Rotation2d.fromDegrees(180)), // 18
+      new Pose2d(4.073906, 4.745482, Rotation2d.fromDegrees(120)), // 19
+      new Pose2d(4.904740, 4.745482, Rotation2d.fromDegrees(60)), // 20
+      new Pose2d(5.321046, 4.025900, Rotation2d.fromDegrees(0)), // 21
+      new Pose2d(4.904740, 3.306318, Rotation2d.fromDegrees(300)) // 22
     };
 
     public enum FieldLocation {

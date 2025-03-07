@@ -178,7 +178,7 @@ public class OperatorInput extends SubsystemBase {
                 CoralPose.SCORE_L4,
                 0,
                 false,
-                120));
+                -60));
     //        .onTrue(new DriveToScorePositionCommand(driveSubsystem, visionSubsystem, null, true));
   }
 
@@ -390,7 +390,9 @@ public class OperatorInput extends SubsystemBase {
               vision,
               Constants.AutoConstants.FieldLocation.preScoreBlueRight6,
               CoralPose.SCORE_L4,
-              delay);
+              delay,
+              true,
+              180);
       case EMERGENCY_AUTO -> new Emergency1CoralAutoCommand(swerve, coral, vision);
       default -> new InstantCommand();
     };
