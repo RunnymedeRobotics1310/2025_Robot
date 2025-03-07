@@ -3,6 +3,7 @@ package frc.robot.commands.auto;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.swervedrive.DriveRobotOrientedCommand;
+import frc.robot.commands.swervedrive.DriveRobotOrientedOmegaCommand;
 import frc.robot.commands.swervedrive.SetAutoGyroCommand;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
@@ -13,6 +14,6 @@ public class ExitZoneAutoCommand extends SequentialCommandGroup {
 
     addCommands(new SetAutoGyroCommand(swerve, 180));
 
-    addCommands(new WaitCommand(1).deadlineFor(new DriveRobotOrientedCommand(swerve, 2, 0, 180)));
+    addCommands(new DriveRobotOrientedOmegaCommand(swerve, 1.00, 0.00, 0).withTimeout(1));
   }
 }
