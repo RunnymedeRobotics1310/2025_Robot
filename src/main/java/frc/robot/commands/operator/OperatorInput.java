@@ -19,7 +19,7 @@ import frc.robot.commands.climb.ClimbCommand;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.pneumatics.ToggleCompressorCommand;
-import frc.robot.commands.swervedrive.SetGyroCommand;
+import frc.robot.commands.swervedrive.SetAutoGyroCommand;
 import frc.robot.commands.swervedrive.ZeroGyroCommand;
 import frc.robot.commands.test.SystemTestCommand;
 import frc.robot.subsystems.AlgaeSubsystem;
@@ -111,12 +111,13 @@ public class OperatorInput extends SubsystemBase {
                 algaeSubsystem));
 
     // Reset Gyro
-    new Trigger(() -> driverController.getBackButton()).onTrue(new ZeroGyroCommand(driveSubsystem));
+    new Trigger(() -> driverController.getBackButton())
+        .onTrue(new SetAutoGyroCommand(driveSubsystem, 0));
 
     // Set Yaw
     // TODO: Remove!  Practice Field Only!
     new Trigger(() -> operatorController.getBackButton())
-        .onTrue(new SetGyroCommand(driveSubsystem, 120));
+        .onTrue(new SetAutoGyroCommand(driveSubsystem, -60));
 
     // Compact (X button)
     new Trigger(() -> driverController.getXButton() || operatorController.getXButton())

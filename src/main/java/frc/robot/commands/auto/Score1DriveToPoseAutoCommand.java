@@ -27,7 +27,8 @@ public class Score1DriveToPoseAutoCommand extends SequentialCommandGroup {
     addCommands(new WaitCommand(delay));
 
     if (driveToPrePose) {
-      addCommands(new DriveToFieldLocationCommand(swerve, fieldLocation));
+      addCommands(new DriveRobotOrientedOmegaCommand(swerve, 1.00, 0.00, 0).withTimeout(1));
+      //      addCommands(new DriveToFieldLocationCommand(swerve, fieldLocation));
     }
 
     addCommands(
@@ -37,5 +38,9 @@ public class Score1DriveToPoseAutoCommand extends SequentialCommandGroup {
     addCommands(new WaitCommand(0.5));
 
     addCommands(new PlantCoralCommand(coral).deadlineFor(new NullDriveCommand(swerve)));
+
+    addCommands(new DriveRobotOrientedOmegaCommand(swerve, -0.50, 0.00, 0).withTimeout(1));
+
+    addCommands(new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.COMPACT, coral));
   }
 }
