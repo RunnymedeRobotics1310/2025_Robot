@@ -297,6 +297,15 @@ public class OperatorInput extends SubsystemBase {
     return driverController.getRightTriggerAxis() <= 0.5;
   }
 
+  // ALGAE COMMANDS REPURPOSED TO ALIGN CORAL STATION ANGLE
+  public boolean isAlignLeftStation() {
+    return driverController.getLeftTriggerAxis() > 0.5;
+  }
+
+  public boolean isAlignRightStation() {
+    return driverController.getRightTriggerAxis() > 0.5;
+  }
+
   /*
    * Compressor enable/disable
    */

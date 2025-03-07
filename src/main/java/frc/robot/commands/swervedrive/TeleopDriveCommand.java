@@ -13,7 +13,6 @@ import static frc.robot.commands.operator.OperatorInput.Stick.LEFT;
 import static frc.robot.commands.operator.OperatorInput.Stick.RIGHT;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -96,6 +95,9 @@ public class TeleopDriveCommand extends BaseDriveCommand {
 
     final boolean faceTarget = oi.isFaceTarget();
 
+    final boolean faceLeftStation = oi.isAlignLeftStation();
+    final boolean faceRightStation = oi.isAlignRightStation();
+
     // Compute boost factor
     // final boolean isSlow = oi.isDriverLeftBumper();
     final boolean isSlow = false;
@@ -144,6 +146,21 @@ public class TeleopDriveCommand extends BaseDriveCommand {
         int tagId = (int) visionSubsystem.getVisibleTargetTagId();
         if (tagId > 0 && tagId <= Constants.FieldConstants.TARGET_HEADINGS.length) {
           headingSetpointDeg = Constants.FieldConstants.TARGET_HEADINGS[tagId - 1];
+        }
+      }
+
+      if (faceLeftStation) {
+        if (invert) {
+          headingSetpointDeg = -54.0;
+        } else {
+          headingSetpointDeg = 126.0;
+        }
+      }
+      if (faceRightStation) {
+        if (invert) {
+          headingSetpointDeg = 54.0;
+        } else {
+          headingSetpointDeg = -126.0;
         }
       }
 
