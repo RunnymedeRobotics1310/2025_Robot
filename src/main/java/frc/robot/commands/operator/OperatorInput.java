@@ -1,5 +1,7 @@
 package frc.robot.commands.operator;
 
+import static frc.robot.Constants.AutoConstants.FieldLocation.preScoreBlueLeft3;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -114,7 +116,7 @@ public class OperatorInput extends SubsystemBase {
     // Set Yaw
     // TODO: Remove!  Practice Field Only!
     new Trigger(() -> operatorController.getBackButton())
-        .onTrue(new SetGyroCommand(driveSubsystem, 120));
+        .onTrue(new SetGyroCommand(driveSubsystem, 60));
 
     // Compact (X button)
     new Trigger(() -> driverController.getXButton() || operatorController.getXButton())
@@ -169,7 +171,7 @@ public class OperatorInput extends SubsystemBase {
     new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
         .onTrue(
             new Score1DriveToPoseAutoCommand(
-                driveSubsystem, coralSubsystem, visionSubsystem, null, CoralPose.SCORE_L4, 0));
+                driveSubsystem, coralSubsystem, visionSubsystem, preScoreBlueLeft3, CoralPose.SCORE_L4, 0));
     //        .onTrue(new DriveToScorePositionCommand(driveSubsystem, visionSubsystem, null, true));
   }
 

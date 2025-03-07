@@ -39,12 +39,11 @@ public class DefaultCoralCommand extends LoggingCommand {
     // Intake commands
     if (plant) {
       if (coralSubsystem.getArmAngle() <= 70) {
-        coralSubsystem.setIntakeSpeed(-CoralConstants.CORAL_OUTAKE_SPEED);
+        coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_OUTAKE_SLOW_SPEED);
       } else {
         coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_OUTAKE_SPEED);
       }
-    }
-    else if (ejectButton) {
+    } else if (ejectButton) {
       coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_EJECT_SPEED);
     } else if (injectButton) {
       // Intake & outtake are in the same direction

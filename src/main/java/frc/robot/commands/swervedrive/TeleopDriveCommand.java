@@ -13,6 +13,7 @@ import static frc.robot.commands.operator.OperatorInput.Stick.LEFT;
 import static frc.robot.commands.operator.OperatorInput.Stick.RIGHT;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -80,10 +81,10 @@ public class TeleopDriveCommand extends BaseDriveCommand {
     final double vY = -oi.getDriverControllerAxis(LEFT, X);
 
     // Operator x for fine-tuning robot oriented
-    final double oX = oi.getOperatorControllerAxis(LEFT, Y) * SLOW_SPEED_FACTOR;
+    final double oX = Math.pow(oi.getOperatorControllerAxis(LEFT, Y), 3) * SLOW_SPEED_FACTOR;
 
     // Operator y for fine-tuning robot oriented
-    final double oY = -oi.getOperatorControllerAxis(LEFT, X) * SLOW_SPEED_FACTOR;
+    final double oY = Math.pow(-oi.getOperatorControllerAxis(LEFT, X), 3) * SLOW_SPEED_FACTOR;
 
     // Left and right on the right stick will change the direction the robot is facing - its
     // heading. Positive x values on the stick translate to clockwise motion, and vice versa.
@@ -163,7 +164,9 @@ public class TeleopDriveCommand extends BaseDriveCommand {
     // if driver isn't driving, operator has control
     if ((vX == 0 && vY == 0 && ccwRotAngularVelPct == 0) && (oX != 0 || oY != 0)) {
       swerve.driveRobotOriented(
-          oX * TRANSLATION_CONFIG.maxSpeedMPS(), oY * TRANSLATION_CONFIG.maxSpeedMPS(), omegaRadiansPerSecond);
+          oX * TRANSLATION_CONFIG.maxSpeedMPS(),
+          oY * TRANSLATION_CONFIG.maxSpeedMPS(),
+          omegaRadiansPerSecond);
       rotationSettleTimer.reset();
       // driver gets priority otherwise
     } else {
