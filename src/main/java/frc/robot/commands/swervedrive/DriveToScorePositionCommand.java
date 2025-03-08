@@ -180,7 +180,7 @@ public class DriveToScorePositionCommand extends LoggingCommand {
 
   public void end(boolean interrupted) {
     logCommandEnd(interrupted);
-    // visionSubsystem.setPoseUpdatesEnabled(true);
+    visionSubsystem.setTargetTagId(0);
     swerve.stop();
   }
 
