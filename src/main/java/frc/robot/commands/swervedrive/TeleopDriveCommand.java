@@ -152,16 +152,20 @@ public class TeleopDriveCommand extends BaseDriveCommand {
 
       if (faceLeftStation) {
         if (invert) {
-          headingSetpointDeg = -54.0;
+          headingSetpointDeg =
+              Constants.FieldConstants.TAGS.RED_LEFT_SOURCE.pose.getRotation().getDegrees();
         } else {
-          headingSetpointDeg = 126.0;
+          headingSetpointDeg =
+              Constants.FieldConstants.TAGS.BLUE_LEFT_SOURCE.pose.getRotation().getDegrees();
         }
       }
       if (faceRightStation) {
         if (invert) {
-          headingSetpointDeg = 54.0;
+          headingSetpointDeg =
+              Constants.FieldConstants.TAGS.RED_RIGHT_SOURCE.pose.getRotation().getDegrees();
         } else {
-          headingSetpointDeg = -126.0;
+          headingSetpointDeg =
+              Constants.FieldConstants.TAGS.BLUE_RIGHT_SOURCE.pose.getRotation().getDegrees();
         }
       }
 
