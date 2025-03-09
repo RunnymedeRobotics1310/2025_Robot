@@ -23,7 +23,7 @@ public class Score3L4AutoCommand extends SequentialCommandGroup {
 
     addCommands(new WaitCommand(delay));
 
-    addCommands(new DriveToFieldLocationCommand(swerve, preScoreBlueLeft4));
+    addCommands(new DriveToFieldLocationCommand(swerve, PRE_SCORE_LEFT_4));
     // Score l4 at left4
     addCommands(new WaitCommand(2).deadlineFor(new NullDriveCommand(swerve)));
     //        addCommands(new DriveThroughFieldLocationCommand(swerve, blueLeftExitTransit, speed));
@@ -31,13 +31,13 @@ public class Score3L4AutoCommand extends SequentialCommandGroup {
     // Intake coral
     //        addCommands(new DriveThroughFieldLocationCommand(swerve, blueLeftPickupTransit,
     // speed));
-    addCommands(new DriveToFieldLocationCommand(swerve, preScoreBlueLeft2));
+    addCommands(new DriveToFieldLocationCommand(swerve, PRE_SCORE_LEFT_2));
     // Score left1
     addCommands(new WaitCommand(2).deadlineFor(new NullDriveCommand(swerve)));
     // addCommands(new DriveThroughFieldLocationCommand(swerve, blueLeftPickupTransit, speed));
     addCommands(new DriveToFieldLocationCommand(swerve, blueLeftOuterStation));
     // Intake coral
-    addCommands(new DriveToFieldLocationCommand(swerve, preScoreBlueLeft3));
+    addCommands(new DriveToFieldLocationCommand(swerve, PRE_SCORE_LEFT_3));
     // Score coral
     addCommands(new WaitCommand(2).deadlineFor(new NullDriveCommand(swerve)));
     addCommands(new DriveToFieldLocationCommand(swerve, blueLeftOuterStation));

@@ -144,8 +144,9 @@ public class TeleopDriveCommand extends BaseDriveCommand {
 
       if (faceTarget) {
         int tagId = (int) visionSubsystem.getVisibleTargetTagId();
-        if (tagId > 0 && tagId <= Constants.FieldConstants.TARGET_HEADINGS.length) {
-          headingSetpointDeg = Constants.FieldConstants.TARGET_HEADINGS[tagId - 1];
+        if (Constants.FieldConstants.TAGS.isValidTagId(tagId)) {
+          headingSetpointDeg =
+              Constants.FieldConstants.TAGS.getTagById(tagId).pose.getRotation().getDegrees();
         }
       }
 

@@ -13,6 +13,8 @@ import frc.robot.subsystems.swerve.SwerveDriveSubsystemConfig;
 import frc.robot.subsystems.swerve.SwerveRotationConfig;
 import frc.robot.subsystems.swerve.SwerveTranslationConfig;
 import frc.robot.subsystems.vision.VisionConfig;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -120,31 +122,56 @@ public final class Constants {
     public static final double FIELD_EXTENT_METRES_Y = 8.211;
     public static final double FIELD_EXTENT_METRES_X = 16.541;
 
-    public static final double[] TARGET_HEADINGS =
-        new double[] {
-          -54, // 1
-          54, // 2
-          90, // 3
-          180, // 4
-          180, // 5
-          120, // 6
-          180, // 7
-          -120, // 8
-          -60, // 9
-          0, // 10
-          60, // 11
-          -126, // 12
-          126, // 13
-          0, // 14
-          0, // 15
-          -90, // 16
-          60, // 17
-          0, // 18
-          -60, // 19
-          -120, // 20
-          180, // 21
-          120 // 22
-        };
+    // This is physical tag locations on field, from 2025FieldDrawings.pdf but the heading is
+    // swapped 180 degrees to indicate heading to face the tag, vs the orientation the tag is facing
+    public enum TAGS {
+      RED_LEFT_SOURCE(1, new Pose2d(16.697198, 0.655320, Rotation2d.fromDegrees(-54))),
+      RED_RIGHT_SOURCE(2, new Pose2d(16.697198, 7.396480, Rotation2d.fromDegrees(54))),
+      RED_PROCESSOR(3, new Pose2d(11.560810, 8.055610, Rotation2d.fromDegrees(90))),
+      RED_RIGHT_BARGE(4, new Pose2d(9.276080, 6.137656, Rotation2d.fromDegrees(180))),
+      RED_LEFT_BARGE(5, new Pose2d(9.276080, 1.914906, Rotation2d.fromDegrees(180))),
+      RED_LEFT_REEF_2_3(6, new Pose2d(13.474446, 3.306318, Rotation2d.fromDegrees(120))),
+      RED_LEFT_RIGHT_REEF_1(7, new Pose2d(13.890498, 4.025900, Rotation2d.fromDegrees(180))),
+      RED_RIGHT_REEF_2_3(8, new Pose2d(13.474446, 4.745482, Rotation2d.fromDegrees(-120))),
+      RED_RIGHT_REEF_4_5(9, new Pose2d(12.643358, 4.745482, Rotation2d.fromDegrees(-60))),
+      RED_RIGHT_LEFT_REEF_6(10, new Pose2d(12.227306, 4.025900, Rotation2d.fromDegrees(0))),
+      RED_LEFT_REEF_4_5(11, new Pose2d(12.643358, 3.306318, Rotation2d.fromDegrees(60))),
+      BLUE_RIGHT_SOURCE(12, new Pose2d(0.851154, 0.655320, Rotation2d.fromDegrees(-126))),
+      BLUE_LEFT_SOURCE(13, new Pose2d(0.851154, 7.396480, Rotation2d.fromDegrees(126))),
+      BLUE_LEFT_BARGE(14, new Pose2d(8.272272, 6.137656, Rotation2d.fromDegrees(0))),
+      BLUE_RIGHT_BARGE(15, new Pose2d(8.272272, 1.914906, Rotation2d.fromDegrees(0))),
+      BLUE_PROCESSOR(16, new Pose2d(5.987542, -0.003810, Rotation2d.fromDegrees(-90))),
+      BLUE_RIGHT_REEF_2_3(17, new Pose2d(4.073906, 3.306318, Rotation2d.fromDegrees(60))),
+      BLUE_RIGHT_LEFT_REEF_1(18, new Pose2d(3.657600, 4.025900, Rotation2d.fromDegrees(0))),
+      BLUE_LEFT_REEF_2_3(19, new Pose2d(4.073906, 4.745482, Rotation2d.fromDegrees(-60))),
+      BLUE_LEFT_REEF_4_5(20, new Pose2d(4.904740, 4.745482, Rotation2d.fromDegrees(-120))),
+      BLUE_LEFT_RIGHT_REEF_6(21, new Pose2d(5.321046, 4.025900, Rotation2d.fromDegrees(180))),
+      BLUE_RIGHT_REEF_4_5(22, new Pose2d(4.904740, 3.306318, Rotation2d.fromDegrees(120)));
+
+      private static final Map<Integer, TAGS> lookup = new HashMap<>();
+
+      static {
+        for (TAGS tag : TAGS.values()) {
+          lookup.put(tag.tagId, tag);
+        }
+      }
+
+      public final int tagId;
+      public final Pose2d pose;
+
+      TAGS(int tagId, Pose2d pose) {
+        this.tagId = tagId;
+        this.pose = pose;
+      }
+
+      public static TAGS getTagById(int tagId) {
+        return lookup.get(tagId);
+      }
+
+      public static boolean isValidTagId(int tagId) {
+        return lookup.containsKey(tagId);
+      }
+    }
   }
 
   public static final class Swerve {
@@ -374,47 +401,24 @@ public final class Constants {
       CORAL_L2,
     }
 
-    public static final Pose2d[] TAG_LOCATIONS = {
-      new Pose2d(16.697198, 0.655320, Rotation2d.fromDegrees(126)), // 1
-      new Pose2d(16.697198, 7.396480, Rotation2d.fromDegrees(234)), // 2
-      new Pose2d(11.560810, 8.055610, Rotation2d.fromDegrees(270)), // 3
-      new Pose2d(9.276080, 6.137656, Rotation2d.fromDegrees(0)), // 4
-      new Pose2d(9.276080, 1.914906, Rotation2d.fromDegrees(0)), // 5
-      new Pose2d(13.474446, 3.306318, Rotation2d.fromDegrees(300)), // 6
-      new Pose2d(13.890498, 4.025900, Rotation2d.fromDegrees(0)), // 7
-      new Pose2d(13.474446, 4.745482, Rotation2d.fromDegrees(60)), // 8
-      new Pose2d(12.643358, 4.745482, Rotation2d.fromDegrees(120)), // 9
-      new Pose2d(12.227306, 4.025900, Rotation2d.fromDegrees(180)), // 10
-      new Pose2d(12.643358, 3.306318, Rotation2d.fromDegrees(240)), // 11
-      new Pose2d(0.851154, 0.655320, Rotation2d.fromDegrees(54)), // 12
-      new Pose2d(0.851154, 7.396480, Rotation2d.fromDegrees(306)), // 13
-      new Pose2d(8.272272, 6.137656, Rotation2d.fromDegrees(180)), // 14
-      new Pose2d(8.272272, 1.914906, Rotation2d.fromDegrees(180)), // 15
-      new Pose2d(5.987542, -0.003810, Rotation2d.fromDegrees(90)), // 16
-      new Pose2d(4.073906, 3.306318, Rotation2d.fromDegrees(240)), // 17
-      new Pose2d(3.657600, 4.025900, Rotation2d.fromDegrees(180)), // 18
-      new Pose2d(4.073906, 4.745482, Rotation2d.fromDegrees(120)), // 19
-      new Pose2d(4.904740, 4.745482, Rotation2d.fromDegrees(60)), // 20
-      new Pose2d(5.321046, 4.025900, Rotation2d.fromDegrees(0)), // 21
-      new Pose2d(4.904740, 3.306318, Rotation2d.fromDegrees(300)) // 22
-    };
-
     public enum FieldLocation {
-      preScoreBlueLeft1(new Pose2d(2.8126, 4.1909, Rotation2d.fromDegrees(0)), 18, 7, true),
-      preScoreBlueLeft2(new Pose2d(3.5085, 5.3948, Rotation2d.fromDegrees(300)), 19, 6, false),
-      preScoreBlueLeft3(new Pose2d(3.7943, 5.5598, Rotation2d.fromDegrees(300)), 19, 6, true),
-      preScoreBlueLeft4(new Pose2d(5.1843, 5.5598, Rotation2d.fromDegrees(240)), 20, 11, false),
-      preScoreBlueLeft5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240)), 20, 11, true),
-      preScoreBlueLeft6(new Pose2d(6.1660, 4.16, Rotation2d.fromDegrees(180)), 21, 10, false),
-      preScoreBlueRight1(new Pose2d(2.8126, 3.8609, Rotation2d.fromDegrees(0)), 18, 7, false),
-      preScoreBlueRight2(new Pose2d(3.5085, 2.6570, Rotation2d.fromDegrees(60)), 17, 8, true),
-      preScoreBlueRight3(new Pose2d(3.92, 2.58, Rotation2d.fromDegrees(60)), 17, 8, false),
-      preScoreBlueRight4(new Pose2d(5.25, 2.45, Rotation2d.fromDegrees(120)), 22, 9, true),
-      preScoreBlueRight5(new Pose2d(5.4701, 2.6570, Rotation2d.fromDegrees(120)), 22, 9, false),
-      preScoreBlueRight6(new Pose2d(6.1660, 3.8609, Rotation2d.fromDegrees(180)), 21, 10, true),
-      preIntakeCentreLeftBlueStation(new Pose2d(1.139, 7.000, Rotation2d.fromDegrees(126)), 13, 1),
-      preIntakeCentreRightBlueStation(new Pose2d(1.139, 1.052, Rotation2d.fromDegrees(234)), 12, 2),
-      // Pickup Locations
+      // Generalized Multi Alliance Locations
+      PRE_SCORE_LEFT_1(new Pose2d(2.8126, 4.1909, Rotation2d.fromDegrees(0)), 18, 7, true),
+      PRE_SCORE_LEFT_2(new Pose2d(3.5085, 5.3948, Rotation2d.fromDegrees(300)), 19, 6, false),
+      PRE_SCORE_LEFT_3(new Pose2d(3.7943, 5.5598, Rotation2d.fromDegrees(300)), 19, 6, true),
+      PRE_SCORE_LEFT_4(new Pose2d(5.1843, 5.5598, Rotation2d.fromDegrees(240)), 20, 11, false),
+      PRE_SCORE_LEFT_5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240)), 20, 11, true),
+      PRE_SCORE_LEFT_6(new Pose2d(6.1660, 4.16, Rotation2d.fromDegrees(180)), 21, 10, false),
+      PRE_SCORE_RIGHT_1(new Pose2d(2.8126, 3.8609, Rotation2d.fromDegrees(0)), 18, 7, false),
+      PRE_SCORE_RIGHT_2(new Pose2d(3.5085, 2.6570, Rotation2d.fromDegrees(60)), 17, 8, true),
+      PRE_SCORE_RIGHT_3(new Pose2d(3.92, 2.58, Rotation2d.fromDegrees(60)), 17, 8, false),
+      PRE_SCORE_RIGHT_4(new Pose2d(5.25, 2.45, Rotation2d.fromDegrees(120)), 22, 9, true),
+      PRE_SCORE_RIGHT_5(new Pose2d(5.4701, 2.6570, Rotation2d.fromDegrees(120)), 22, 9, false),
+      PRE_SCORE_RIGHT_6(new Pose2d(6.1660, 3.8609, Rotation2d.fromDegrees(180)), 21, 10, true),
+      PRE_INTAKE_CENTRE_LEFT_STATION(new Pose2d(1.139, 7.000, Rotation2d.fromDegrees(126)), 13, 1),
+      PRE_INTAKE_CENTRE_RIGHT_STATION(new Pose2d(1.139, 1.052, Rotation2d.fromDegrees(234)), 12, 2),
+
+      // Legacy Alliance Specific Locations
       redRightOuterStation(
           new Pose2d(
               FIELD_EXTENT_METRES_X - 100, FIELD_EXTENT_METRES_Y - 70, Rotation2d.fromDegrees(234)),
