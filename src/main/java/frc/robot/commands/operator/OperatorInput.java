@@ -1,6 +1,6 @@
 package frc.robot.commands.operator;
 
-import static frc.robot.Constants.AutoConstants.FieldLocation.preScoreBlueLeft3;
+import static frc.robot.Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_3;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -20,7 +20,6 @@ import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.pneumatics.ToggleCompressorCommand;
 import frc.robot.commands.swervedrive.SetAutoGyroCommand;
-import frc.robot.commands.swervedrive.ZeroGyroCommand;
 import frc.robot.commands.test.SystemTestCommand;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.ClimbSubsystem;
@@ -175,7 +174,7 @@ public class OperatorInput extends SubsystemBase {
                 driveSubsystem,
                 coralSubsystem,
                 visionSubsystem,
-                preScoreBlueLeft3,
+                PRE_SCORE_LEFT_3,
                 CoralPose.SCORE_L4,
                 0,
                 false,
@@ -389,7 +388,7 @@ public class OperatorInput extends SubsystemBase {
               swerve,
               coral,
               vision,
-              Constants.AutoConstants.FieldLocation.preScoreBlueRight6,
+              Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_6,
               CoralPose.SCORE_L4,
               delay,
               true,

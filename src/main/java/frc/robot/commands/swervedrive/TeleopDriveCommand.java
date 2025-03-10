@@ -144,23 +144,28 @@ public class TeleopDriveCommand extends BaseDriveCommand {
 
       if (faceTarget) {
         int tagId = (int) visionSubsystem.getVisibleTargetTagId();
-        if (tagId > 0 && tagId <= Constants.FieldConstants.TARGET_HEADINGS.length) {
-          headingSetpointDeg = Constants.FieldConstants.TARGET_HEADINGS[tagId - 1];
+        if (Constants.FieldConstants.TAGS.isValidTagId(tagId)) {
+          headingSetpointDeg =
+              Constants.FieldConstants.TAGS.getTagById(tagId).pose.getRotation().getDegrees();
         }
       }
 
       if (faceLeftStation) {
         if (invert) {
-          headingSetpointDeg = -54.0;
+          headingSetpointDeg =
+              Constants.FieldConstants.TAGS.RED_LEFT_SOURCE.pose.getRotation().getDegrees();
         } else {
-          headingSetpointDeg = 126.0;
+          headingSetpointDeg =
+              Constants.FieldConstants.TAGS.BLUE_LEFT_SOURCE.pose.getRotation().getDegrees();
         }
       }
       if (faceRightStation) {
         if (invert) {
-          headingSetpointDeg = 54.0;
+          headingSetpointDeg =
+              Constants.FieldConstants.TAGS.RED_RIGHT_SOURCE.pose.getRotation().getDegrees();
         } else {
-          headingSetpointDeg = -126.0;
+          headingSetpointDeg =
+              Constants.FieldConstants.TAGS.BLUE_RIGHT_SOURCE.pose.getRotation().getDegrees();
         }
       }
 

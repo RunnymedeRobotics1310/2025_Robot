@@ -21,7 +21,7 @@ public class Score1CoralCenterAutoCommand extends SequentialCommandGroup {
 
     addCommands(
         new DriveToFieldLocationCommand(
-            swerve, Constants.AutoConstants.FieldLocation.preScoreBlueLeft6));
+            swerve, Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_6));
     //    addCommands(
     //        new SetupScoreCommand(
     //            Constants.CoralConstants.CoralPose.SCORE_L4,
@@ -41,7 +41,7 @@ public class Score1CoralCenterAutoCommand extends SequentialCommandGroup {
                     swerve,
                     0.35,
                     0,
-                    Constants.AutoConstants.FieldLocation.preScoreBlueLeft6
+                    Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_6
                         .pose
                         .getRotation()
                         .getDegrees())));

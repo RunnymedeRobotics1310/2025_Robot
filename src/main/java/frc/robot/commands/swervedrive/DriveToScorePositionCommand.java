@@ -32,7 +32,10 @@ public class DriveToScorePositionCommand extends LoggingCommand {
 
   /**
    * Drive to a scoring position based on a vision target tag. If no tag is specified, it'll use the
-   * currently visible closest one
+   * currently visible closest one.
+   *
+   * <p>NOTE: This is the command used @ Centennial. It is now considered legacy and to be replaced
+   * by better options. Left here as it did work well for scoring one on Right6.
    *
    * @param swerve The swerve subsystem
    * @param visionSubsystem The vision subsystem
@@ -104,10 +107,8 @@ public class DriveToScorePositionCommand extends LoggingCommand {
         isLeftBranch = fieldLocation.isLeftSide;
       }
 
-      tagPose = Constants.AutoConstants.TAG_LOCATIONS[tagId - 1];
-      this.targetHeadingDeg =
-          SwerveUtils.normalizeDegrees(
-              tagPose.getRotation().getDegrees() + 180); // Face Tag, not the other way around
+      tagPose = Constants.FieldConstants.TAGS.getTagById(tagId).pose;
+      this.targetHeadingDeg = tagPose.getRotation().getDegrees();
 
       // Whatever tag we're looking at, it's the one we want.
       visionSubsystem.setTargetTagId(tagId);
@@ -155,18 +156,19 @@ public class DriveToScorePositionCommand extends LoggingCommand {
               newPose.getY() + finalY,
               Rotation2d.fromDegrees(targetHeadingDeg));
 
-      SmartDashboard.putNumber("1310/SetupScoreCommand/finalX", finalX);
-      SmartDashboard.putNumber("1310/SetupScoreCommand/finalY", finalY);
-      SmartDashboard.putNumber("1310/SetupScoreCommand/targetIagId", tagId);
+      SmartDashboard.putNumber("1310/DriveToScorePositionCommand/finalX", finalX);
+      SmartDashboard.putNumber("1310/DriveToScorePositionCommand/finalY", finalY);
+      SmartDashboard.putNumber("1310/DriveToScorePositionCommand/targetIagId", tagId);
     }
 
-    SmartDashboard.putNumber("1310/SetupScoreCommand/targetX", targetX);
-    SmartDashboard.putNumber("1310/SetupScoreCommand/targetY", targetY);
-    SmartDashboard.putNumber("1310/SetupScoreCommand/targetAngle", targetGlobalAngle);
-    SmartDashboard.putNumber("1310/SetupScoreCommand/targetTagId", tagId);
-    SmartDashboard.putString("1310/SetupScoreCommand/initalPose", initialRobotPose.toString());
-    SmartDashboard.putString("1310/SetupScoreCommand/myPose", newPose.toString());
-    SmartDashboard.putString("1310/SetupScoreCommand/targetPose", targetPose.toString());
+    SmartDashboard.putNumber("1310/DriveToScorePositionCommand/targetX", targetX);
+    SmartDashboard.putNumber("1310/DriveToScorePositionCommand/targetY", targetY);
+    SmartDashboard.putNumber("1310/DriveToScorePositionCommand/targetAngle", targetGlobalAngle);
+    SmartDashboard.putNumber("1310/DriveToScorePositionCommand/targetTagId", tagId);
+    SmartDashboard.putString(
+        "1310/DriveToScorePositionCommand/initalPose", initialRobotPose.toString());
+    SmartDashboard.putString("1310/DriveToScorePositionCommand/myPose", newPose.toString());
+    SmartDashboard.putString("1310/DriveToScorePositionCommand/targetPose", targetPose.toString());
   }
 
   private double calcSwerveSpeed(
@@ -180,7 +182,7 @@ public class DriveToScorePositionCommand extends LoggingCommand {
 
   public void end(boolean interrupted) {
     logCommandEnd(interrupted);
-    // visionSubsystem.setPoseUpdatesEnabled(true);
+    visionSubsystem.setTargetTagId(0);
     swerve.stop();
   }
 
@@ -198,7 +200,7 @@ public class DriveToScorePositionCommand extends LoggingCommand {
     if (done) {
       Pose2d endPose = swerve.getPose();
       SmartDashboard.putString(
-          "1310/SetupScoreCommand/endPose",
+          "1310/DriveToScorePositionCommand/endPose",
           "x["
               + endPose.getX()
               + "] y["
