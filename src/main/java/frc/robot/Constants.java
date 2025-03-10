@@ -8,7 +8,6 @@ import ca.team1310.swerve.core.config.*;
 import ca.team1310.swerve.utils.Coordinates;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import frc.robot.subsystems.swerve.SwerveDriveSubsystemConfig;
 import frc.robot.subsystems.swerve.SwerveRotationConfig;
 import frc.robot.subsystems.swerve.SwerveTranslationConfig;
@@ -39,58 +38,6 @@ public final class Constants {
           0.3,
           .5,
           true);
-
-  public enum BotTarget {
-    // Blue Field Targets
-    BLUE_AMP(new Translation3d(1.8415, 8.2042, 0.873252)),
-    BLUE_SOURCE(new Translation3d(15.632176, 0.564896, 0)),
-    BLUE_SPEAKER(new Translation3d(0.0381, 5.547868, 2.124202)),
-    BLUE_STAGE(new Translation3d(4.86791, 4.105656, 1.6764)),
-
-    // Red Field Targets
-    RED_AMP(new Translation3d(14.700758, 8.2042, 0.873252)),
-    RED_SOURCE(new Translation3d(0.908812, 0.564769, 0)),
-    RED_SPEAKER(new Translation3d(16.579342, 5.547868, 2.124202)),
-    RED_STAGE(new Translation3d(11.676634, 4.105656, 1.6764)),
-
-    // Blue Side Notes
-    BLUE_NOTE_WOLVERINE(new Translation3d(2.9, 4.11, 0)),
-    BLUE_NOTE_BARNUM(new Translation3d(2.9, 5.5, 0)),
-    BLUE_NOTE_VALJEAN(new Translation3d(2.9, 7, 0)),
-
-    // Red Side Notes
-    RED_NOTE_WOLVERINE(new Translation3d(13.53, 4.11, 0)),
-    RED_NOTE_BARNUM(new Translation3d(13.53, 5.5, 0)),
-    RED_NOTE_VALJEAN(new Translation3d(13.53, 7, 0)),
-
-    // Centre Field Notes
-    CENTRE_NOTE_1(new Translation3d(8.16, 0.75, 0)),
-    CENTRE_NOTE_2(new Translation3d(8.16, 2.43, 0)),
-    CENTRE_NOTE_3(new Translation3d(8.16, 4.11, 0)),
-    CENTRE_NOTE_4(new Translation3d(8.16, 5.79, 0)),
-    CENTRE_NOTE_5(new Translation3d(8.16, 7.47, 0)),
-
-    // When No Target is Set
-    NONE(new Translation3d(0, 0, 0)),
-
-    // No focus, but go to any tag visible
-    ALL(new Translation3d(0, 0, 0));
-
-    private final Translation3d location;
-
-    BotTarget(Translation3d location) {
-      this.location = location;
-    }
-
-    public Translation3d getLocation() {
-      return location;
-    }
-
-    @Override
-    public String toString() {
-      return "BotTarget: " + name() + " at " + location;
-    }
-  }
 
   public static final class OiConstants {
 
@@ -303,17 +250,6 @@ public final class Constants {
     public static final SwerveDriveSubsystemConfig SUBSYSTEM_CONFIG =
         new SwerveDriveSubsystemConfig(
             true, CORE_SWERVE_CONFIG, TRANSLATION_CONFIG, ROTATION_CONFIG);
-  }
-
-  public static final class UsefulPoses {
-
-    public static final Pose2d SCORE_BLUE_AMP =
-        (new Pose2d(BotTarget.BLUE_AMP.getLocation().getX(), 7.6, Rotation2d.fromDegrees(90)));
-    public static final Pose2d SCORE_RED_AMP =
-        (new Pose2d(BotTarget.RED_AMP.getLocation().getX(), 7.6, Rotation2d.fromDegrees(90)));
-
-    public static final Pose2d BLUE_2_2_20 = new Pose2d(2, 2, Rotation2d.fromDegrees(20));
-    public static final Pose2d RED_2_2_20 = new Pose2d(14.54, 2, Rotation2d.fromDegrees(-20));
   }
 
   public static final class AutoConstants {
