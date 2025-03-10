@@ -148,7 +148,7 @@ public class OperatorInput extends SubsystemBase {
     /*
      * Coral Intake Buttons
      */
-    new Trigger(() -> driverController.getLeftBumperButton())
+    new Trigger(() -> isAlignLeftStation() || isAlignRightStation())
         .onTrue(new IntakeCoralCommand(coralSubsystem, false));
 
     new Trigger(() -> driverController.getYButton())
@@ -227,6 +227,10 @@ public class OperatorInput extends SubsystemBase {
     return driverController.getRightBumperButton();
   }
 
+  public boolean isSlowMode() {
+    return driverController.getLeftBumperButton();
+  }
+
   public boolean isFaceTarget() {
     return driverController.getBButton();
   }
@@ -296,18 +300,8 @@ public class OperatorInput extends SubsystemBase {
     return operatorController.getRightTriggerAxis() > 0.5;
   }
 
-  /*
-   * Default Algae Command
-   */
-  public boolean getIntakeAlgae() {
-    return driverController.getLeftTriggerAxis() <= 0.5;
-  }
 
-  public boolean getOuttakeAlgae() {
-    return driverController.getRightTriggerAxis() <= 0.5;
-  }
-
-  // ALGAE COMMANDS REPURPOSED TO ALIGN CORAL STATION ANGLE
+  // ALIGN CORAL STATION ANGLE
   public boolean isAlignLeftStation() {
     return driverController.getLeftTriggerAxis() > 0.5;
   }

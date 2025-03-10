@@ -1,9 +1,7 @@
 package frc.robot.commands.swervedrive;
 
 import static ca.team1310.swerve.utils.SwerveUtils.normalizeDegrees;
-import static frc.robot.Constants.OiConstants.GENERAL_SPEED_FACTOR;
-import static frc.robot.Constants.OiConstants.MAX_SPEED_FACTOR;
-import static frc.robot.Constants.OiConstants.SLOW_SPEED_FACTOR;
+import static frc.robot.Constants.OiConstants.*;
 import static frc.robot.Constants.Swerve.ROTATION_CONFIG;
 import static frc.robot.Constants.Swerve.TRANSLATION_CONFIG;
 import static frc.robot.RunnymedeUtils.getRunnymedeAlliance;
@@ -80,16 +78,16 @@ public class TeleopDriveCommand extends BaseDriveCommand {
     final double vY = -oi.getDriverControllerAxis(LEFT, X);
 
     // Operator x for fine-tuning robot oriented
-    final double oX = Math.pow(oi.getOperatorControllerAxis(LEFT, Y), 3) * SLOW_SPEED_FACTOR;
+    final double oX = Math.pow(oi.getOperatorControllerAxis(LEFT, Y), 3) * OPERATOR_SPEED_FACTOR;
 
     // Operator y for fine-tuning robot oriented
-    final double oY = Math.pow(-oi.getOperatorControllerAxis(LEFT, X), 3) * SLOW_SPEED_FACTOR;
+    final double oY = Math.pow(-oi.getOperatorControllerAxis(LEFT, X), 3) * OPERATOR_SPEED_FACTOR;
 
     // Left and right on the right stick will change the direction the robot is facing - its
     // heading. Positive x values on the stick translate to clockwise motion, and vice versa.
     // The coordinate system has positive motion as CCW.
     // Therefore, negative x stick value maps to positive rotation on the field.
-    final double ccwRotAngularVelPct = -oi.getDriverControllerAxis(RIGHT, X) * 0.65;
+    final double ccwRotAngularVelPct = -oi.getDriverControllerAxis(RIGHT, X) * 0.65; // TODO: put this in constants?
 
     final boolean rotate180Val = oi.getRotate180Val();
 
@@ -99,8 +97,8 @@ public class TeleopDriveCommand extends BaseDriveCommand {
     final boolean faceRightStation = oi.isAlignRightStation();
 
     // Compute boost factor
-    // final boolean isSlow = oi.isDriverLeftBumper();
-    final boolean isSlow = false;
+    final boolean isSlow = oi.isSlowMode();
+//    final boolean isSlow = false;
     final boolean isFast = oi.isFastMode();
     final double boostFactor =
         isSlow ? SLOW_SPEED_FACTOR : (isFast ? MAX_SPEED_FACTOR : GENERAL_SPEED_FACTOR);

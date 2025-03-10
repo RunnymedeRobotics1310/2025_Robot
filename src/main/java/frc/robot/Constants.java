@@ -62,6 +62,12 @@ public final class Constants {
      * against the max translational speed.
      */
     public static final double SLOW_SPEED_FACTOR = .05;
+
+    /**
+     * Operator tune factor for tuning robot oriented at reef. This factor will be multiplied
+     * against the max translational speed.
+     */
+    public static final double OPERATOR_SPEED_FACTOR = 0.05;
   }
 
   public static final class FieldConstants {
@@ -144,7 +150,7 @@ public final class Constants {
 
     public static final SwerveRotationConfig ROTATION_CONFIG =
         new SwerveRotationConfig(
-            /* max rot vel (rad/s) */ Rotation2d.fromRotations(1).getRadians(),
+            /* max rot vel (rad/s) */ Rotation2d.fromRotations(1.5).getRadians(),
             /* max rotation accel (rad/s/s) */ Rotation2d.fromRotations(4).getRadians(),
             /* heading PID p */ 0.025, // Rads/Deg
             /* heading PID i */ 0,
