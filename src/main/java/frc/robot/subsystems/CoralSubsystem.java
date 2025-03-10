@@ -14,6 +14,7 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -69,6 +70,9 @@ public class CoralSubsystem extends SubsystemBase {
   private SparkLimitSwitch elevatorUpperLimitSwitch = elevatorMotor.getForwardLimitSwitch();
 
   private double elevatorEncoderOffset = 0;
+
+  // Rate limiter to prevent damaging elevator (used everywhere except at sensors)
+  private SlewRateLimiter elevatorRateLimiter = new SlewRateLimiter(0.2);
 
   // Arm
 
@@ -567,10 +571,7 @@ public class CoralSubsystem extends SubsystemBase {
       if (getElevatorEncoder() <= CoralConstants.ELEVATOR_SLOW_ZONE) {
 
         if (elevatorSpeed < -CoralConstants.ELEVATOR_SLOW_ZONE_SPEED) {
-
           elevatorSpeed = -CoralConstants.ELEVATOR_SLOW_ZONE_SPEED;
-          // Directly set the motor speed, do not call the setter method (recursive loop)
-          elevatorMotor.set(elevatorSpeed);
         }
       }
       // Elevator is in the upper slow zone
@@ -578,21 +579,20 @@ public class CoralSubsystem extends SubsystemBase {
           >= CoralConstants.ELEVATOR_MAX_HEIGHT - CoralConstants.ELEVATOR_SLOW_ZONE) {
 
         if (elevatorSpeed > CoralConstants.ELEVATOR_SLOW_ZONE_SPEED) {
-
           elevatorSpeed = CoralConstants.ELEVATOR_SLOW_ZONE_SPEED;
-          // Directly set the motor speed, do not call the setter method (recursive loop)
-          elevatorMotor.set(elevatorSpeed);
         }
       } else { // Elevator is not near a limit
 
         // Limit the elevator speed
         if (Math.abs(elevatorSpeed) > CoralConstants.ELEVATOR_MAX_SPEED) {
-
           elevatorSpeed = CoralConstants.ELEVATOR_MAX_SPEED * Math.signum(elevatorSpeed);
-          // Directly set the motor speed, do not call the setter method (recursive loop)
-          elevatorMotor.set(elevatorSpeed);
         }
       }
+      // If not at limit switch, rate limit speed to reduce wear on gears.
+      elevatorSpeed = elevatorRateLimiter.calculate(elevatorSpeed);
+
+      // Directly set the motor speed, do not call the setter method (recursive loop)
+      elevatorMotor.set(elevatorSpeed);
     }
 
     /*
