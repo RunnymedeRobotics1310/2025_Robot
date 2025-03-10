@@ -571,7 +571,7 @@ public final class Constants {
     // Set the encoder offset so that the encoder reads 0.1 rotations against the hard stop
     // This is so that the angle can go negative instead of back to 360 deg when slightly
     // less than zero. This constant was read off the REV Hardware Client Absolute Encoder page
-    public static final double ARM_ANGLE_ENCODER_OFFSET = 0.0296887;
+    public static final double ARM_ANGLE_ENCODER_OFFSET = 0.3506509;
     // Maximum manual tuning speed
     public static final double ARM_TUNE_MAX_SPEED = 0.2;
     // Pseudo PID and safe zone constants
@@ -591,8 +591,8 @@ public final class Constants {
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
       COMPACT(0),
-      CLOSE_INTAKE(47.5),
-      FAR_INTAKE(21),
+      CLOSE_INTAKE(50),
+      FAR_INTAKE(31),
       LEVEL_1(0),
       LEVEL_2(0),
       LEVEL_3(72),
