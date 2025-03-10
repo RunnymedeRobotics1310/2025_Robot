@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import frc.robot.commands.operator.OperatorInput;
-import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
@@ -15,7 +14,6 @@ public class CancelCommand extends LoggingCommand {
     private final CoralSubsystem coralSubsystem;
     private final PneumaticsSubsystem pneumaticsSubsystem;
     private final ClimbSubsystem climbSubsystem;
-    private final AlgaeSubsystem algaeSubsystem;
 
     /**
      * Cancel the commands running on all subsystems.
@@ -24,16 +22,15 @@ public class CancelCommand extends LoggingCommand {
      * that safely stops the robot from moving.
      */
     public CancelCommand(
-            OperatorInput operatorInput, SwerveSubsystem driveSubsystem, CoralSubsystem coralSubsystem, PneumaticsSubsystem pneumaticsSubsystem, ClimbSubsystem climbSubsystem, AlgaeSubsystem algaeSubsystem) {
+            OperatorInput operatorInput, SwerveSubsystem driveSubsystem, CoralSubsystem coralSubsystem, PneumaticsSubsystem pneumaticsSubsystem, ClimbSubsystem climbSubsystem) {
 
         this.operatorInput = operatorInput;
         this.driveSubsystem = driveSubsystem;
         this.coralSubsystem = coralSubsystem;
         this.pneumaticsSubsystem = pneumaticsSubsystem;
         this.climbSubsystem = climbSubsystem;
-        this.algaeSubsystem = algaeSubsystem;
 
-        addRequirements(driveSubsystem, coralSubsystem, pneumaticsSubsystem, algaeSubsystem, climbSubsystem);
+        addRequirements(driveSubsystem, coralSubsystem, pneumaticsSubsystem, climbSubsystem);
     }
 
     @Override
@@ -84,6 +81,5 @@ public class CancelCommand extends LoggingCommand {
         // Stop all of the robot movement
         driveSubsystem.stop();
         coralSubsystem.stop();
-        algaeSubsystem.stop();
     }
 }

@@ -21,7 +21,6 @@ import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.pneumatics.ToggleCompressorCommand;
 import frc.robot.commands.swervedrive.SetAutoGyroCommand;
 import frc.robot.commands.test.SystemTestCommand;
-import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
@@ -87,7 +86,6 @@ public class OperatorInput extends SubsystemBase {
       CoralSubsystem coralSubsystem,
       PneumaticsSubsystem pneumaticsSubsystem,
       ClimbSubsystem climbSubsystem,
-      AlgaeSubsystem algaeSubsystem,
       LimelightVisionSubsystem visionSubsystem) {
 
     // System Test Command
@@ -106,8 +104,7 @@ public class OperatorInput extends SubsystemBase {
                 driveSubsystem,
                 coralSubsystem,
                 pneumaticsSubsystem,
-                climbSubsystem,
-                algaeSubsystem));
+                climbSubsystem));
 
     // Reset Gyro
     new Trigger(() -> driverController.getBackButton())

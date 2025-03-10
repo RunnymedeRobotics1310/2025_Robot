@@ -618,15 +618,6 @@ public final class Constants {
     public static final int CLIMB_REVERSE_PNEUMATIC_PORT = 0;
   }
 
-  public static final class AlgaeConstants {
-    public static final int ALGAE_FORWARDS_PNEUMATIC_PORT = 6;
-    public static final int ALGAE_REVERSE_PNEUMATIC_PORT = 1;
-    public static final int INTAKE_MOTOR_CAN_ID = 50;
-
-    public static final int ALGAE_INTAKE_SPEED = 1;
-    public static final int ALGAE_OUTTAKE_SPEED = -1;
-  }
-
   public static final class LightsConstants {
 
     public static final int LED_STRING_PWM_PORT = 9;
