@@ -136,6 +136,16 @@ public class OperatorInput extends SubsystemBase {
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L1, coralSubsystem));
 
     /*
+     * Set remove algae poses
+     */
+    new Trigger(
+            () -> operatorController.getPOV() == 270 && operatorController.getRightBumperButton())
+        .onTrue(new MoveToCoralPoseCommand(CoralPose.REMOVE_HIGH_ALGAE, coralSubsystem));
+    new Trigger(
+            () -> operatorController.getPOV() == 180 && operatorController.getRightBumperButton())
+        .onTrue(new MoveToCoralPoseCommand(CoralPose.REMOVE_LOW_ALGAE, coralSubsystem));
+
+    /*
      * Coral Intake Buttons
      */
     new Trigger(() -> driverController.getLeftBumperButton())
