@@ -46,7 +46,7 @@ public class DriveToTagCommand extends LoggingCommand {
   private static final double MAX_SPEED = 1.5; // Maximum speed in m/s
   private static final double SLOWDOWN_DISTANCE =
       0.3; // Distance at which to start slowing down (30 cm)
-  private static final double STOP_TOLERANCE = 0.2;
+  private static final double STOP_TOLERANCE = 0.02;
 
   /**
    * Drive to a scoring position based on a vision target tag. If no tag is specified, it'll use the
@@ -73,25 +73,42 @@ public class DriveToTagCommand extends LoggingCommand {
   public void initialize() {
     logCommandStart();
 
+    // Reset basic variables
     tagId = 0;
-    speedX = 0;
-    speedY = 0;
-    omega = 0;
-    lastUpdateTime = 0;
-    travelTimeEstimate = 0;
-    noTagsAbort = false;
-    noDataTimeout = false;
-    reachedTarget = false;
-
-    // Setup initial pose and target based on target tag
-    Pose2d initialRobotPose = swerve.getPose();
+    speedX = speedY = omega = lastUpdateTime = travelTimeEstimate = 0;
+    noTagsAbort = noDataTimeout = reachedTarget = false;
 
     // If No field location, use the closest tag
+    Pose2d tagPose = initTag();
+    if (tagPose == null) {
+      noTagsAbort = true;
+      return;
+    }
+
+    // Whatever tag we're looking at, it's the one we want.
+    visionSubsystem.setTargetTagId(tagId);
+
+    // Calculate the target position based on tag with side and backwards offsets
+    calcTargetPosition(tagPose.getRotation().getDegrees());
+
+    // Initialize our data
+    calcTarget();
+
+    SmartDashboard.putNumber("1310/DriveToTagCommand/targetIagId", tagId);
+    SmartDashboard.putString("1310/DriveToTagCommand/initalPose", swerve.getPose().toString());
+  }
+
+  /**
+   * Initialize the tag to target. If a field location is specified, it will use the tag id from the
+   * fieldLocation, otherwise will use whatever tag is visible
+   *
+   * @return Tag Pose for selected Tag
+   */
+  private Pose2d initTag() {
     if (fieldLocation == null) {
       int visionClosestTagId = (int) visionSubsystem.getVisibleTargetTagId();
       if (!Constants.FieldConstants.TAGS.isValidTagId(visionClosestTagId)) {
-        noTagsAbort = true;
-        return;
+        return null;
       }
       tagId = visionClosestTagId;
     } else {
@@ -103,12 +120,16 @@ public class DriveToTagCommand extends LoggingCommand {
       isLeftBranch = fieldLocation.isLeftSide;
     }
 
-    Pose2d tagPose = Constants.FieldConstants.TAGS.getTagById(tagId).pose;
-    double targetHeadingDeg = tagPose.getRotation().getDegrees();
+    return Constants.FieldConstants.TAGS.getTagById(tagId).pose;
+  }
 
-    // Whatever tag we're looking at, it's the one we want.
-    visionSubsystem.setTargetTagId(tagId);
-
+  /**
+   * Calculate the target position based on sideways and backwards offsets to the tag location to
+   * accommodate for reef positions and size of robot
+   *
+   * @param targetHeadingDeg The field orientation facing the tag
+   */
+  private void calcTargetPosition(double targetHeadingDeg) {
     double sideOffset = isLeftBranch ? OFFSET_FROM_TAG_FOR_SCORING : -OFFSET_FROM_TAG_FOR_SCORING;
 
     // Compute side offset along target's orientation (Perpendicular)
@@ -123,23 +144,13 @@ public class DriveToTagCommand extends LoggingCommand {
 
     offsetX = sideOffsetX + backwardOffsetX;
     offsetY = sideOffsetY + backwardOffsetY;
-
-    lastUpdateTime = Timer.getFPGATimestamp();
-
-    SmartDashboard.putNumber("1310/DriveToTagCommand/targetIagId", tagId);
-    SmartDashboard.putString("1310/DriveToTagCommand/initalPose", initialRobotPose.toString());
   }
 
-  @Override
-  public void execute() {
+  private boolean calcTarget() {
+    boolean tagInView = visionSubsystem.isTagInView(tagId);
 
-    double currentTime = Timer.getFPGATimestamp();
-    boolean hasNewData = visionSubsystem.isTagInView(tagId);
-
-    // Update targeting and time remaining when the tag is in view.  This means that if the tag
-    // isn't in view, the robot will keep moving towards it in the direction it was last told to go,
-    // for the estimated duration.
-    if (hasNewData) {
+    if (tagInView) {
+      // Get Target info from Limelight & Swerve
       double robotHeading = swerve.getYaw();
       double targetAngleRelative = visionSubsystem.angleToTarget();
       double distanceToTarget = visionSubsystem.distanceToTarget();
@@ -150,18 +161,52 @@ public class DriveToTagCommand extends LoggingCommand {
       double targetX = distanceToTarget * Math.cos(Math.toRadians(targetGlobalAngle));
       double targetY = distanceToTarget * Math.sin(Math.toRadians(targetGlobalAngle));
 
-      // Compute final target position with offset
-      double finalX = targetX + offsetX;
-      double finalY = targetY + offsetY;
+      // Compute final target position with targeting offset calculated during init
+      double distanceX = targetX + offsetX;
+      double distanceY = targetY + offsetY;
 
-      calculateSpeeds(finalX, finalY, robotHeading, targetGlobalAngle);
-      swerve.driveRobotOriented(speedX, speedY, omega);
+      // Determine Motor Speeds & Omega
+      double distanceTotal = Math.hypot(distanceX, distanceY); // Total distance to target
+      double speedMultiplier = 1.0;
 
-      SmartDashboard.putNumber("1310/DriveToTagCommand/finalX", finalX);
-      SmartDashboard.putNumber("1310/DriveToTagCommand/finalY", finalY);
+      // Stop if within tolerance, or slow down if within the slowdown distance
+      if (distanceTotal < STOP_TOLERANCE) {
+        speedMultiplier = 0;
+        reachedTarget = true;
+      } else if (distanceTotal < SLOWDOWN_DISTANCE) {
+        speedMultiplier = distanceTotal / SLOWDOWN_DISTANCE; // Scale speed linearly
+      }
+
+      // Normalize direction and apply speed
+      speedX = speedMultiplier * MAX_SPEED * Math.cos(targetAngleRelative);
+      speedY = speedMultiplier * MAX_SPEED * Math.sin(targetAngleRelative);
+      omega = swerve.computeOmega(targetGlobalAngle);
+
+      // Time estimate remaining
+      travelTimeEstimate =
+          (distanceTotal >= STOP_TOLERANCE) ? (distanceTotal / (speedMultiplier * MAX_SPEED)) : 0;
+
+      SmartDashboard.putNumber("1310/DriveToTagCommand/distanceX", distanceX);
+      SmartDashboard.putNumber("1310/DriveToTagCommand/distanceY", distanceY);
       SmartDashboard.putNumber("1310/DriveToTagCommand/targetX", targetX);
       SmartDashboard.putNumber("1310/DriveToTagCommand/targetY", targetY);
       SmartDashboard.putNumber("1310/DriveToTagCommand/targetAngle", targetGlobalAngle);
+    }
+
+    return tagInView;
+  }
+
+  @Override
+  public void execute() {
+
+    double currentTime = Timer.getFPGATimestamp();
+    boolean hasNewData = calcTarget();
+
+    // Update targeting and time remaining when the tag is in view.  This means that if the tag
+    // isn't in view, the robot will keep moving towards it in the direction it was last told to go,
+    // for the estimated duration.
+    if (hasNewData) {
+      swerve.driveRobotOriented(speedX, speedY, omega);
     } else {
       // If no new data for a while, we have to abort/stop.
       double timeSinceLastData = currentTime - lastUpdateTime;
@@ -181,29 +226,6 @@ public class DriveToTagCommand extends LoggingCommand {
         swerve.stop();
       }
     }
-  }
-
-  private void calculateSpeeds(
-      double distanceX, double distanceY, double headingAngle, double targetAngleRobotRelative) {
-    double distanceTotal = Math.hypot(distanceX, distanceY); // Total distance to target
-    double speedMultiplier = 1.0;
-
-    // Stop if within tolerance, or slow down if within the slowdown distance
-    if (distanceTotal < STOP_TOLERANCE) {
-      speedMultiplier = 0;
-      reachedTarget = true;
-    } else if (distanceTotal < SLOWDOWN_DISTANCE) {
-      speedMultiplier = distanceTotal / SLOWDOWN_DISTANCE; // Scale speed linearly
-    }
-
-    // Normalize direction and apply speed
-    speedX = speedMultiplier * MAX_SPEED * Math.cos(targetAngleRobotRelative);
-    speedY = speedMultiplier * MAX_SPEED * Math.sin(targetAngleRobotRelative);
-    omega = swerve.computeOmega(headingAngle);
-
-    // Time estimate remaining
-    travelTimeEstimate =
-        (distanceTotal >= STOP_TOLERANCE) ? (distanceTotal / (speedMultiplier * MAX_SPEED)) : 0;
   }
 
   public void end(boolean interrupted) {
