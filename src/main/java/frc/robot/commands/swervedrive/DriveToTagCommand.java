@@ -23,10 +23,6 @@ public class DriveToTagCommand extends LoggingCommand {
   private boolean isLeftBranch;
   private final Constants.AutoConstants.FieldLocation fieldLocation;
 
-  private Pose2d tagPose;
-  private double targetHeadingDeg;
-  private Pose2d initialRobotPose;
-  private Pose2d targetPose;
   private int tagId = 0;
 
   private boolean noTagsAbort = false;
@@ -42,7 +38,6 @@ public class DriveToTagCommand extends LoggingCommand {
 
   private double lastUpdateTime = 0;
   private double travelTimeEstimate = 0;
-  private double timeRemaining = 0;
 
   public static final double OFFSET_FROM_TAG_FOR_SCORING = 0.20;
   public static final double OFFSET_FROM_TAG_ROBOT_HALF_LENGTH = 0.57;
@@ -78,21 +73,18 @@ public class DriveToTagCommand extends LoggingCommand {
   public void initialize() {
     logCommandStart();
 
-    // Disable vision processing
-    // visionSubsystem.setPoseUpdatesEnabled(false);
     tagId = 0;
     speedX = 0;
     speedY = 0;
     omega = 0;
     lastUpdateTime = 0;
     travelTimeEstimate = 0;
-    timeRemaining = 0;
     noTagsAbort = false;
     noDataTimeout = false;
     reachedTarget = false;
 
     // Setup initial pose and target based on target tag
-    initialRobotPose = swerve.getPose();
+    Pose2d initialRobotPose = swerve.getPose();
 
     // If No field location, use the closest tag
     if (fieldLocation == null) {
@@ -111,8 +103,8 @@ public class DriveToTagCommand extends LoggingCommand {
       isLeftBranch = fieldLocation.isLeftSide;
     }
 
-    tagPose = Constants.FieldConstants.TAGS.getTagById(tagId).pose;
-    this.targetHeadingDeg = tagPose.getRotation().getDegrees();
+    Pose2d tagPose = Constants.FieldConstants.TAGS.getTagById(tagId).pose;
+    double targetHeadingDeg = tagPose.getRotation().getDegrees();
 
     // Whatever tag we're looking at, it's the one we want.
     visionSubsystem.setTargetTagId(tagId);
@@ -172,13 +164,22 @@ public class DriveToTagCommand extends LoggingCommand {
       SmartDashboard.putNumber("1310/DriveToTagCommand/targetAngle", targetGlobalAngle);
     } else {
       // If no new data for a while, we have to abort/stop.
-      if (currentTime - lastUpdateTime > DATA_TIMEOUT) {
+      double timeSinceLastData = currentTime - lastUpdateTime;
+      if (timeSinceLastData > DATA_TIMEOUT) {
         noDataTimeout = true;
         swerve.stop();
       }
 
-      // Reduce the remaining time by the amount of time elasped since the last data update
-      timeRemaining = travelTimeEstimate - (currentTime - lastUpdateTime);
+      // Reduce the remaining time by the amount of time elapsed since the last data update
+      double timeRemaining = travelTimeEstimate - timeSinceLastData;
+
+      // If we're out of time, stop moving, we should have reached the target
+      // The travelTimeEstimate > 0 handles the case where a tag wasn't visible on the 1st calls to
+      // execute() within DATA_TIMEOUT window - i.e. we can wait a little to see if the tag shows up
+      if (travelTimeEstimate > 0 && timeRemaining <= 0) {
+        reachedTarget = true;
+        swerve.stop();
+      }
     }
   }
 
@@ -201,9 +202,8 @@ public class DriveToTagCommand extends LoggingCommand {
     omega = swerve.computeOmega(headingAngle);
 
     // Time estimate remaining
-    timeRemaining =
-        travelTimeEstimate =
-            (distanceTotal >= STOP_TOLERANCE) ? (distanceTotal / (speedMultiplier * MAX_SPEED)) : 0;
+    travelTimeEstimate =
+        (distanceTotal >= STOP_TOLERANCE) ? (distanceTotal / (speedMultiplier * MAX_SPEED)) : 0;
   }
 
   public void end(boolean interrupted) {
