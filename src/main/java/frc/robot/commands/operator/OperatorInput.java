@@ -228,7 +228,7 @@ public class OperatorInput extends SubsystemBase {
     return driverController.getLeftBumperButton();
   }
 
-  public boolean isFaceTarget() {
+  public boolean isFaceReef() {
     return driverController.getBButton();
   }
 

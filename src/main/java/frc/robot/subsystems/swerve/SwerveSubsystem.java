@@ -3,12 +3,14 @@ package frc.robot.subsystems.swerve;
 import ca.team1310.swerve.RunnymedeSwerveDrive;
 import ca.team1310.swerve.core.SwerveMath;
 import ca.team1310.swerve.odometry.FieldAwareSwerveDrive;
+import ca.team1310.swerve.utils.SwerveUtils;
 import ca.team1310.swerve.vision.VisionPoseCallback;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RunnymedeUtils;
 import frc.robot.telemetry.Telemetry;
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -248,4 +250,35 @@ public class SwerveSubsystem extends SubsystemBase {
 
     return speed;
   }
+
+  public double getClosestReefAngle(double currentX, double currentY) {
+    double reefX = 4.49;
+    double reefY = 4.03;
+    double reefDiff = 8.57;
+
+    double rrX = reefX - currentX;
+    double rrY = reefY - currentY;
+    if (rrX > Constants.FieldConstants.FIELD_EXTENT_METRES_X/2) {
+      rrX -= reefDiff;
+    }
+
+    double angleAroundReefDeg = Math.toDegrees(Math.atan2(rrX, rrY));
+
+    if (angleAroundReefDeg > -150 && angleAroundReefDeg < -90) {
+      return -60;
+    } else if (angleAroundReefDeg < -30 && angleAroundReefDeg > -90) {
+      return -120;
+    } else if (angleAroundReefDeg < 30 && angleAroundReefDeg > -30) {
+      return 180;
+    } else if (angleAroundReefDeg < 90 && angleAroundReefDeg > 30) {
+      return 120;
+    } else if (angleAroundReefDeg < 150 && angleAroundReefDeg > 90) {
+      return 60;
+    } else {
+      return 0;
+    }
+
+
+  }
+
 }
