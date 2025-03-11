@@ -1,8 +1,8 @@
 package frc.robot.commands.swervedrive;
 
-import ca.team1310.swerve.utils.SwerveUtils;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.RunnymedeUtils;
@@ -10,6 +10,12 @@ import frc.robot.commands.LoggingCommand;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 
+/**
+ * Drive to a scoring position based on a vision target tag. If no tag is specified, it'll use the
+ * currently visible closest one. This will calculate a distance that needs to be travelled, and
+ * will tolerate losing sight of the tag for a short duration. It will stop moving once it reaches
+ * the target.
+ */
 public class DriveToTagCommand extends LoggingCommand {
 
   private final SwerveSubsystem swerve;
@@ -22,7 +28,11 @@ public class DriveToTagCommand extends LoggingCommand {
   private Pose2d initialRobotPose;
   private Pose2d targetPose;
   private int tagId = 0;
+
   private boolean noTagsAbort = false;
+  private boolean noDataTimeout = false;
+  private boolean reachedTarget = false;
+
   private double offsetX;
   private double offsetY;
 
@@ -30,15 +40,18 @@ public class DriveToTagCommand extends LoggingCommand {
   private double speedY;
   private double omega;
 
-  private double startTime;
-  private double estimatedTime;
+  private double lastUpdateTime = 0;
+  private double travelTimeEstimate = 0;
+  private double timeRemaining = 0;
 
   public static final double OFFSET_FROM_TAG_FOR_SCORING = 0.20;
   public static final double OFFSET_FROM_TAG_ROBOT_HALF_LENGTH = 0.57;
 
+  private static final double DATA_TIMEOUT = 0.2;
   private static final double MAX_SPEED = 1.5; // Maximum speed in m/s
   private static final double SLOWDOWN_DISTANCE =
       0.3; // Distance at which to start slowing down (30 cm)
+  private static final double STOP_TOLERANCE = 0.2;
 
   /**
    * Drive to a scoring position based on a vision target tag. If no tag is specified, it'll use the
@@ -68,6 +81,15 @@ public class DriveToTagCommand extends LoggingCommand {
     // Disable vision processing
     // visionSubsystem.setPoseUpdatesEnabled(false);
     tagId = 0;
+    speedX = 0;
+    speedY = 0;
+    omega = 0;
+    lastUpdateTime = 0;
+    travelTimeEstimate = 0;
+    timeRemaining = 0;
+    noTagsAbort = false;
+    noDataTimeout = false;
+    reachedTarget = false;
 
     // Setup initial pose and target based on target tag
     initialRobotPose = swerve.getPose();
@@ -75,7 +97,7 @@ public class DriveToTagCommand extends LoggingCommand {
     // If No field location, use the closest tag
     if (fieldLocation == null) {
       int visionClosestTagId = (int) visionSubsystem.getVisibleTargetTagId();
-      if (visionClosestTagId < 1 || visionClosestTagId > 22) {
+      if (!Constants.FieldConstants.TAGS.isValidTagId(visionClosestTagId)) {
         noTagsAbort = true;
         return;
       }
@@ -110,6 +132,8 @@ public class DriveToTagCommand extends LoggingCommand {
     offsetX = sideOffsetX + backwardOffsetX;
     offsetY = sideOffsetY + backwardOffsetY;
 
+    lastUpdateTime = Timer.getFPGATimestamp();
+
     SmartDashboard.putNumber("1310/DriveToTagCommand/targetIagId", tagId);
     SmartDashboard.putString("1310/DriveToTagCommand/initalPose", initialRobotPose.toString());
   }
@@ -117,31 +141,45 @@ public class DriveToTagCommand extends LoggingCommand {
   @Override
   public void execute() {
 
-    if (noTagsAbort || !visionSubsystem.isTagInView(tagId)) {
-      return;
+    double currentTime = Timer.getFPGATimestamp();
+    boolean hasNewData = visionSubsystem.isTagInView(tagId);
+
+    // Update targeting and time remaining when the tag is in view.  This means that if the tag
+    // isn't in view, the robot will keep moving towards it in the direction it was last told to go,
+    // for the estimated duration.
+    if (hasNewData) {
+      double robotHeading = swerve.getYaw();
+      double targetAngleRelative = visionSubsystem.angleToTarget();
+      double distanceToTarget = visionSubsystem.distanceToTarget();
+      lastUpdateTime = Timer.getFPGATimestamp();
+
+      // Compute target position relative to robot
+      double targetGlobalAngle = robotHeading + targetAngleRelative;
+      double targetX = distanceToTarget * Math.cos(Math.toRadians(targetGlobalAngle));
+      double targetY = distanceToTarget * Math.sin(Math.toRadians(targetGlobalAngle));
+
+      // Compute final target position with offset
+      double finalX = targetX + offsetX;
+      double finalY = targetY + offsetY;
+
+      calculateSpeeds(finalX, finalY, robotHeading, targetGlobalAngle);
+      swerve.driveRobotOriented(speedX, speedY, omega);
+
+      SmartDashboard.putNumber("1310/DriveToTagCommand/finalX", finalX);
+      SmartDashboard.putNumber("1310/DriveToTagCommand/finalY", finalY);
+      SmartDashboard.putNumber("1310/DriveToTagCommand/targetX", targetX);
+      SmartDashboard.putNumber("1310/DriveToTagCommand/targetY", targetY);
+      SmartDashboard.putNumber("1310/DriveToTagCommand/targetAngle", targetGlobalAngle);
+    } else {
+      // If no new data for a while, we have to abort/stop.
+      if (currentTime - lastUpdateTime > DATA_TIMEOUT) {
+        noDataTimeout = true;
+        swerve.stop();
+      }
+
+      // Reduce the remaining time by the amount of time elasped since the last data update
+      timeRemaining = travelTimeEstimate - (currentTime - lastUpdateTime);
     }
-
-    double robotHeading = swerve.getYaw();
-    double targetAngleRelative = visionSubsystem.angleToTarget();
-    double distanceToTarget = visionSubsystem.distanceToTarget();
-
-    // Compute target position relative to robot
-    double targetGlobalAngle = robotHeading + targetAngleRelative;
-    double targetX = distanceToTarget * Math.cos(Math.toRadians(targetGlobalAngle));
-    double targetY = distanceToTarget * Math.sin(Math.toRadians(targetGlobalAngle));
-
-    // Compute final target position with offset
-    double finalX = targetX + offsetX;
-    double finalY = targetY + offsetY;
-
-    calculateSpeeds(finalX, finalY, robotHeading, targetGlobalAngle);
-    swerve.driveRobotOriented(speedX, speedY, omega);
-
-    SmartDashboard.putNumber("1310/DriveToTagCommand/finalX", finalX);
-    SmartDashboard.putNumber("1310/DriveToTagCommand/finalY", finalY);
-    SmartDashboard.putNumber("1310/DriveToTagCommand/targetX", targetX);
-    SmartDashboard.putNumber("1310/DriveToTagCommand/targetY", targetY);
-    SmartDashboard.putNumber("1310/DriveToTagCommand/targetAngle", targetGlobalAngle);
   }
 
   private void calculateSpeeds(
@@ -149,8 +187,11 @@ public class DriveToTagCommand extends LoggingCommand {
     double distanceTotal = Math.hypot(distanceX, distanceY); // Total distance to target
     double speedMultiplier = 1.0;
 
-    // Slow down if within the slowdown distance
-    if (distanceTotal < SLOWDOWN_DISTANCE) {
+    // Stop if within tolerance, or slow down if within the slowdown distance
+    if (distanceTotal < STOP_TOLERANCE) {
+      speedMultiplier = 0;
+      reachedTarget = true;
+    } else if (distanceTotal < SLOWDOWN_DISTANCE) {
       speedMultiplier = distanceTotal / SLOWDOWN_DISTANCE; // Scale speed linearly
     }
 
@@ -160,37 +201,31 @@ public class DriveToTagCommand extends LoggingCommand {
     omega = swerve.computeOmega(headingAngle);
 
     // Time estimate remaining
-    estimatedTime = (distanceTotal > 0) ? (distanceTotal / (speedMultiplier * MAX_SPEED)) : 0;
-  }
-
-  private double calcSwerveSpeed(
-      double distance, double tolerance, double minSpeed, double maxSpeed) {
-    double xSpeed = Math.max(minSpeed, Math.min(maxSpeed, Math.abs(distance)));
-    if (Math.abs(distance) < tolerance) {
-      xSpeed = 0;
-    }
-    return xSpeed * Math.signum(distance);
+    timeRemaining =
+        travelTimeEstimate =
+            (distanceTotal >= STOP_TOLERANCE) ? (distanceTotal / (speedMultiplier * MAX_SPEED)) : 0;
   }
 
   public void end(boolean interrupted) {
     logCommandEnd(interrupted);
     visionSubsystem.setTargetTagId(0);
-    // visionSubsystem.setPoseUpdatesEnabled(true);
     swerve.stop();
   }
 
   @Override
   public boolean isFinished() {
     if (noTagsAbort) {
+      log("No tags to target");
       return true;
     }
 
-    boolean done =
-        (SwerveUtils.isCloseEnough(
-                swerve.getPose().getTranslation(), targetPose.getTranslation(), 0.02)
-            && SwerveUtils.isCloseEnough(swerve.getYaw(), targetHeadingDeg, 2));
+    if (noDataTimeout) {
+      log("No data for too long, stopping");
+      return true;
+    }
 
-    if (done) {
+    if (reachedTarget) {
+      log("Reached target");
       Pose2d endPose = swerve.getPose();
       SmartDashboard.putString(
           "1310/DriveToTagCommand/endPose",
@@ -201,8 +236,9 @@ public class DriveToTagCommand extends LoggingCommand {
               + "], deg["
               + endPose.getRotation().getDegrees()
               + "]");
-      visionSubsystem.setTargetTagId(0);
+      return true;
     }
-    return done;
+
+    return false;
   }
 }
