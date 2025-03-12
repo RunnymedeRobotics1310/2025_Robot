@@ -30,8 +30,9 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   private final NetworkTableEntry nikolaPipeline = nikolaVision.getEntry("pipeline");
   private final DoubleArrayPublisher nikolaRobotOrientation =
       nikolaVision.getDoubleArrayTopic("robot_orientation_set").publish();
-  private final DoubleArrayPublisher thomasCameraLocation =
-      thomasVision.getDoubleArrayTopic("camerapose_robotspace_set").publish();
+  // TODO: Remove properly
+  //  private final DoubleArrayPublisher thomasCameraLocation =
+  //      thomasVision.getDoubleArrayTopic("camerapose_robotspace_set").publish();
 
   private final NetworkTableEntry thomasCamMode = thomasVision.getEntry("camMode");
   private final NetworkTableEntry thomsPipeline = thomasVision.getEntry("pipeline");
@@ -160,7 +161,7 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
 
   public void setThomasHeight(double height) {
     thomasPositionSet[2] = height;
-    thomasCameraLocation.set(thomasPositionSet);
+    //    thomasCameraLocation.set(thomasPositionSet);  // TODO: Remove properly
   }
 
   public void setTargetTagId(TagType tag) {
