@@ -72,7 +72,7 @@ public class CoralSubsystem extends SubsystemBase {
   private double elevatorEncoderOffset = 0;
 
   // Rate limiter to prevent damaging elevator (used everywhere except at sensors)
-  private SlewRateLimiter elevatorRateLimiter = new SlewRateLimiter(0.2);
+  private SlewRateLimiter elevatorLimiter = new SlewRateLimiter(Double.POSITIVE_INFINITY - 1);
 
   // Arm
 
@@ -589,7 +589,7 @@ public class CoralSubsystem extends SubsystemBase {
         }
       }
       // If not at limit switch, rate limit speed to reduce wear on gears.
-      elevatorSpeed = elevatorRateLimiter.calculate(elevatorSpeed);
+      elevatorSpeed = elevatorLimiter.calculate(elevatorSpeed);
 
       // Directly set the motor speed, do not call the setter method (recursive loop)
       elevatorMotor.set(elevatorSpeed);
