@@ -15,10 +15,17 @@ public class DriveToFieldLocationCommand extends LoggingCommand {
   private final Pose2d location;
   private Pose2d allianceLocation;
   private double targetHeadingDeg;
+  private double tolerance = 0.05;
 
   public DriveToFieldLocationCommand(SwerveSubsystem swerve, FieldLocation location) {
     this.swerve = swerve;
     this.location = location.pose;
+  }
+
+  public DriveToFieldLocationCommand(SwerveSubsystem swerve, FieldLocation location, double toleranceM) {
+    this.swerve = swerve;
+    this.location = location.pose;
+    this.tolerance = toleranceM;
   }
 
   @Override
@@ -60,8 +67,8 @@ public class DriveToFieldLocationCommand extends LoggingCommand {
     // targetHeadingDeg, 10));
     boolean done =
         (SwerveUtils.isCloseEnough(
-                swerve.getPose().getTranslation(), allianceLocation.getTranslation(), 0.05)
-            && SwerveUtils.isCloseEnough(swerve.getYaw(), targetHeadingDeg, 10));
+                swerve.getPose().getTranslation(), allianceLocation.getTranslation(), tolerance)
+            && SwerveUtils.isCloseEnough(swerve.getYaw(), targetHeadingDeg, 5));
     if (done) {
       System.out.println(
           "REACHED DESTINATION: x["
