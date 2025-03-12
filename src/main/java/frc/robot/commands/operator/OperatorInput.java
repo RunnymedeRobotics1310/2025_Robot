@@ -382,7 +382,7 @@ public class OperatorInput extends SubsystemBase {
 
     return switch (autoPatternChooser.getSelected()) {
       case EXIT_ZONE -> new ExitZoneAutoCommand(swerve, delay);
-      case SCORE_3_LEFT -> new Score3L4AutoCommand(swerve, delay);
+      case SCORE_3_LEFT -> new Score3L4AutoCommand(swerve, coral, vision, delay);
       case SCORE_1_CENTER -> new Score1CoralCenterAutoCommand(swerve, coral, vision, delay);
       case SCORE_1_POSE ->
           new Score1DriveToPoseAutoCommand(
