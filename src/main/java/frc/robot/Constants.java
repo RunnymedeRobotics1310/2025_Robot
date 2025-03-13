@@ -28,6 +28,13 @@ import java.util.Map;
 public final class Constants {
 
   public static final double DEFAULT_COMMAND_TIMEOUT_SECONDS = 5;
+
+  public static final class RobotConfig {
+    public static final double LENGTH_METRES = 0.81;
+    public static final double WIDTH_METRES = 0.71;
+    public static final double HEIGHT_METRES = 1.016;
+  }
+
   public static final VisionConfig VISION_CONFIG =
       new VisionConfig(
           0,
