@@ -14,7 +14,6 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -70,9 +69,6 @@ public class CoralSubsystem extends SubsystemBase {
   private SparkLimitSwitch elevatorUpperLimitSwitch = elevatorMotor.getForwardLimitSwitch();
 
   private double elevatorEncoderOffset = 0;
-
-  // Rate limiter to prevent damaging elevator (used everywhere except at sensors)
-  private SlewRateLimiter elevatorLimiter = new SlewRateLimiter(Double.POSITIVE_INFINITY - 1);
 
   // Arm
 
@@ -279,7 +275,7 @@ public class CoralSubsystem extends SubsystemBase {
 
     double error = targetHeight.encoderCount - getElevatorEncoder();
 
-    if (Math.abs(error) >= 10) {
+    if (Math.abs(error) >= CoralConstants.ELEVATOR_SLOW_ZONE) {
       speed = CoralConstants.ELEVATOR_MAX_SPEED;
     } else {
       speed = CoralConstants.ELEVATOR_SLOW_ZONE_SPEED;
@@ -356,7 +352,7 @@ public class CoralSubsystem extends SubsystemBase {
 
   public void resetElevatorEncoder() {
     setElevatorEncoder(0);
-    System.out.println("Resetting elevator encoder!");
+    // System.out.println("Resetting elevator encoder!");
   }
 
   public void setElevatorEncoder(double encoderValue) {
@@ -545,22 +541,22 @@ public class CoralSubsystem extends SubsystemBase {
   private void checkSafety() {
 
     if (isElevatorAtLowerLimit()) {
+      resetElevatorEncoder();
 
       if (elevatorSpeed < 0) {
         elevatorSpeed = 0;
         // Directly set the motor speed, do not call the setter method (recursive loop)
         elevatorMotor.set(0);
-        resetElevatorEncoder();
       }
     }
 
     if (isElevatorAtUpperLimit()) {
+      elevatorEncoder.setPosition(ELEVATOR_MAX_HEIGHT);
 
       if (elevatorSpeed > 0) {
         elevatorSpeed = 0;
         // Directly set the motor speed, do not call the setter method (recursive loop)
         elevatorMotor.set(0);
-        elevatorEncoder.setPosition(ELEVATOR_MAX_HEIGHT);
       }
     }
 
@@ -569,6 +565,7 @@ public class CoralSubsystem extends SubsystemBase {
 
       // Elevator is in the lower slow zone
       if (getElevatorEncoder() <= CoralConstants.ELEVATOR_SLOW_ZONE) {
+        // System.out.println("Lower slow zone!");
 
         if (elevatorSpeed < -CoralConstants.ELEVATOR_SLOW_ZONE_SPEED) {
           elevatorSpeed = -CoralConstants.ELEVATOR_SLOW_ZONE_SPEED;
@@ -577,6 +574,7 @@ public class CoralSubsystem extends SubsystemBase {
       // Elevator is in the upper slow zone
       else if (getElevatorEncoder()
           >= CoralConstants.ELEVATOR_MAX_HEIGHT - CoralConstants.ELEVATOR_SLOW_ZONE) {
+        // System.out.println("Upper slow zone!");
 
         if (elevatorSpeed > CoralConstants.ELEVATOR_SLOW_ZONE_SPEED) {
           elevatorSpeed = CoralConstants.ELEVATOR_SLOW_ZONE_SPEED;
@@ -588,9 +586,6 @@ public class CoralSubsystem extends SubsystemBase {
           elevatorSpeed = CoralConstants.ELEVATOR_MAX_SPEED * Math.signum(elevatorSpeed);
         }
       }
-      // If not at limit switch, rate limit speed to reduce wear on gears.
-      elevatorSpeed = elevatorLimiter.calculate(elevatorSpeed);
-
       // Directly set the motor speed, do not call the setter method (recursive loop)
       elevatorMotor.set(elevatorSpeed);
     }

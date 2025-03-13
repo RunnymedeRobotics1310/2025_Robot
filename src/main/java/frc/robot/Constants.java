@@ -496,15 +496,16 @@ public final class Constants {
      * Elevator Constants
      */
     public static final double ELEVATOR_MAX_SPEED = 1;
-    public static final double ELEVATOR_MAX_HEIGHT = 188;
+    public static final double ELEVATOR_MAX_HEIGHT = 158;
     public static final double ELEVATOR_TOLERANCE = 2.5;
     public static final double ELEVATOR_P = 0.05;
     // Maximum manual tuning speed
     public static final double ELEVATOR_TUNE_MAX_SPEED = 0.2;
     // Safety constants near the limits
-    public static final double ELEVATOR_SLOW_ZONE_SPEED = 0.2;
-    public static final double ELEVATOR_SLOW_ZONE = 10; // encoder counts
-    public static final double ELEVATOR_METERS_PER_ENCODER_COUNT = 0.745 / 122.13;
+    public static final double ELEVATOR_SLOW_ZONE_SPEED = 0.25;
+    public static final double ELEVATOR_SLOW_ZONE = 15; // encoder counts
+    public static final double ELEVATOR_METERS_PER_ENCODER_COUNT =
+        0.745 / 122.13; // TODO: fixme: WRONG
     public static final double THOMAS_STARTING_HEIGHT = 0.88; // m
     /*
      * Arm Constants
@@ -537,14 +538,14 @@ public final class Constants {
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
       COMPACT(0),
-      CLOSE_INTAKE(50),
-      FAR_INTAKE(31),
+      CLOSE_INTAKE(39),
+      FAR_INTAKE(32),
       LEVEL_1(0),
       LEVEL_2(0),
-      LEVEL_3(72),
+      LEVEL_3(57),
       LEVEL_4(ELEVATOR_MAX_HEIGHT),
-      REMOVE_LOW_ALGAE(60),
-      REMOVE_HIGH_ALGAE(130);
+      REMOVE_LOW_ALGAE(18.5),
+      REMOVE_HIGH_ALGAE(80);
 
       public final double encoderCount;
 
@@ -556,12 +557,12 @@ public final class Constants {
     // Arm Angles in degrees
     public enum ArmAngle {
       COMPACT(-1),
-      INTAKE(20),
+      INTAKE(21),
       LEVEL_1(0),
       LEVEL_2(120),
-      LEVEL_3(120),
+      LEVEL_3(126),
       LEVEL_4(112),
-      REMOVE_ALGAE(40);
+      REMOVE_ALGAE(74);
 
       public final double angle;
 
