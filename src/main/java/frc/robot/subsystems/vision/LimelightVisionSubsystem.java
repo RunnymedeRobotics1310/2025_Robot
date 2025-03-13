@@ -106,7 +106,8 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   private static final Matrix<N3, N1> POSE_DEVIATION_MEGATAG2 =
       VecBuilder.fill(0.06, 0.06, 9999999);
 
-  private final LimelightBotPose botPoseMegaTag1 = new LimelightBotPose(null, 0, null);
+  private final LimelightBotPose nikolaBotPoseMegaTag1 = new LimelightBotPose(null, 0, null);
+  private final LimelightBotPose thomasBotPoseMegaTag1 = new LimelightBotPose(null, 0, null);
 
   private double[] orientationSet = new double[] {0, 0, 0, 0, 0, 0};
   private double[] thomasPositionSet = new double[] {0.155, 0.13, 0.88, 179, 0, 0};
@@ -140,17 +141,18 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   public void periodic() {
     TimestampedDoubleArray nikolaBotPoseBlueMegaTag1 = nikolaMegaTag1.getAtomic();
     double[] nikolaStddevData = nikolaStddevs.get();
-    botPoseMegaTag1.update(
+    nikolaBotPoseMegaTag1.update(
         nikolaBotPoseBlueMegaTag1.value, nikolaBotPoseBlueMegaTag1.timestamp, nikolaStddevData);
-    //    TimestampedDoubleArray thomasBotPoseBlueMegaTag1 = thomasMegaTag1.getAtomic();
-    //    double[] thomasStdevData = thomasStddevs.get();
-    //    botPoseMegaTag1.update(
-    //        nikolaBotPoseBlueMegaTag1.value,
-    //        nikolaBotPoseBlueMegaTag1.timestamp,
-    //        nikolaStddevData,
-    //        null,
-    //        0,
-    //        thomasStdevData);
+
+    TimestampedDoubleArray thomasBotPoseBlueMegaTag1 = thomasMegaTag1.getAtomic();
+    double[] thomasStddevData = thomasStddevs.get();
+    thomasBotPoseMegaTag1.update(
+        thomasBotPoseBlueMegaTag1.value, thomasBotPoseBlueMegaTag1.timestamp, thomasStddevData);
+  }
+
+  /** If targetting the left reef, use the left reef pose, otherwise use the right reef pose */
+  private LimelightBotPose getBotPose(boolean leftBranch) {
+    return leftBranch ? nikolaBotPoseMegaTag1 : thomasBotPoseMegaTag1;
   }
 
   /* Public API */
@@ -177,35 +179,65 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   }
 
   public double getVisibleTargetTagId() {
-    return botPoseMegaTag1.getTagId(0);
+    return nikolaBotPoseMegaTag1.getTagId(0);
+  }
+
+  public double getVisibleTargetTagId(boolean leftBranch) {
+    return getBotPose(leftBranch).getTagId(0);
   }
 
   public int getNumTagsVisible() {
-    return (int) botPoseMegaTag1.getTagCount();
+    return (int) nikolaBotPoseMegaTag1.getTagCount();
   }
 
-  public double distanceToTarget() {
+  public double distanceTagToRobot() {
+    return distanceTagToRobot(true);
+  }
+
+  public double distanceTagToRobot(boolean leftBranch) {
+    LimelightBotPose botPose = getBotPose(leftBranch);
+
     int index = 0;
     if (targetTagId > 0) {
-      index = botPoseMegaTag1.getTagIndex(targetTagId);
+      index = botPose.getTagIndex(targetTagId);
     }
-    return botPoseMegaTag1.getTagDistToRobot(index);
+    return botPose.getTagDistToRobot(index);
+  }
+
+  public double distanceTagToCamera() {
+    return distanceTagToCamera(true);
+  }
+
+  public double distanceTagToCamera(boolean leftBranch) {
+    LimelightBotPose botPose = getBotPose(leftBranch);
+
+    int index = 0;
+    if (targetTagId > 0) {
+      index = botPose.getTagIndex(targetTagId);
+    }
+    return botPose.getTagDistToCamera(index);
   }
 
   public double angleToTarget() {
+    return angleToTarget(true);
+  }
+
+  public double angleToTarget(boolean leftBranch) {
+    LimelightBotPose botPose = getBotPose(leftBranch);
+
     int index = 0;
     if (targetTagId > 0) {
-      index = botPoseMegaTag1.getTagIndex(targetTagId);
+      index = botPose.getTagIndex(targetTagId);
     }
-    return -botPoseMegaTag1.getTagTxnc(index);
+    return -botPose.getTagTxnc(index);
   }
 
   public double getTagAmount() {
-    return botPoseMegaTag1.getTagCount();
+    return nikolaBotPoseMegaTag1.getTagCount();
   }
 
   public boolean isTagInView(int tagId) {
-    return botPoseMegaTag1.getTagIndex(tagId) != -1;
+    return nikolaBotPoseMegaTag1.getTagIndex(tagId) != -1;
   }
 
   /**
@@ -218,7 +250,7 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   }
 
   public LimelightBotPose getBotPose() {
-    return botPoseMegaTag1;
+    return nikolaBotPoseMegaTag1;
   }
 
   /**
@@ -253,23 +285,23 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
     // Get the current pose delta
     double compareDistance = -1;
     double compareHeading = -1;
-    double tagAmbiguity = botPoseMegaTag1.getTagAmbiguity(0);
+    double tagAmbiguity = nikolaBotPoseMegaTag1.getTagAmbiguity(0);
     double[] deviations = new double[] {-1, -1, -1};
 
     LimelightPoseEstimate.PoseConfidence poseConfidence = LimelightPoseEstimate.PoseConfidence.NONE;
-    LimelightBotPose botPose = botPoseMegaTag1; // default to MT1 for telemetry
+    LimelightBotPose botPose = nikolaBotPoseMegaTag1; // default to MT1 for telemetry
 
     // If pose is 0,0 or no tags in view, we don't actually have data - return null
-    if (botPoseMegaTag1.getTagCount() > 0
-        && botPoseMegaTag1.isPoseXInBounds(0, fieldExtentMetresX)
-        && botPoseMegaTag1.isPoseYInBounds(0, fieldExtentMetresY)) {
+    if (nikolaBotPoseMegaTag1.getTagCount() > 0
+        && nikolaBotPoseMegaTag1.isPoseXInBounds(0, fieldExtentMetresX)
+        && nikolaBotPoseMegaTag1.isPoseYInBounds(0, fieldExtentMetresY)) {
 
       // Do we have a decent signal?  i.e. Ambiguity < 0.7
       if (tagAmbiguity < maxAmbiguity) {
         // Check for super good signal - ambiguity < 0.1, or we're disabled (field setup)
         if (tagAmbiguity < highQualityAmbiguity || DriverStation.isDisabled()) {
           // use megatag1 as is, it's rock solid
-          double[] stddevs = botPoseMegaTag1.getStandardDeviations();
+          double[] stddevs = nikolaBotPoseMegaTag1.getStandardDeviations();
           deviations[0] = stddevs[0]; // MegaTag1 X Standard Deviation
           deviations[1] = stddevs[1]; // MegaTag1 Y Standard Deviation
           deviations[2] = stddevs[5]; // MegaTag Deg Standard Deviation
@@ -277,7 +309,9 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
 
           returnVal =
               new LimelightPoseEstimate(
-                  botPoseMegaTag1.getPose(), botPoseMegaTag1.getTimestampSeconds(), deviations);
+                  nikolaBotPoseMegaTag1.getPose(),
+                  nikolaBotPoseMegaTag1.getTimestampSeconds(),
+                  deviations);
         }
 
         if (Telemetry.vision.enabled) {

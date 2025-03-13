@@ -71,7 +71,7 @@ public class SetupScoreCommand extends LoggingCommand {
     atElevatorHeight = coralSubsystem.moveElevatorToHeight(coralPose.elevatorHeight);
     atArmAngle = coralSubsystem.moveArmToAngle(coralPose.armAngle);
 
-    distanceToTag = limelightVisionSubsystem.distanceToTarget();
+    distanceToTag = limelightVisionSubsystem.distanceTagToRobot();
 
     //    currentDistance = coralSubsystem.getUltrasonicDistanceCm();
 

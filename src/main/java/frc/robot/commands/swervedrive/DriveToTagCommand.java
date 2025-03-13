@@ -39,7 +39,7 @@ public class DriveToTagCommand extends LoggingCommand {
   private double lastUpdateTime = 0;
   private double travelTimeEstimate = 0;
 
-  public static final double OFFSET_FROM_TAG_FOR_SCORING = 0.20;
+  //  public static final double OFFSET_FROM_TAG_FOR_SCORING = 0.20;
   public static final double OFFSET_FROM_TAG_ROBOT_HALF_LENGTH = 0.57;
 
   private static final double DATA_TIMEOUT = 0.2;
@@ -106,7 +106,7 @@ public class DriveToTagCommand extends LoggingCommand {
    */
   private Pose2d initTag() {
     if (fieldLocation == null) {
-      int visionClosestTagId = (int) visionSubsystem.getVisibleTargetTagId();
+      int visionClosestTagId = (int) visionSubsystem.getVisibleTargetTagId(isLeftBranch);
       if (!Constants.FieldConstants.TAGS.isValidTagId(visionClosestTagId)) {
         return null;
       }
@@ -130,11 +130,12 @@ public class DriveToTagCommand extends LoggingCommand {
    * @param targetHeadingDeg The field orientation facing the tag
    */
   private void calcTargetPosition(double targetHeadingDeg) {
-    double sideOffset = isLeftBranch ? OFFSET_FROM_TAG_FOR_SCORING : -OFFSET_FROM_TAG_FOR_SCORING;
-
-    // Compute side offset along target's orientation (Perpendicular)
-    double sideOffsetX = sideOffset * Math.cos(Math.toRadians(targetHeadingDeg + 90));
-    double sideOffsetY = sideOffset * Math.sin(Math.toRadians(targetHeadingDeg + 90));
+    //    double sideOffset = isLeftBranch ? OFFSET_FROM_TAG_FOR_SCORING :
+    // -OFFSET_FROM_TAG_FOR_SCORING;
+    //
+    //    // Compute side offset along target's orientation (Perpendicular)
+    //    double sideOffsetX = sideOffset * Math.cos(Math.toRadians(targetHeadingDeg + 90));
+    //    double sideOffsetY = sideOffset * Math.sin(Math.toRadians(targetHeadingDeg + 90));
 
     // Compute backward offset away from the target (Opposite direction)
     double backwardOffsetX =
@@ -142,8 +143,8 @@ public class DriveToTagCommand extends LoggingCommand {
     double backwardOffsetY =
         OFFSET_FROM_TAG_ROBOT_HALF_LENGTH * Math.sin(Math.toRadians(targetHeadingDeg + 180));
 
-    offsetX = sideOffsetX + backwardOffsetX;
-    offsetY = sideOffsetY + backwardOffsetY;
+    offsetX = /*sideOffsetX +*/ backwardOffsetX;
+    offsetY = /*sideOffsetY +*/ backwardOffsetY;
   }
 
   private boolean calcTarget() {
@@ -152,8 +153,8 @@ public class DriveToTagCommand extends LoggingCommand {
     if (tagInView) {
       // Get Target info from Limelight & Swerve
       double robotHeading = swerve.getYaw();
-      double targetAngleRelative = visionSubsystem.angleToTarget();
-      double distanceToTarget = visionSubsystem.distanceToTarget();
+      double targetAngleRelative = visionSubsystem.angleToTarget(isLeftBranch);
+      double distanceToTarget = visionSubsystem.distanceTagToRobot(isLeftBranch);
       lastUpdateTime = Timer.getFPGATimestamp();
 
       // Compute target position relative to robot

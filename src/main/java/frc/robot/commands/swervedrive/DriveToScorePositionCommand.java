@@ -121,7 +121,7 @@ public class DriveToScorePositionCommand extends LoggingCommand {
 
     double robotHeading = currentPose.getRotation().getDegrees();
     double targetAngleRelative = visionSubsystem.angleToTarget();
-    double distanceToTarget = visionSubsystem.distanceToTarget();
+    double distanceToTarget = visionSubsystem.distanceTagToRobot();
 
     // Compute target position relative to robot
     double targetGlobalAngle = robotHeading + targetAngleRelative;
