@@ -22,7 +22,8 @@ public class DriveToFieldLocationCommand extends LoggingCommand {
     this.location = location.pose;
   }
 
-  public DriveToFieldLocationCommand(SwerveSubsystem swerve, FieldLocation location, double toleranceM) {
+  public DriveToFieldLocationCommand(
+      SwerveSubsystem swerve, FieldLocation location, double toleranceM) {
     this.swerve = swerve;
     this.location = location.pose;
     this.tolerance = toleranceM;
@@ -37,9 +38,10 @@ public class DriveToFieldLocationCommand extends LoggingCommand {
     } else {
       this.allianceLocation = location;
     }
-    this.targetHeadingDeg = SwerveUtils.normalizeDegrees(location.getRotation().getDegrees());
+    this.targetHeadingDeg =
+        SwerveUtils.normalizeDegrees(allianceLocation.getRotation().getDegrees());
 
-    log("Pose: " + swerve.getPose());
+    log("Pose: " + swerve.getPose() + " AllianceLoc:" + allianceLocation);
   }
 
   @Override
