@@ -339,12 +339,19 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
       Telemetry.vision.standardDeviations = deviations;
       Telemetry.vision.navxYaw = yaw;
       Telemetry.vision.navxYawDelta = odometryPose.getRotation().getDegrees() - yaw;
-      Telemetry.vision.visibleTags = botPose.getVisibleTags();
       Telemetry.vision.poseXSeries.add(botPose.getPoseX());
       Telemetry.vision.poseYSeries.add(botPose.getPoseY());
       Telemetry.vision.poseDegSeries.add(botPose.getPoseRotationYaw());
-      Telemetry.vision.tx = botPose.getTagTxnc(0);
-      Telemetry.vision.distance = botPose.getTagDistToRobot(0);
+
+      Telemetry.vision.nikVisibleTags = nikolaBotPoseMegaTag1.getVisibleTags();
+      Telemetry.vision.nikTx = nikolaBotPoseMegaTag1.getTagTxnc(0);
+      Telemetry.vision.nikDistanceToRobot = nikolaBotPoseMegaTag1.getTagDistToRobot(0);
+      Telemetry.vision.nikDistanceToCam = nikolaBotPoseMegaTag1.getTagDistToCamera(0);
+
+      Telemetry.vision.tomVisibleTags = thomasBotPoseMegaTag1.getVisibleTags();
+      Telemetry.vision.tomTx = thomasBotPoseMegaTag1.getTagTxnc(0);
+      Telemetry.vision.tomDistanceToRobot = thomasBotPoseMegaTag1.getTagDistToRobot(0);
+      Telemetry.vision.tomDistanceToCam = thomasBotPoseMegaTag1.getTagDistToCamera(0);
     }
 
     return poseUpdatesEnabled ? returnVal : null;

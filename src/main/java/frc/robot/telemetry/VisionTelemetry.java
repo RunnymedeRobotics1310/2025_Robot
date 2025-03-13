@@ -64,14 +64,19 @@ public class VisionTelemetry {
 
   public double navxYawDelta = Double.MIN_VALUE;
 
-  public double[] visibleTags = new double[0];
-
   public TimeSeriesMetric poseXSeries = new TimeSeriesMetric();
   public TimeSeriesMetric poseYSeries = new TimeSeriesMetric();
   public TimeSeriesMetric poseDegSeries = new TimeSeriesMetric();
 
-  public double tx = -1;
-  public double distance = -1;
+  public double[] nikVisibleTags = new double[0];
+  public double nikTx = -1;
+  public double nikDistanceToRobot = -1;
+  public double nikDistanceToCam = -1;
+
+  public double[] tomVisibleTags = new double[0];
+  public double tomTx = -1;
+  public double tomDistanceToRobot = -1;
+  public double tomDistanceToCam = -1;
 
   public void addPoseToSeries(Pose2d pose) {
     poseXSeries.add(pose.getTranslation().getX());
@@ -111,8 +116,6 @@ public class VisionTelemetry {
     SmartDashboard.putString(
         PREFIX + "Vision/yaw_navx_delta", String.format("%.2f°", navxYawDelta));
 
-    SmartDashboard.putNumberArray(PREFIX + "Vision/visible_tags", visibleTags);
-
     String poseVisSeries =
         String.format(
             "(%.2f, %.2f)m %.1f°",
@@ -121,7 +124,14 @@ public class VisionTelemetry {
             poseDegSeries.getMaxValue() - poseDegSeries.getMinValue());
     SmartDashboard.putString(PREFIX + "Vision/pose_vis_range", poseVisSeries);
 
-    SmartDashboard.putNumber(PREFIX + "Vision/tx", tx);
-    SmartDashboard.putNumber(PREFIX + "Vision/distance", distance);
+    SmartDashboard.putNumberArray(PREFIX + "Vision/nik_visible_tags", nikVisibleTags);
+    SmartDashboard.putNumber(PREFIX + "Vision/nik_tx", nikTx);
+    SmartDashboard.putNumber(PREFIX + "Vision/nik_distanceToRobot", nikDistanceToRobot);
+    SmartDashboard.putNumber(PREFIX + "Vision/nik_distanceToCam", nikDistanceToCam);
+
+    SmartDashboard.putNumberArray(PREFIX + "Vision/tom_visible_tags", tomVisibleTags);
+    SmartDashboard.putNumber(PREFIX + "Vision/tom_tx", tomTx);
+    SmartDashboard.putNumber(PREFIX + "Vision/tom_distanceToRobot", tomDistanceToRobot);
+    SmartDashboard.putNumber(PREFIX + "Vision/tom_distanceToCam", tomDistanceToCam);
   }
 }

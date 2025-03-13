@@ -33,6 +33,7 @@ public final class Constants {
     public static final double LENGTH_METRES = 0.81;
     public static final double WIDTH_METRES = 0.71;
     public static final double HEIGHT_METRES = 1.016;
+    public static final double BUMPER_WIDTH = 0.08; // TODO: Measure!
   }
 
   public static final VisionConfig VISION_CONFIG =
