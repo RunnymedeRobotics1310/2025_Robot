@@ -24,7 +24,7 @@ public class DriveRobotOrientedOmegaCommand extends LoggingCommand {
 
   @Override
   public void execute() {
-    swerve.driveRobotOriented(x, y, swerve.computeOmega(omega));
+    swerve.driveRobotOriented(x, y, omega);
   }
 
   @Override
