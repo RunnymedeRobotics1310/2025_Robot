@@ -49,7 +49,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   public void periodic() {
     ultrasonicVoltage = ultrasonicDistanceSensor.getVoltage();
-    ultrasonicDistanceM = Math.round(1.28722 * ultrasonicVoltage - 0.53066);
+    ultrasonicDistanceM = 1.28722 * ultrasonicVoltage - 0.53066;
 
     Telemetry.drive.ultrasonicDistanceM = ultrasonicDistanceM;
     Telemetry.drive.ultrasonicVoltage = ultrasonicVoltage;

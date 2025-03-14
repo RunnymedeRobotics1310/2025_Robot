@@ -64,7 +64,7 @@ public class DriveTelemetry {
             fieldOrientedDeltaToPoseHeading);
     SmartDashboard.putString(PREFIX + "Drive/distance_to_pose", delta);
 
-    SmartDashboard.putNumber(PREFIX + "Drive/Ultrasonic Distance Cm", ultrasonicDistanceM);
+    SmartDashboard.putNumber(PREFIX + "Drive/Ultrasonic Distance M", ultrasonicDistanceM);
     SmartDashboard.putNumber(PREFIX + "Drive/Ultrasonic Voltage", ultrasonicVoltage);
   }
 }
