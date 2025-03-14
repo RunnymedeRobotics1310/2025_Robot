@@ -8,11 +8,15 @@ import ca.team1310.swerve.vision.VisionPoseCallback;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RunnymedeUtils;
 import frc.robot.telemetry.Telemetry;
+
+import static frc.robot.Constants.CoralConstants.ULTRASONIC_SENSOR_PORT;
 
 public class SwerveSubsystem extends SubsystemBase {
 
@@ -22,6 +26,11 @@ public class SwerveSubsystem extends SubsystemBase {
   private final SlewRateLimiter yLimiter;
   private final SlewRateLimiter omegaLimiter;
   private final PIDController headingPIDController;
+  private final AnalogInput ultrasonicDistanceSensor = new AnalogInput(ULTRASONIC_SENSOR_PORT);
+
+  private double ultrasonicVoltage;
+  private double ultrasonicDistanceM;
+
 
   public SwerveSubsystem(SwerveDriveSubsystemConfig config, VisionPoseCallback callback) {
     this.drive = new FieldAwareSwerveDrive(config.coreConfig(), callback);
@@ -36,6 +45,15 @@ public class SwerveSubsystem extends SubsystemBase {
             config.rotationConfig().headingD());
     headingPIDController.enableContinuousInput(-180, 180);
     headingPIDController.setTolerance(2);
+  }
+
+
+  public void periodic() {
+    ultrasonicVoltage = ultrasonicDistanceSensor.getVoltage();
+    ultrasonicDistanceM = Math.round(1.28722 * ultrasonicVoltage - 0.53066);
+
+    Telemetry.drive.ultrasonicDistanceM = ultrasonicDistanceM;
+    Telemetry.drive.ultrasonicVoltage = ultrasonicVoltage;
   }
 
   /*
@@ -137,6 +155,10 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public boolean lock() {
     return drive.lock();
+  }
+
+  public double getUltrasonicDistanceM() {
+    return ultrasonicDistanceM;
   }
 
   /**

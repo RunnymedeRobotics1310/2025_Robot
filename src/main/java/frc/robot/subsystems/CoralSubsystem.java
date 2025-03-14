@@ -59,9 +59,6 @@ public class CoralSubsystem extends SubsystemBase {
   private double intakeSetpoint = 0;
   private double lastKnownElevatorHeight = -1;
 
-  // ultrasonic
-  private final AnalogInput ultrasonicDistanceSensor = new AnalogInput(ULTRASONIC_SENSOR_PORT);
-
   // Elevator
 
   private RelativeEncoder elevatorEncoder = elevatorMotor.getEncoder();
@@ -447,12 +444,6 @@ public class CoralSubsystem extends SubsystemBase {
     return sensorCache.intakeEncoderPosition;
   }
 
-  public double getUltrasonicDistanceCm() {
-    double ultrasonicVoltage = ultrasonicDistanceSensor.getVoltage();
-    double distanceCm = 128.722 * ultrasonicVoltage - 53.066;
-    return Math.round(distanceCm);
-  }
-
   public void stop() {
     setElevatorSpeed(0);
     setArmSpeed(0);
@@ -487,9 +478,6 @@ public class CoralSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("Coral/Intake Speed", intakeSetpoint);
     SmartDashboard.putBoolean("Coral/Coral Detected", isCoralDetected());
-
-    SmartDashboard.putNumber("Coral/Ultrasonic Distance Cm", getUltrasonicDistanceCm());
-    SmartDashboard.putNumber("Coral/Ultrasonic Voltage", ultrasonicDistanceSensor.getVoltage());
   }
 
   private void simulate() {
