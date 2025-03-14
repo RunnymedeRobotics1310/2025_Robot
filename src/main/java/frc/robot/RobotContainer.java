@@ -7,7 +7,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.OiConstants;
 import frc.robot.Constants.Swerve;
-import frc.robot.commands.auto.Score3L4AutoCommand;
 import frc.robot.commands.coral.DefaultCoralCommand;
 import frc.robot.commands.operator.OperatorInput;
 import frc.robot.commands.swervedrive.TeleopDriveCommand;

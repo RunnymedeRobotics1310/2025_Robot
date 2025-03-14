@@ -8,25 +8,25 @@ import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 
-public class Score3L4AutoCommand extends BaseAutoCommand {
+public class Score3L4RightAutoCommand extends BaseAutoCommand {
 
-  public Score3L4AutoCommand(
+  public Score3L4RightAutoCommand(
       SwerveSubsystem swerve, CoralSubsystem coral, LimelightVisionSubsystem vision, double delay) {
     super(swerve, vision, coral);
 
     addCommands(new SetAutoGyroCommand(swerve, 180));
     addCommands(new WaitCommand(delay));
 
-    goScoreL4Coral(PRE_SCORE_LEFT_4);
+    goScoreL4Coral(PRE_SCORE_RIGHT_4);
 
-    autoIntake(blueLeftOuterStation);
+    autoIntake(blueRightOuterStation);
 
-    goScoreL4Coral(PRE_SCORE_LEFT_2);
+    goScoreL4Coral(PRE_SCORE_RIGHT_2);
 
-    autoIntake(blueLeftOuterStation);
+    autoIntake(blueRightOuterStation);
 
-    goScoreL4Coral(PRE_SCORE_LEFT_3);
+    goScoreL4Coral(PRE_SCORE_RIGHT_3);
 
-    autoIntake(blueLeftOuterStation);
+    autoIntake(blueRightOuterStation);
   }
 }

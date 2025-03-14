@@ -278,10 +278,9 @@ public final class Constants {
       DO_NOTHING,
       EXIT_ZONE,
       SCORE_3_LEFT,
+      SCORE_3_RIGHT,
       SCORE_1_CENTER,
-      SCORE_1_POSE,
-      EMERGENCY_AUTO,
-    }
+      }
 
     public enum Delay {
       NO_DELAY,

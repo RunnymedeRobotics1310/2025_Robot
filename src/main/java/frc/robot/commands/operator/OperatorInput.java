@@ -19,6 +19,7 @@ import frc.robot.commands.climb.ClimbCommand;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.pneumatics.ToggleCompressorCommand;
+import frc.robot.commands.swervedrive.DriveToVisibleTagCommand;
 import frc.robot.commands.swervedrive.SetAutoGyroCommand;
 import frc.robot.commands.test.SystemTestCommand;
 import frc.robot.subsystems.ClimbSubsystem;
@@ -161,28 +162,12 @@ public class OperatorInput extends SubsystemBase {
 
     new Trigger(this::isToggleCompressor).onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
 
-    //        new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
-    //            .onTrue(
-    //                new SetupScoreCommand(
-    //                        CoralPose.SCORE_L4,
-    //                        Constants.CoralConstants.DesiredDistanceToTargetCM.LEVEL_4,
-    //                        true,
-    //                        coralSubsystem,
-    //                        driveSubsystem,
-    //                        visionSubsystem));
-
     new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
         .onTrue(
-            new Score1DriveToPoseAutoCommand(
+            new DriveToVisibleTagCommand(
                 driveSubsystem,
-                coralSubsystem,
                 visionSubsystem,
-                PRE_SCORE_RIGHT_4,
-                CoralPose.SCORE_L4,
-                0,
-                true,
-                180));
-    //        .onTrue(new DriveToScorePositionCommand(driveSubsystem, visionSubsystem, null, true));
+                true));
   }
 
   /*
@@ -339,15 +324,11 @@ public class OperatorInput extends SubsystemBase {
 
     SmartDashboard.putData("1310/auto/Auto Selector", autoPatternChooser);
 
-    autoPatternChooser.setDefaultOption(
-        "Do Nothing", Constants.AutoConstants.AutoPattern.DO_NOTHING);
+    autoPatternChooser.setDefaultOption("Do Nothing", Constants.AutoConstants.AutoPattern.DO_NOTHING);
     autoPatternChooser.addOption("Exit Zone", Constants.AutoConstants.AutoPattern.EXIT_ZONE);
-    autoPatternChooser.addOption("1 Coral Pose", Constants.AutoConstants.AutoPattern.SCORE_1_POSE);
-    autoPatternChooser.addOption(
-        "Emergency Coral", Constants.AutoConstants.AutoPattern.EMERGENCY_AUTO);
-    autoPatternChooser.addOption(
-        "1 Coral Center", Constants.AutoConstants.AutoPattern.SCORE_1_CENTER);
+    autoPatternChooser.addOption("1 Coral Center", Constants.AutoConstants.AutoPattern.SCORE_1_CENTER);
     autoPatternChooser.addOption("3 Coral Left", Constants.AutoConstants.AutoPattern.SCORE_3_LEFT);
+    autoPatternChooser.addOption("3 Coral Right", Constants.AutoConstants.AutoPattern.SCORE_3_RIGHT);
 
     SmartDashboard.putData("1310/auto/Delay Selector", delayChooser);
 
@@ -377,12 +358,10 @@ public class OperatorInput extends SubsystemBase {
 
     return switch (autoPatternChooser.getSelected()) {
       case EXIT_ZONE -> new ExitZoneAutoCommand(swerve, delay);
-      case SCORE_3_LEFT -> new Score3L4AutoCommand(swerve, coral, vision, delay);
+      case SCORE_3_LEFT -> new Score3L4LeftAutoCommand(swerve, coral, vision, delay);
+      case SCORE_3_RIGHT -> new Score3L4RightAutoCommand(swerve, coral, vision, delay);
       case SCORE_1_CENTER -> new Score1CoralCenterAutoCommand(swerve, coral, vision, delay);
-      case SCORE_1_POSE ->
-          new Score1DriveToPoseAutoCommand(
-              swerve, coral, vision, PRE_SCORE_RIGHT_4, CoralPose.SCORE_L4, delay, true, 180);
-      case EMERGENCY_AUTO -> new Emergency1CoralAutoCommand(swerve, coral, vision);
+
       default -> new InstantCommand();
     };
   }
