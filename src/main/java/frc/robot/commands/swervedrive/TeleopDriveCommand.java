@@ -228,15 +228,15 @@ public class TeleopDriveCommand extends BaseDriveCommand {
     double magnitude = input.getNorm();
     Rotation2d angle = magnitude > 1e-6 ? input.getAngle() : new Rotation2d();
 
+    // cube to allow more fine-grained control for user at low values
+    magnitude = Math.pow(magnitude, 3);
+
     // apply boost factor
     magnitude *= boostFactor;
 
     // handle case where in simulator, a value of 1,1 is possible whereas normally the
     // controller magnitude never exceeds 1
     magnitude = MathUtil.clamp(magnitude, -1, 1);
-
-    // cube to allow more fine-grained control for user at low values
-    magnitude = Math.pow(magnitude, 3);
 
     // convert from % to mps
     magnitude *= TRANSLATION_CONFIG.maxSpeedMPS();
