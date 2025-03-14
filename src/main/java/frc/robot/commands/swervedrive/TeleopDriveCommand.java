@@ -94,7 +94,6 @@ public class TeleopDriveCommand extends BaseDriveCommand {
 
     final boolean rotate180Val = oi.getRotate180Val();
 
-    final boolean faceTarget = false;
     final boolean faceReef = oi.isFaceReef();
 
     final boolean faceLeftStation = oi.isAlignLeftStation();
@@ -144,13 +143,6 @@ public class TeleopDriveCommand extends BaseDriveCommand {
         }
       }
 
-      if (faceTarget) {
-        int tagId = (int) visionSubsystem.getVisibleTargetTagId();
-        if (Constants.FieldConstants.TAGS.isValidTagId(tagId)) {
-          headingSetpointDeg =
-              Constants.FieldConstants.TAGS.getTagById(tagId).pose.getRotation().getDegrees();
-        }
-      }
       if (faceReef) {
         headingSetpointDeg =
             swerve.getClosestReefAngle(swerve.getPose().getX(), swerve.getPose().getY());
