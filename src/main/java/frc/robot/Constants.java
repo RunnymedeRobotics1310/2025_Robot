@@ -506,6 +506,7 @@ public final class Constants {
     public static final double ELEVATOR_MAX_SPEED = 1;
     public static final double ELEVATOR_MAX_HEIGHT = 158;
     public static final double ELEVATOR_TOLERANCE = 2.5;
+    public static final double ELEVATOR_MAX_SLEW = 0.2;
     public static final double ELEVATOR_P = 0.05;
     // Maximum manual tuning speed
     public static final double ELEVATOR_TUNE_MAX_SPEED = 0.2;
