@@ -138,10 +138,10 @@ public final class Constants {
   public static final class Swerve {
 
     /** Front to back from the middle of the wheels */
-    public static final double WHEEL_BASE_METRES = inchesToMeters(23);
+    public static final double WHEEL_BASE_METRES = inchesToMeters(26.5);
 
     /** Side to side from the middle of the wheels */
-    public static final double TRACK_WIDTH_METRES = inchesToMeters(26.5);
+    public static final double TRACK_WIDTH_METRES = inchesToMeters(23);
 
     public static final double SDS_MK4I_WHEEL_RADIUS_M = 0.051;
 
