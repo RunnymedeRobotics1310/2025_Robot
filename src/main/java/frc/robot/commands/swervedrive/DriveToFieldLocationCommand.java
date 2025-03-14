@@ -70,7 +70,7 @@ public class DriveToFieldLocationCommand extends LoggingCommand {
     boolean done =
         (SwerveUtils.isCloseEnough(
                 swerve.getPose().getTranslation(), allianceLocation.getTranslation(), tolerance)
-            && SwerveUtils.isCloseEnough(swerve.getYaw(), targetHeadingDeg, 5));
+            && SwerveUtils.isCloseEnough(swerve.getYaw(), targetHeadingDeg, 1));
     if (done) {
       System.out.println(
           "REACHED DESTINATION: x["

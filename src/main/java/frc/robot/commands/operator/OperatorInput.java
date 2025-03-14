@@ -1,6 +1,6 @@
 package frc.robot.commands.operator;
 
-import static frc.robot.Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_3;
+import static frc.robot.Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_4;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -100,11 +100,7 @@ public class OperatorInput extends SubsystemBase {
     new Trigger(this::isCancel)
         .whileTrue(
             new CancelCommand(
-                this,
-                driveSubsystem,
-                coralSubsystem,
-                pneumaticsSubsystem,
-                climbSubsystem));
+                this, driveSubsystem, coralSubsystem, pneumaticsSubsystem, climbSubsystem));
 
     // Reset Gyro
     new Trigger(() -> driverController.getBackButton())
@@ -181,11 +177,11 @@ public class OperatorInput extends SubsystemBase {
                 driveSubsystem,
                 coralSubsystem,
                 visionSubsystem,
-                PRE_SCORE_LEFT_3,
+                PRE_SCORE_RIGHT_4,
                 CoralPose.SCORE_L4,
                 0,
-                false,
-                -60));
+                true,
+                180));
     //        .onTrue(new DriveToScorePositionCommand(driveSubsystem, visionSubsystem, null, true));
   }
 
@@ -297,7 +293,6 @@ public class OperatorInput extends SubsystemBase {
     return operatorController.getRightTriggerAxis() > 0.5;
   }
 
-
   // ALIGN CORAL STATION ANGLE
   public boolean isAlignLeftStation() {
     return driverController.getLeftTriggerAxis() > 0.5;
@@ -386,14 +381,7 @@ public class OperatorInput extends SubsystemBase {
       case SCORE_1_CENTER -> new Score1CoralCenterAutoCommand(swerve, coral, vision, delay);
       case SCORE_1_POSE ->
           new Score1DriveToPoseAutoCommand(
-              swerve,
-              coral,
-              vision,
-              Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_6,
-              CoralPose.SCORE_L4,
-              delay,
-              true,
-              180);
+              swerve, coral, vision, PRE_SCORE_RIGHT_4, CoralPose.SCORE_L4, delay, true, 180);
       case EMERGENCY_AUTO -> new Emergency1CoralAutoCommand(swerve, coral, vision);
       default -> new InstantCommand();
     };

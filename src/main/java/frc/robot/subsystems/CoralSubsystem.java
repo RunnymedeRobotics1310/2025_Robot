@@ -460,7 +460,7 @@ public class CoralSubsystem extends SubsystemBase {
 
   public double getUltrasonicDistanceCm() {
     double ultrasonicVoltage = ultrasonicDistanceSensor.getVoltage();
-    double distanceCm = ULTRASONIC_M * ultrasonicVoltage + ULTRASONIC_B;
+    double distanceCm = 128.722 * ultrasonicVoltage - 53.066;
     return Math.round(distanceCm);
   }
 

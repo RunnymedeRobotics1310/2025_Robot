@@ -27,12 +27,12 @@ public class Score1DriveToPoseAutoCommand extends SequentialCommandGroup {
     addCommands(new WaitCommand(delay));
 
     if (driveToPrePose) {
-      addCommands(new DriveRobotOrientedOmegaCommand(swerve, 1.00, 0.00, 0).withTimeout(0.4));
-      //      addCommands(new DriveToFieldLocationCommand(swerve, fieldLocation));
+      // addCommands(new DriveRobotOrientedOmegaCommand(swerve, 1.00, 0.00, 0).withTimeout(0.4));
+      addCommands(new DriveToFieldLocationCommand(swerve, fieldLocation));
     }
 
     addCommands(
-        new DriveToScorePositionCommand(swerve, vision, fieldLocation, true)
+        new DriveToTagCommand(swerve, vision, fieldLocation, true)
             .alongWith(new MoveToCoralPoseCommand(coralPose, coral).withTimeout(2)));
 
     addCommands(new WaitCommand(0.5));
