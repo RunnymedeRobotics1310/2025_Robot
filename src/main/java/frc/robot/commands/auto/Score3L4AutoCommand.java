@@ -9,6 +9,7 @@ import frc.robot.Constants;
 import frc.robot.RunnymedeUtils;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
+import frc.robot.commands.coral.intake.PlantCoralCommand;
 import frc.robot.commands.swervedrive.*;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -32,15 +33,11 @@ public class Score3L4AutoCommand extends SequentialCommandGroup {
 
     addCommands(new DriveToFieldLocationCommand(swerve, PRE_SCORE_LEFT_4));
 
-    // TODO: scoring block commented out until nathan & jeff fix it
-    //    addCommands(
-    //            new DriveToScorePositionCommand(swerve, vision, PRE_SCORE_LEFT_4, true)
-    //                    .alongWith(new
-    // MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L4, coral).withTimeout(2)));
-    //    addCommands(new WaitCommand(0.5));
-    //    addCommands(new PlantCoralCommand(coral).deadlineFor(new NullDriveCommand(swerve)));
-    // fixme: remove this when above is done
-    addCommands(new WaitCommand(4).deadlineFor(new NullDriveCommand(swerve)));
+    addCommands(new DriveToVisibleTagCommand(swerve, vision, false)
+            .alongWith(new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L4, coral)));
+
+    addCommands(new WaitCommand(0.5));
+    addCommands(new PlantCoralCommand(coral).deadlineFor(new NullDriveCommand(swerve)));
 
     addCommands(new DriveRobotOrientedOmegaCommand(swerve, -0.20, 0, 0).withTimeout(1));
     addCommands(new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.COMPACT, coral));
@@ -49,7 +46,7 @@ public class Score3L4AutoCommand extends SequentialCommandGroup {
     addCommands(new IntakeCoralCommand(coral, false)
             .deadlineFor(new DriveRobotOrientedCommand(swerve, 0.25, 0, blueLeftOuterStation.pose.getRotation().getDegrees() + allianceOffset)));
 
-    // ------------------------the-did-it-work-line------------------------------------
+    // ------------------------the-did-it-work-line------------------------------------ //
 
     // addCommands(new DriveThroughFieldLocationCommand(swerve, blueLeftPickupTransit, speed));
     addCommands(new DriveToFieldLocationCommand(swerve, PRE_SCORE_LEFT_2));

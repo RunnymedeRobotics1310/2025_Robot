@@ -22,29 +22,15 @@ public class Score1CoralCenterAutoCommand extends SequentialCommandGroup {
     addCommands(
         new DriveToFieldLocationCommand(
             swerve, Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_6));
-    //    addCommands(
-    //        new SetupScoreCommand(
-    //            Constants.CoralConstants.CoralPose.SCORE_L4,
-    //            Constants.CoralConstants.DesiredDistanceToTargetCM.LEVEL_4,
-    //                false,
-    //            coral,
-    //            swerve,
-    //                vision));
-    addCommands(
-        new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L4, coral)
-            .deadlineFor(new NullDriveCommand(swerve)));
 
     addCommands(
-        new WaitCommand(1)
-            .deadlineFor(
-                new DriveRobotOrientedCommand(
-                    swerve,
-                    0.35,
-                    0,
-                    Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_6
-                        .pose
-                        .getRotation()
-                        .getDegrees())));
+            new DriveToVisibleTagCommand(swerve, vision, true)
+                    .alongWith(new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L4, coral).withTimeout(2)));
+
+    addCommands(new WaitCommand(0.5));
     addCommands(new PlantCoralCommand(coral).deadlineFor(new NullDriveCommand(swerve)));
+
+    addCommands(new DriveRobotOrientedOmegaCommand(swerve, 0.00, 0.20, 0).withTimeout(1));
+    addCommands(new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.COMPACT, coral));
   }
 }
