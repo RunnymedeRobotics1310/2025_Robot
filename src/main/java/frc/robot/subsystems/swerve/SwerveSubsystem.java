@@ -8,6 +8,7 @@ import ca.team1310.swerve.vision.VisionPoseCallback;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RunnymedeUtils;
@@ -252,17 +253,19 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public double getClosestReefAngle(double currentX, double currentY) {
-    double reefX = 4.49;
+    double blueReefX = 4.49;
+    double redReefX = 13.06;
     double reefY = 4.03;
-    double reefDiff = 8.57;
 
-    double rrX = reefX - currentX;
-    double rrY = reefY - currentY;
-    if (rrX > Constants.FieldConstants.FIELD_EXTENT_METRES_X/2) {
-      rrX -= reefDiff;
+    double rrX;
+    if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
+      rrX = redReefX - currentX;
+    } else {
+      rrX = blueReefX - currentX;
     }
+    double rrY = reefY - currentY;
 
-    double angleAroundReefDeg = Math.toDegrees(Math.atan2(rrX, rrY));
+    double angleAroundReefDeg = SwerveUtils.normalizeDegrees(Math.toDegrees(Math.atan2(rrX, rrY)) + 90);
 
     if (angleAroundReefDeg > -150 && angleAroundReefDeg < -90) {
       return -60;
@@ -277,8 +280,6 @@ public class SwerveSubsystem extends SubsystemBase {
     } else {
       return 0;
     }
-
-
   }
 
 }
