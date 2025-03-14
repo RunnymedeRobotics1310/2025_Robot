@@ -46,9 +46,8 @@ public class Score3L4AutoCommand extends SequentialCommandGroup {
     addCommands(new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.COMPACT, coral));
 
     addCommands(new DriveToFieldLocationCommand(swerve, blueLeftOuterStation, 0.05));
-    addCommands(
-        new DriveRobotOrientedCommand(swerve, 0.25, 0, blueLeftOuterStation.pose.getRotation().getDegrees() + allianceOffset)
-            .deadlineFor(new IntakeCoralCommand(coral, false)));
+    addCommands(new IntakeCoralCommand(coral, false)
+            .deadlineFor(new DriveRobotOrientedCommand(swerve, 0.25, 0, blueLeftOuterStation.pose.getRotation().getDegrees() + allianceOffset)));
 
     // ------------------------the-did-it-work-line------------------------------------
 
