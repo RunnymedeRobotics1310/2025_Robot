@@ -264,6 +264,10 @@ public final class Constants {
     public static final SwerveDriveSubsystemConfig SUBSYSTEM_CONFIG =
         new SwerveDriveSubsystemConfig(
             true, CORE_SWERVE_CONFIG, TRANSLATION_CONFIG, ROTATION_CONFIG);
+
+    // Ultrasonic port
+    public static final int ULTRASONIC_SENSOR_PORT = 0;
+    public static final double SCORING_DISTANCE_TOLERANCE = 0.05;
   }
 
   public static final class AutoConstants {
@@ -450,37 +454,6 @@ public final class Constants {
         this.redTagId = redTagId;
         this.isLeftSide = isLeftSide;
       }
-    }
-  }
-
-  public static final class DriveConstants {
-
-    // NOTE: Follower motors are at CAN_ID+1
-    public static final int LEFT_MOTOR_CAN_ID = 10;
-    public static final int RIGHT_MOTOR_CAN_ID = 20;
-    public static final boolean LEFT_MOTOR_INVERTED = false;
-    public static final boolean RIGHT_MOTOR_INVERTED = true;
-    public static final double CM_PER_ENCODER_COUNT = 3.503;
-    public static final boolean GYRO_INVERTED = false;
-
-    /** Proportional gain for gyro pid tracking */
-    public static final double GYRO_PID_KP = 0.01;
-
-    public static final double DRIVE_SCALING_BOOST = 1;
-    public static final double DRIVE_SCALING_NORMAL = .6;
-    public static final double DRIVE_SCALING_SLOW = .3;
-
-    // Ultrasonic port
-    public static final int ULTRASONIC_SENSOR_PORT = 0;
-    public static final double ULTRASONIC_M = (609.6 - 30.5) / (2.245 - 0.12);
-    public static final double ULTRASONIC_B = 609.6 - ULTRASONIC_M * 2.245;
-    public static final double SCORING_DISTANCE_TOLERANCE = 5;
-
-    public static enum DriveMode {
-      TANK,
-      ARCADE,
-      SINGLE_STICK_LEFT,
-      SINGLE_STICK_RIGHT;
     }
   }
 

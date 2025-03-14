@@ -1,5 +1,7 @@
 package frc.robot.subsystems.swerve;
 
+import static frc.robot.Constants.Swerve.ULTRASONIC_SENSOR_PORT;
+
 import ca.team1310.swerve.RunnymedeSwerveDrive;
 import ca.team1310.swerve.core.SwerveMath;
 import ca.team1310.swerve.odometry.FieldAwareSwerveDrive;
@@ -14,8 +16,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RunnymedeUtils;
 import frc.robot.telemetry.Telemetry;
-
-import static frc.robot.Constants.DriveConstants.ULTRASONIC_SENSOR_PORT;
 
 public class SwerveSubsystem extends SubsystemBase {
 
