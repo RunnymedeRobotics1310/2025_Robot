@@ -30,7 +30,6 @@ public class SwerveSubsystem extends SubsystemBase {
   private double ultrasonicVoltage;
   private double ultrasonicDistanceM;
 
-
   public SwerveSubsystem(SwerveDriveSubsystemConfig config, VisionPoseCallback callback) {
     this.drive = new FieldAwareSwerveDrive(config.coreConfig(), callback);
     this.config = config;
@@ -45,7 +44,6 @@ public class SwerveSubsystem extends SubsystemBase {
     headingPIDController.enableContinuousInput(-180, 180);
     headingPIDController.setTolerance(2);
   }
-
 
   public void periodic() {
     ultrasonicVoltage = ultrasonicDistanceSensor.getVoltage();
@@ -239,7 +237,20 @@ public class SwerveSubsystem extends SubsystemBase {
    * @return the required rotation speed of the robot (omega) in rad/s
    */
   public double computeOmega(double desiredHeadingDegrees) {
-    return headingPIDController.calculate(drive.getYaw(), desiredHeadingDegrees);
+    return computeOmega(desiredHeadingDegrees, config.rotationConfig().defaultRotVelocityRadPS());
+  }
+
+  /**
+   * Compute the required rotation speed of the robot given the desired heading. Note the desired
+   * heading is specified in degrees, adn the returned value is in radians per second.
+   *
+   * @param desiredHeadingDegrees the desired heading of the robot
+   * @param maxOmegaRadPerSec the maximum allowable rotation speed of the robot
+   * @return the required rotation speed of the robot (omega) in rad/s
+   */
+  public double computeOmega(double desiredHeadingDegrees, double maxOmegaRadPerSec) {
+    double omega = headingPIDController.calculate(drive.getYaw(), desiredHeadingDegrees);
+    return Math.min(omega, maxOmegaRadPerSec);
   }
 
   public double computeTranslateVelocity(double distance, double tolerance) {
@@ -286,7 +297,8 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     double rrY = reefY - currentY;
 
-    double angleAroundReefDeg = SwerveUtils.normalizeDegrees(Math.toDegrees(Math.atan2(rrX, rrY)) + 90);
+    double angleAroundReefDeg =
+        SwerveUtils.normalizeDegrees(Math.toDegrees(Math.atan2(rrX, rrY)) + 90);
 
     if (angleAroundReefDeg > -150 && angleAroundReefDeg < -90) {
       return -60;
@@ -302,5 +314,4 @@ public class SwerveSubsystem extends SubsystemBase {
       return 0;
     }
   }
-
 }

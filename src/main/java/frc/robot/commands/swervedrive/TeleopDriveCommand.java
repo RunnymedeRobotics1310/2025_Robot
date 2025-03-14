@@ -177,7 +177,8 @@ public class TeleopDriveCommand extends BaseDriveCommand {
         omegaRadiansPerSecond = 0;
       } else {
         headingSetpointDeg = normalizeDegrees(headingSetpointDeg);
-        omegaRadiansPerSecond = swerve.computeOmega(headingSetpointDeg);
+        omegaRadiansPerSecond =
+            swerve.computeOmega(headingSetpointDeg, ROTATION_CONFIG.maxRotVelocityRadPS());
       }
     }
 
