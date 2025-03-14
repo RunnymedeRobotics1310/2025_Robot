@@ -245,7 +245,12 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   }
 
   public boolean isTagInView(int tagId) {
-    return nikolaBotPose.getTagIndex(tagId) != -1;
+    return isTagInView(tagId, true);
+  }
+
+  public boolean isTagInView(int tagId, boolean leftBranch) {
+    LimelightBotPose botPose = getBotPose(leftBranch);
+    return botPose.getTagIndex(tagId) != -1;
   }
 
   /**
