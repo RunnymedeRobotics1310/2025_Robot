@@ -472,9 +472,7 @@ public final class Constants {
 
     // Ultrasonic port
     public static final int ULTRASONIC_SENSOR_PORT = 0;
-    public static final double ULTRASONIC_M = (609.6 - 30.5) / (2.245 - 0.12);
-    public static final double ULTRASONIC_B = 609.6 - ULTRASONIC_M * 2.245;
-    public static final double SCORING_DISTANCE_TOLERANCE = 5;
+    public static final double SCORING_DISTANCE_TOLERANCE = 0.05;
 
     public static enum DriveMode {
       TANK,
