@@ -530,12 +530,12 @@ public class CoralSubsystem extends SubsystemBase {
 
   private void checkSafety() {
 
-    boolean lowerLimit = isElevatorAtLowerLimit();
-    boolean upperLimit = isElevatorAtUpperLimit();
-    boolean goingDown = elevatorSetpoint < 0;
-    boolean goingUp = elevatorSetpoint > 0;
+    boolean elLowerLimit = isElevatorAtLowerLimit();
+    boolean elUpperLimit = isElevatorAtUpperLimit();
+    boolean elGoingDown = elevatorSetpoint < 0;
+    boolean elGoingUp = elevatorSetpoint > 0;
 
-    if (lowerLimit) {
+    if (elLowerLimit) {
       resetElevatorEncoder();
 
       if (elevatorSpeed < 0) {
@@ -545,7 +545,7 @@ public class CoralSubsystem extends SubsystemBase {
       }
     }
 
-    if (upperLimit) {
+    if (elUpperLimit) {
       elevatorEncoder.setPosition(ELEVATOR_MAX_HEIGHT);
 
       if (elevatorSpeed > 0) {
@@ -555,7 +555,7 @@ public class CoralSubsystem extends SubsystemBase {
       }
     }
 
-    if (!(lowerLimit && goingDown) && !(upperLimit && goingUp)) {
+    if (!(elLowerLimit && elGoingDown) && !(elUpperLimit && elGoingUp)) {
 
       // If not at either limit, then limit the speed.
       double previousMotorSpeed = elevatorSpeed;
@@ -599,7 +599,12 @@ public class CoralSubsystem extends SubsystemBase {
     /*
      * Arm Safety
      */
-    if (isArmAtLowerLimit()) {
+    boolean armLowerLimit = isArmAtLowerLimit();
+    boolean armUpperLimit = isArmAtUpperLimit();
+    boolean armGoingDown = armSetpoint < 0;
+    boolean armGoingUp = armSetpoint > 0;
+
+    if (armLowerLimit) {
 
       if (armSetpoint < 0) {
         armSetpoint = 0;
@@ -608,7 +613,7 @@ public class CoralSubsystem extends SubsystemBase {
       }
     }
 
-    if (isArmAtUpperLimit()) {
+    if (armUpperLimit) {
 
       if (armSetpoint > 0) {
         armSetpoint = 0;
@@ -618,7 +623,7 @@ public class CoralSubsystem extends SubsystemBase {
     }
 
     // If not at either limit, then limit the arm speed
-    if (!isArmAtLowerLimit() && !isArmAtUpperLimit()) {
+    if (!(armLowerLimit && armGoingDown) && !(armUpperLimit && armGoingUp)) {
 
       // If near the lower limit, then limit the speed
       if (getArmAngle()
