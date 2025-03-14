@@ -627,7 +627,6 @@ public class CoralSubsystem extends SubsystemBase {
         if (armSetpoint < -CoralConstants.ARM_SLOW_ZONE_SPEED) {
 
           armSetpoint = -CoralConstants.ARM_SLOW_ZONE_SPEED;
-          armMotor.set(armSetpoint);
         }
       }
       // If near the upper limit, limit the speed
@@ -637,7 +636,6 @@ public class CoralSubsystem extends SubsystemBase {
         if (armSetpoint > CoralConstants.ARM_SLOW_ZONE_SPEED) {
 
           armSetpoint = CoralConstants.ARM_SLOW_ZONE_SPEED;
-          armMotor.set(armSetpoint);
         }
       } else {
 
@@ -645,9 +643,9 @@ public class CoralSubsystem extends SubsystemBase {
         if (Math.abs(armSetpoint) > CoralConstants.ARM_MAX_SPEED) {
           armSetpoint = CoralConstants.ARM_MAX_SPEED * Math.signum(armSetpoint);
           // Directly set the motor speed, do not call the setter method (recursive loop)
-          armMotor.set(armSetpoint);
         }
       }
+      armMotor.set(armSetpoint);
     }
 
     /*
