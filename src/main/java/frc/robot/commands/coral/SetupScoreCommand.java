@@ -1,13 +1,13 @@
 package frc.robot.commands.coral;
 
+import static frc.robot.Constants.Swerve.SCORING_DISTANCE_TOLERANCE;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.commands.LoggingCommand;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
-
-import static frc.robot.Constants.DriveConstants.SCORING_DISTANCE_TOLERANCE;
 
 public class SetupScoreCommand extends LoggingCommand {
 
