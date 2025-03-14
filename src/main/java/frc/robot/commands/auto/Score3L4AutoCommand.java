@@ -38,7 +38,7 @@ public class Score3L4AutoCommand extends SequentialCommandGroup {
     addCommands(new DriveRobotOrientedOmegaCommand(swerve, -0.20, 0, 0).withTimeout(1));
     addCommands(new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.COMPACT, coral));
 
-    addCommands(new DriveToFieldLocationCommand(swerve, blueRightOuterStation, 0.25));
+    addCommands(new DriveToFieldLocationCommand(swerve, blueRightOuterStation, 0.05));
     addCommands(
         new DriveRobotOrientedOmegaCommand(swerve, 0.25, 0, 0)
             .deadlineFor(new IntakeCoralCommand(coral, false)));

@@ -248,7 +248,7 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
    * @param stream the camera stream to set the view to
    */
   public void setCameraView(CamStreamType stream) {
-    thomasStream.set(stream.getIndex());
+    // thomasStream.set(stream.getIndex());  //TODO: Remove properly when not needed
   }
 
   public LimelightBotPose getBotPose() {

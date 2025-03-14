@@ -45,6 +45,8 @@ public class TeleopDriveCommand extends BaseDriveCommand {
   public void initialize() {
     super.initialize();
     rotationSettleTimer.start();
+    rotationSettleTimer.reset();
+    headingSetpointDeg = null;
 
     // The FRC field-oriented coordinate system
     // https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
@@ -87,7 +89,8 @@ public class TeleopDriveCommand extends BaseDriveCommand {
     // heading. Positive x values on the stick translate to clockwise motion, and vice versa.
     // The coordinate system has positive motion as CCW.
     // Therefore, negative x stick value maps to positive rotation on the field.
-    final double ccwRotAngularVelPct = -oi.getDriverControllerAxis(RIGHT, X) * 0.65; // TODO: put this in constants?
+    final double ccwRotAngularVelPct =
+        -oi.getDriverControllerAxis(RIGHT, X) * 0.65; // TODO: put this in constants?
 
     final boolean rotate180Val = oi.getRotate180Val();
 
@@ -99,7 +102,7 @@ public class TeleopDriveCommand extends BaseDriveCommand {
 
     // Compute boost factor
     final boolean isSlow = oi.isSlowMode();
-//    final boolean isSlow = false;
+    //    final boolean isSlow = false;
     final boolean isFast = oi.isFastMode();
     final double boostFactor =
         isSlow ? SLOW_SPEED_FACTOR : (isFast ? MAX_SPEED_FACTOR : GENERAL_SPEED_FACTOR);
@@ -149,7 +152,8 @@ public class TeleopDriveCommand extends BaseDriveCommand {
         }
       }
       if (faceReef) {
-        headingSetpointDeg = swerve.getClosestReefAngle(swerve.getPose().getX(), swerve.getPose().getY());
+        headingSetpointDeg =
+            swerve.getClosestReefAngle(swerve.getPose().getX(), swerve.getPose().getY());
       }
 
       if (faceLeftStation) {
@@ -209,6 +213,7 @@ public class TeleopDriveCommand extends BaseDriveCommand {
   public void end(boolean interrupted) {
     super.end(interrupted);
     headingSetpointDeg = null;
+    rotationSettleTimer.reset();
   }
 
   // Returns true when the command should end.
