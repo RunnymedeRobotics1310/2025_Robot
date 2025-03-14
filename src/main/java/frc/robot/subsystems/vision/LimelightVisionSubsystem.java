@@ -36,6 +36,8 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
 
   private final NetworkTableEntry thomasCamMode = thomasVision.getEntry("camMode");
   private final NetworkTableEntry thomsPipeline = thomasVision.getEntry("pipeline");
+  private final DoubleArrayPublisher thomasRobotOrientation =
+      thomasVision.getDoubleArrayTopic("robot_orientation_set").publish();
   private final DoubleEntry thomasStream = thomasVision.getDoubleTopic("stream").getEntry(-1);
 
   // MegaTags
@@ -277,8 +279,9 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   public PoseEstimate getPoseEstimate(Pose2d odometryPose, double yaw, double yawRate) {
 
     // First, update the limelight and let it know our orientation
-    orientationSet[0] = odometryPose.getRotation().getDegrees();
+    orientationSet[0] = yaw;
     nikolaRobotOrientation.set(orientationSet);
+    thomasRobotOrientation.set(orientationSet);
 
     PoseEstimate returnVal = null;
 

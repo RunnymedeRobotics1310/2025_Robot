@@ -33,7 +33,7 @@ public final class Constants {
     public static final double LENGTH_METRES = 0.81;
     public static final double WIDTH_METRES = 0.71;
     public static final double HEIGHT_METRES = 1.016;
-    public static final double BUMPER_WIDTH = 0.08; // TODO: Measure!
+    public static final double BUMPER_WIDTH = 0.089;
   }
 
   public static final VisionConfig VISION_CONFIG =
@@ -362,7 +362,7 @@ public final class Constants {
       PRE_SCORE_RIGHT_1(new Pose2d(2.8126, 3.8609, Rotation2d.fromDegrees(0)), 18, 7, false),
       PRE_SCORE_RIGHT_2(new Pose2d(3.5085, 2.6570, Rotation2d.fromDegrees(60)), 17, 8, true),
       PRE_SCORE_RIGHT_3(new Pose2d(3.92, 2.58, Rotation2d.fromDegrees(60)), 17, 8, false),
-      PRE_SCORE_RIGHT_4(new Pose2d(5.25, 2.45, Rotation2d.fromDegrees(120)), 22, 9, true),
+      PRE_SCORE_RIGHT_4(new Pose2d(5.19, 2.9, Rotation2d.fromDegrees(120)), 22, 9, true),
       PRE_SCORE_RIGHT_5(new Pose2d(5.4701, 2.6570, Rotation2d.fromDegrees(120)), 22, 9, false),
       PRE_SCORE_RIGHT_6(new Pose2d(6.1660, 3.8609, Rotation2d.fromDegrees(180)), 21, 10, true),
       PRE_INTAKE_CENTRE_LEFT_STATION(new Pose2d(1.139, 7.000, Rotation2d.fromDegrees(126)), 13, 1),
@@ -505,7 +505,7 @@ public final class Constants {
      */
     public static final double ELEVATOR_MAX_SPEED = 1;
     public static final double ELEVATOR_MAX_HEIGHT = 158;
-    public static final double ELEVATOR_TOLERANCE = 2.5;
+    public static final double ELEVATOR_TOLERANCE = 1;
     public static final double ELEVATOR_MAX_SLEW = 0.2;
     public static final double ELEVATOR_P = 0.05;
     // Maximum manual tuning speed
@@ -547,10 +547,10 @@ public final class Constants {
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
       COMPACT(0),
-      CLOSE_INTAKE(39),
+      CLOSE_INTAKE(41),
       FAR_INTAKE(32),
       LEVEL_1(0),
-      LEVEL_2(0),
+      LEVEL_2(3),
       LEVEL_3(57),
       LEVEL_4(ELEVATOR_MAX_HEIGHT),
       REMOVE_LOW_ALGAE(18.5),

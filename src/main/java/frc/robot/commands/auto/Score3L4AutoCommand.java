@@ -23,7 +23,7 @@ public class Score3L4AutoCommand extends SequentialCommandGroup {
     addCommands(new SetAutoGyroCommand(swerve, 180));
     addCommands(new WaitCommand(delay));
 
-    addCommands(new DriveToFieldLocationCommand(swerve, PRE_SCORE_LEFT_4));
+    addCommands(new DriveToFieldLocationCommand(swerve, PRE_SCORE_RIGHT_4));
 
     // TODO: scoring block commented out until nathan & jeff fix it
     //    addCommands(
@@ -38,7 +38,7 @@ public class Score3L4AutoCommand extends SequentialCommandGroup {
     addCommands(new DriveRobotOrientedOmegaCommand(swerve, -0.20, 0, 0).withTimeout(1));
     addCommands(new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.COMPACT, coral));
 
-    addCommands(new DriveToFieldLocationCommand(swerve, blueLeftOuterStation, 0.25));
+    addCommands(new DriveToFieldLocationCommand(swerve, blueRightOuterStation, 0.25));
     addCommands(
         new DriveRobotOrientedOmegaCommand(swerve, 0.25, 0, 0)
             .deadlineFor(new IntakeCoralCommand(coral, false)));
@@ -46,16 +46,16 @@ public class Score3L4AutoCommand extends SequentialCommandGroup {
     // ------------------------the-did-it-work-line------------------------------------
 
     // addCommands(new DriveThroughFieldLocationCommand(swerve, blueLeftPickupTransit, speed));
-    addCommands(new DriveToFieldLocationCommand(swerve, PRE_SCORE_LEFT_2));
+    addCommands(new DriveToFieldLocationCommand(swerve, PRE_SCORE_RIGHT_2));
     // Score left1
     addCommands(new WaitCommand(2).deadlineFor(new NullDriveCommand(swerve)));
     // addCommands(new DriveThroughFieldLocationCommand(swerve, blueLeftPickupTransit, speed));
-    addCommands(new DriveToFieldLocationCommand(swerve, blueLeftOuterStation));
+    addCommands(new DriveToFieldLocationCommand(swerve, blueRightOuterStation));
     // Intake coral
-    addCommands(new DriveToFieldLocationCommand(swerve, PRE_SCORE_LEFT_3));
+    addCommands(new DriveToFieldLocationCommand(swerve, PRE_SCORE_RIGHT_3));
     // Score coral
     addCommands(new WaitCommand(2).deadlineFor(new NullDriveCommand(swerve)));
-    addCommands(new DriveToFieldLocationCommand(swerve, blueLeftOuterStation));
+    addCommands(new DriveToFieldLocationCommand(swerve, blueRightOuterStation));
     // Intake coral
 
   }
