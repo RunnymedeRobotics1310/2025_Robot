@@ -10,13 +10,12 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RunnymedeUtils;
 import frc.robot.telemetry.Telemetry;
 
-import static frc.robot.Constants.CoralConstants.ULTRASONIC_SENSOR_PORT;
+import static frc.robot.Constants.DriveConstants.ULTRASONIC_SENSOR_PORT;
 
 public class SwerveSubsystem extends SubsystemBase {
 

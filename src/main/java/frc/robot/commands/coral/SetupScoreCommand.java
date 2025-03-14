@@ -7,6 +7,8 @@ import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 
+import static frc.robot.Constants.DriveConstants.SCORING_DISTANCE_TOLERANCE;
+
 public class SetupScoreCommand extends LoggingCommand {
 
   /*
@@ -91,13 +93,13 @@ public class SetupScoreCommand extends LoggingCommand {
       deltaDistanceLeft = 0;
     }
 
-    if (Math.abs(deltaDistanceForward) < Constants.CoralConstants.SCORING_DISTANCE_TOLERANCE) {
+    if (Math.abs(deltaDistanceForward) < SCORING_DISTANCE_TOLERANCE) {
       atCorrectDistanceForward = true;
     } else {
       atCorrectDistanceForward = false;
     }
 
-    if (Math.abs(deltaDistanceLeft) < Constants.CoralConstants.SCORING_DISTANCE_TOLERANCE) {
+    if (Math.abs(deltaDistanceLeft) < SCORING_DISTANCE_TOLERANCE) {
       atCorrectDistanceLeft = true;
     } else {
       atCorrectDistanceLeft = false;
