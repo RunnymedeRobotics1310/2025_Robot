@@ -25,10 +25,9 @@ import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 public class RobotContainer {
 
   // Subsystems
+  private final SwerveSubsystem swerveDriveSubsystem = new SwerveSubsystem(Swerve.SUBSYSTEM_CONFIG);
   private final LimelightVisionSubsystem visionSubsystem =
-      new LimelightVisionSubsystem(Constants.VISION_CONFIG);
-  private final SwerveSubsystem swerveDriveSubsystem =
-      new SwerveSubsystem(Swerve.SUBSYSTEM_CONFIG, visionSubsystem);
+      new LimelightVisionSubsystem(Constants.VISION_CONFIG, swerveDriveSubsystem);
   private final CoralSubsystem coralSubsystem = new CoralSubsystem();
   private final PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
   private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();

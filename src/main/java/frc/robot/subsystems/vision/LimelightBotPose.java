@@ -3,6 +3,7 @@ package frc.robot.subsystems.vision;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.networktables.TimestampedDoubleArray;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -37,6 +38,10 @@ public class LimelightBotPose {
 
   public LimelightBotPose(double[] botPose, long timestampMicros) {
     update(botPose, timestampMicros);
+  }
+
+  public void update(TimestampedDoubleArray botPoseData) {
+    update(botPoseData.value, botPoseData.timestamp);
   }
 
   public void update(double[] botPose, long timestampMicros) {

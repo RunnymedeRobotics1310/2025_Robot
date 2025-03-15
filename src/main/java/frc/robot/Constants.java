@@ -12,6 +12,7 @@ import frc.robot.subsystems.swerve.SwerveDriveSubsystemConfig;
 import frc.robot.subsystems.swerve.SwerveRotationConfig;
 import frc.robot.subsystems.swerve.SwerveTranslationConfig;
 import frc.robot.subsystems.vision.VisionConfig;
+import frc.robot.subsystems.vision.VisionTelemetryLevel;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public final class Constants {
           0.1,
           .5,
           true,
-          true);
+          VisionTelemetryLevel.VERBOSE);
 
   public static final class OiConstants {
 

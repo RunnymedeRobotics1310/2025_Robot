@@ -2,11 +2,10 @@ package frc.robot.subsystems.swerve;
 
 import static frc.robot.Constants.Swerve.ULTRASONIC_SENSOR_PORT;
 
-import ca.team1310.swerve.RunnymedeSwerveDrive;
 import ca.team1310.swerve.core.SwerveMath;
 import ca.team1310.swerve.odometry.FieldAwareSwerveDrive;
 import ca.team1310.swerve.utils.SwerveUtils;
-import ca.team1310.swerve.vision.VisionPoseCallback;
+import ca.team1310.swerve.vision.VisionPoseEstimate;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -19,7 +18,7 @@ import frc.robot.telemetry.Telemetry;
 
 public class SwerveSubsystem extends SubsystemBase {
 
-  private final RunnymedeSwerveDrive drive;
+  private final FieldAwareSwerveDrive drive;
   private final SwerveDriveSubsystemConfig config;
   private final SlewRateLimiter xLimiter;
   private final SlewRateLimiter yLimiter;
@@ -30,8 +29,8 @@ public class SwerveSubsystem extends SubsystemBase {
   private double ultrasonicVoltage;
   private double ultrasonicDistanceM;
 
-  public SwerveSubsystem(SwerveDriveSubsystemConfig config, VisionPoseCallback callback) {
-    this.drive = new FieldAwareSwerveDrive(config.coreConfig(), callback);
+  public SwerveSubsystem(SwerveDriveSubsystemConfig config) {
+    this.drive = new FieldAwareSwerveDrive(config.coreConfig());
     this.config = config;
     this.xLimiter = new SlewRateLimiter(this.config.translationConfig().maxAccelMPS2());
     this.yLimiter = new SlewRateLimiter(this.config.translationConfig().maxAccelMPS2());
@@ -213,6 +212,15 @@ public class SwerveSubsystem extends SubsystemBase {
    */
   public void setModuleState(String moduleName, double speed, double angle) {
     drive.setModuleState(moduleName, speed, angle);
+  }
+
+  /**
+   * Update odometry with a sample from Vision
+   *
+   * @param visionPoseEstimate the pose estimate from vision
+   */
+  public void addVisionMeasurement(VisionPoseEstimate visionPoseEstimate) {
+    drive.addVisionMeasurement(visionPoseEstimate);
   }
 
   @Override

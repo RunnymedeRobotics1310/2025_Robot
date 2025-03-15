@@ -14,7 +14,7 @@ package frc.robot.subsystems.vision;
  * @param maxVisposeDeltaDistanceMetres the maximum distance between two vispose measurements to be
  *     considered the same
  * @param megatag2 Should megatag2 be used?
- * @param telemetryEnabled whether telemetry is enabled
+ * @param telemetryLevel What level of telemetry should be logged
  */
 public record VisionConfig(
     long pipelineAprilTagDetect,
@@ -25,4 +25,4 @@ public record VisionConfig(
     double highQualityAmbiguity,
     double maxVisposeDeltaDistanceMetres,
     boolean megatag2,
-    boolean telemetryEnabled) {}
+    VisionTelemetryLevel telemetryLevel) {}
