@@ -219,8 +219,8 @@ public class SwerveSubsystem extends SubsystemBase {
    *
    * @param visionPoseEstimate the pose estimate from vision
    */
-  public void updateVision(VisionPoseEstimate visionPoseEstimate) {
-    drive.updateVision(visionPoseEstimate);
+  public void addVisionEstimate(VisionPoseEstimate visionPoseEstimate) {
+    drive.addVisionEstimate(visionPoseEstimate);
   }
 
   @Override

@@ -374,7 +374,7 @@ public class LimelightVisionSubsystem extends SubsystemBase {
     }
 
     if (poseUpdatesEnabled && visionPoseEstimate != null) {
-      swerve.updateVision(visionPoseEstimate);
+      swerve.addVisionEstimate(visionPoseEstimate);
     }
   }
 
