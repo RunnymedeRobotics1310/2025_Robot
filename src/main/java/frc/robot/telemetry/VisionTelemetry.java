@@ -8,6 +8,7 @@ import static frc.robot.telemetry.Telemetry.PREFIX;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.vision.LimelightPoseEstimate;
+import frc.robot.subsystems.vision.VisionTelemetryLevel;
 
 /**
  * @author JZ
@@ -16,7 +17,7 @@ import frc.robot.subsystems.vision.LimelightPoseEstimate;
 public class VisionTelemetry {
 
   /** Whether the vision telemetry is enabled */
-  public boolean enabled = false;
+  public VisionTelemetryLevel telemetryLevel = VisionTelemetryLevel.NONE;
 
   // Pose
   /** The x location of the robot with respect to the field in metres */
@@ -83,47 +84,47 @@ public class VisionTelemetry {
   }
 
   void post() {
-    // Do nothing if not enabled
-    if (!enabled) {
-      return;
+    if (Telemetry.vision.telemetryLevel == VisionTelemetryLevel.REGULAR
+        || Telemetry.vision.telemetryLevel == VisionTelemetryLevel.VERBOSE) {
+      String poseOdo =
+          String.format("(%.2f, %.2f)m %.1f°", poseMetresX, poseMetresY, poseHeadingDegrees);
+      SmartDashboard.putString(PREFIX + "Vision/pose_odo", poseOdo);
+
+      String poseVis =
+          String.format("(%.2f, %.2f)m %.1f°", visionPoseX, visionPoseY, visionPoseHeading);
+      SmartDashboard.putString(PREFIX + "Vision/pose_vis", poseVis);
+
+      String poseDelta = String.format("%.2fm, %.1f°", poseDeltaMetres, headingDeltaDegrees);
+      SmartDashboard.putString(PREFIX + "Vision/pose_delta", poseDelta);
+
+      SmartDashboard.putString(PREFIX + "Vision/pose_confidence", poseConfidence.toString());
+
+      SmartDashboard.putNumber(PREFIX + "Vision/tag_ambiguity", tagAmbiguity);
+
+      SmartDashboard.putString(PREFIX + "Vision/yaw_navx", String.format("%.2f°", navxYaw));
+
+      SmartDashboard.putString(
+          PREFIX + "Vision/yaw_navx_delta", String.format("%.2f°", navxYawDelta));
     }
 
-    String poseOdo =
-        String.format("(%.2f, %.2f)m %.1f°", poseMetresX, poseMetresY, poseHeadingDegrees);
-    SmartDashboard.putString(PREFIX + "Vision/pose_odo", poseOdo);
+    if (Telemetry.vision.telemetryLevel == VisionTelemetryLevel.VERBOSE) {
+      String poseVisSeries =
+          String.format(
+              "(%.2f, %.2f)m %.1f°",
+              poseXSeries.getMaxValue() - poseXSeries.getMinValue(),
+              poseYSeries.getMaxValue() - poseYSeries.getMinValue(),
+              poseDegSeries.getMaxValue() - poseDegSeries.getMinValue());
+      SmartDashboard.putString(PREFIX + "Vision/pose_vis_range", poseVisSeries);
 
-    String poseVis =
-        String.format("(%.2f, %.2f)m %.1f°", visionPoseX, visionPoseY, visionPoseHeading);
-    SmartDashboard.putString(PREFIX + "Vision/pose_vis", poseVis);
+      SmartDashboard.putNumberArray(PREFIX + "Vision/nik_visible_tags", nikVisibleTags);
+      SmartDashboard.putNumber(PREFIX + "Vision/nik_tx", nikTx);
+      SmartDashboard.putNumber(PREFIX + "Vision/nik_distanceToRobot", nikDistanceToRobot);
+      SmartDashboard.putNumber(PREFIX + "Vision/nik_distanceToCam", nikDistanceToCam);
 
-    String poseDelta = String.format("%.2fm, %.1f°", poseDeltaMetres, headingDeltaDegrees);
-    SmartDashboard.putString(PREFIX + "Vision/pose_delta", poseDelta);
-
-    SmartDashboard.putString(PREFIX + "Vision/pose_confidence", poseConfidence.toString());
-
-    SmartDashboard.putNumber(PREFIX + "Vision/tag_ambiguity", tagAmbiguity);
-
-    SmartDashboard.putString(PREFIX + "Vision/yaw_navx", String.format("%.2f°", navxYaw));
-
-    SmartDashboard.putString(
-        PREFIX + "Vision/yaw_navx_delta", String.format("%.2f°", navxYawDelta));
-
-    String poseVisSeries =
-        String.format(
-            "(%.2f, %.2f)m %.1f°",
-            poseXSeries.getMaxValue() - poseXSeries.getMinValue(),
-            poseYSeries.getMaxValue() - poseYSeries.getMinValue(),
-            poseDegSeries.getMaxValue() - poseDegSeries.getMinValue());
-    SmartDashboard.putString(PREFIX + "Vision/pose_vis_range", poseVisSeries);
-
-    SmartDashboard.putNumberArray(PREFIX + "Vision/nik_visible_tags", nikVisibleTags);
-    SmartDashboard.putNumber(PREFIX + "Vision/nik_tx", nikTx);
-    SmartDashboard.putNumber(PREFIX + "Vision/nik_distanceToRobot", nikDistanceToRobot);
-    SmartDashboard.putNumber(PREFIX + "Vision/nik_distanceToCam", nikDistanceToCam);
-
-    SmartDashboard.putNumberArray(PREFIX + "Vision/tom_visible_tags", tomVisibleTags);
-    SmartDashboard.putNumber(PREFIX + "Vision/tom_tx", tomTx);
-    SmartDashboard.putNumber(PREFIX + "Vision/tom_distanceToRobot", tomDistanceToRobot);
-    SmartDashboard.putNumber(PREFIX + "Vision/tom_distanceToCam", tomDistanceToCam);
+      SmartDashboard.putNumberArray(PREFIX + "Vision/tom_visible_tags", tomVisibleTags);
+      SmartDashboard.putNumber(PREFIX + "Vision/tom_tx", tomTx);
+      SmartDashboard.putNumber(PREFIX + "Vision/tom_distanceToRobot", tomDistanceToRobot);
+      SmartDashboard.putNumber(PREFIX + "Vision/tom_distanceToCam", tomDistanceToCam);
+    }
   }
 }

@@ -1,12 +1,12 @@
 package frc.robot.subsystems.vision;
 
-import ca.team1310.swerve.vision.PoseEstimate;
+import ca.team1310.swerve.vision.VisionPoseEstimate;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 
-public class LimelightPoseEstimate implements PoseEstimate {
+public class LimelightPoseEstimate implements VisionPoseEstimate {
 
   public enum PoseConfidence {
     NONE,
