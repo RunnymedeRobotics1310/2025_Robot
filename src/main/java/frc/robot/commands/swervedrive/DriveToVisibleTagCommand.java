@@ -10,17 +10,18 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
   private static final int MAX_NO_DATA_COUNT_CYCLES = 20;
 
   private final SwerveSubsystem swerve;
-  private final LimelightVisionSubsystem visionSubsystem;
+  private final LimelightVisionSubsystem vision;
   private final boolean isLeftBranch;
 
   private int tagId = -1;
   private int noDataCount = 0;
 
   public DriveToVisibleTagCommand(
-      SwerveSubsystem swerve, LimelightVisionSubsystem visionSubsystem, boolean isLeftBranch) {
+      SwerveSubsystem swerve, LimelightVisionSubsystem vision, boolean isLeftBranch) {
     this.swerve = swerve;
-    this.visionSubsystem = visionSubsystem;
+    this.vision = vision;
     this.isLeftBranch = isLeftBranch;
+    addRequirements(swerve, vision);
   }
 
   @Override
@@ -28,7 +29,7 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
 
     // capture tag if we don't have one
     if (tagId == -1) {
-      tagId = (int) visionSubsystem.getVisibleTargetTagId(isLeftBranch);
+      tagId = (int) vision.getVisibleTargetTagId(isLeftBranch);
       if (tagId == -1) {
         noDataCount++;
         return;
@@ -39,11 +40,11 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
     }
 
     // get offset
-    visionSubsystem.setTargetTagId(tagId);
+    vision.setTargetTagId(tagId);
     final double tX;
-    if (visionSubsystem.isTagInView(tagId, isLeftBranch)) {
+    if (vision.isTagInView(tagId, isLeftBranch)) {
       noDataCount = 0;
-      tX = visionSubsystem.angleToTarget(isLeftBranch);
+      tX = vision.angleToTarget(isLeftBranch);
     } else {
       noDataCount++;
       return;
