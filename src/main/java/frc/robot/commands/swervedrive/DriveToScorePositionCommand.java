@@ -182,7 +182,7 @@ public class DriveToScorePositionCommand extends LoggingCommand {
 
   public void end(boolean interrupted) {
     logCommandEnd(interrupted);
-    visionSubsystem.setTargetTagId(0);
+    visionSubsystem.clearTargetTagId();
     swerve.stop();
   }
 
@@ -208,7 +208,6 @@ public class DriveToScorePositionCommand extends LoggingCommand {
               + "], deg["
               + endPose.getRotation().getDegrees()
               + "]");
-      visionSubsystem.setTargetTagId(0);
     }
     return done;
   }

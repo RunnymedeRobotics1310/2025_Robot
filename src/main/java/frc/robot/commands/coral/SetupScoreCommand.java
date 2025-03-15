@@ -83,7 +83,7 @@ public class SetupScoreCommand extends LoggingCommand {
     tX = limelightVisionSubsystem.angleToTarget();
     offsetFromTag = currentDistance * Math.sin(Math.toRadians(tX));
 
-    if (limelightVisionSubsystem.getTagAmount() > 0.5) {
+    if (limelightVisionSubsystem.getTagCount() > 0.5) {
       if (isLeftBranch) {
         deltaDistanceLeft = Constants.CoralConstants.OFFSET_FROM_TAG_FOR_SCORING - offsetFromTag;
       } else {
