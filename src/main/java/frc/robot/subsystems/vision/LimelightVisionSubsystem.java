@@ -44,8 +44,8 @@ public class LimelightVisionSubsystem extends SubsystemBase {
       VecBuilder.fill(0.06, 0.06, 9999999);
 
   // These hold the data from the limelights, updated every periodic()
-  private final LimelightBotPose nikolaBotPose = new LimelightBotPose(null, 0);
-  private final LimelightBotPose thomasBotPose = new LimelightBotPose(null, 0);
+  private final LimelightBotPose nikolaBotPoseCache = new LimelightBotPose(null, 0);
+  private final LimelightBotPose thomasBotPoseCache = new LimelightBotPose(null, 0);
 
   private final SwerveSubsystem swerve;
   private final double fieldExtentMetresX;
@@ -92,8 +92,8 @@ public class LimelightVisionSubsystem extends SubsystemBase {
     thomasRobotOrientation.set(orientationSet);
 
     // Next, pull updated data from the limelights
-    nikolaBotPose.update(nikolaMegaTag.getAtomic());
-    thomasBotPose.update(thomasMegaTag.getAtomic());
+    nikolaBotPoseCache.update(nikolaMegaTag.getAtomic());
+    thomasBotPoseCache.update(thomasMegaTag.getAtomic());
 
     // Lastly, publish the pose estimate to the PoseEstimator
     updateVisionPose();
@@ -106,7 +106,7 @@ public class LimelightVisionSubsystem extends SubsystemBase {
    * @return Appropriate botPose data for Nikola or Thomas based on side
    */
   private LimelightBotPose getBotPose(boolean leftBranch) {
-    return leftBranch ? nikolaBotPose : thomasBotPose;
+    return leftBranch ? nikolaBotPoseCache : thomasBotPoseCache;
   }
 
   /* Public API */
@@ -145,7 +145,7 @@ public class LimelightVisionSubsystem extends SubsystemBase {
    * @return the number of tags visible to the default limelight (nikola)
    */
   public int getNumTagsVisible() {
-    return (int) nikolaBotPose.getTagCount();
+    return (int) nikolaBotPoseCache.getTagCount();
   }
 
   /**
@@ -238,7 +238,7 @@ public class LimelightVisionSubsystem extends SubsystemBase {
    * @return the number of tags visible to the default limelight (nikola)
    */
   public double getTagCount() {
-    return nikolaBotPose.getTagCount();
+    return nikolaBotPoseCache.getTagCount();
   }
 
   /**
@@ -289,24 +289,25 @@ public class LimelightVisionSubsystem extends SubsystemBase {
     // Get the current pose delta
     double compareDistance = -1;
     double compareHeading = -1;
-    double tagAmbiguity = nikolaBotPose.getTagAmbiguity(0);
+    double tagAmbiguity = nikolaBotPoseCache.getTagAmbiguity(0);
     Pose2d odometryPose = swerve.getPose();
     double yaw = swerve.getYaw();
 
     LimelightPoseEstimate.PoseConfidence poseConfidence = LimelightPoseEstimate.PoseConfidence.NONE;
-    LimelightBotPose botPose = nikolaBotPose;
+    LimelightBotPose botPose = nikolaBotPoseCache;
 
     // If pose is 0,0 or no tags in view, we don't actually have data - return null
-    if (nikolaBotPose.getTagCount() > 0
-        && nikolaBotPose.isPoseXInBounds(0, fieldExtentMetresX)
-        && nikolaBotPose.isPoseYInBounds(0, fieldExtentMetresY)) {
+    if (nikolaBotPoseCache.getTagCount() > 0
+        && nikolaBotPoseCache.isPoseXInBounds(0, fieldExtentMetresX)
+        && nikolaBotPoseCache.isPoseYInBounds(0, fieldExtentMetresY)) {
 
       if (megatag2) {
         poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG2;
         visionPoseEstimate =
             new LimelightPoseEstimate(
-                nikolaBotPose.getPose(),
-                nikolaBotPose.getTimestampSeconds() - nikolaBotPose.getTotalLatencySeconds(),
+                nikolaBotPoseCache.getPose(),
+                nikolaBotPoseCache.getTimestampSeconds()
+                    - nikolaBotPoseCache.getTotalLatencySeconds(),
                 POSE_DEVIATION_MEGATAG2);
       }
       // MT1: Do we have a decent signal?  i.e. Ambiguity < 0.7
@@ -317,8 +318,8 @@ public class LimelightVisionSubsystem extends SubsystemBase {
           poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG1_HIGH;
           visionPoseEstimate =
               new LimelightPoseEstimate(
-                  nikolaBotPose.getPose(),
-                  nikolaBotPose.getTimestampSeconds(),
+                  nikolaBotPoseCache.getPose(),
+                  nikolaBotPoseCache.getTimestampSeconds(),
                   POSE_DEVIATION_MEGATAG1);
         } else {
           // We need to be careful with this data set. If the location is too far off,
@@ -327,11 +328,13 @@ public class LimelightVisionSubsystem extends SubsystemBase {
               botPose.getPose().getTranslation().getDistance(odometryPose.getTranslation());
           if (compareDistance < maxVisposDeltaDistanceMetres) {
             poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG1_MED;
-            double stdDevRatio = Math.pow(nikolaBotPose.getTagDistToRobot(0), 2) / 2;
+            double stdDevRatio = Math.pow(nikolaBotPoseCache.getTagDistToRobot(0), 2) / 2;
             Matrix<N3, N1> deviations = VecBuilder.fill(stdDevRatio, stdDevRatio, stdDevRatio * 5);
             visionPoseEstimate =
                 new LimelightPoseEstimate(
-                    nikolaBotPose.getPose(), nikolaBotPose.getTimestampSeconds(), deviations);
+                    nikolaBotPoseCache.getPose(),
+                    nikolaBotPoseCache.getTimestampSeconds(),
+                    deviations);
           }
         }
       }
@@ -365,15 +368,15 @@ public class LimelightVisionSubsystem extends SubsystemBase {
       Telemetry.vision.poseYSeries.add(botPose.getPoseY());
       Telemetry.vision.poseDegSeries.add(botPose.getPoseRotationYaw());
 
-      Telemetry.vision.nikVisibleTags = nikolaBotPose.getVisibleTags();
-      Telemetry.vision.nikTx = nikolaBotPose.getTagTxnc(0);
-      Telemetry.vision.nikDistanceToRobot = nikolaBotPose.getTagDistToRobot(0);
-      Telemetry.vision.nikDistanceToCam = nikolaBotPose.getTagDistToCamera(0);
+      Telemetry.vision.nikVisibleTags = nikolaBotPoseCache.getVisibleTags();
+      Telemetry.vision.nikTx = nikolaBotPoseCache.getTagTxnc(0);
+      Telemetry.vision.nikDistanceToRobot = nikolaBotPoseCache.getTagDistToRobot(0);
+      Telemetry.vision.nikDistanceToCam = nikolaBotPoseCache.getTagDistToCamera(0);
 
-      Telemetry.vision.tomVisibleTags = thomasBotPose.getVisibleTags();
-      Telemetry.vision.tomTx = thomasBotPose.getTagTxnc(0);
-      Telemetry.vision.tomDistanceToRobot = thomasBotPose.getTagDistToRobot(0);
-      Telemetry.vision.tomDistanceToCam = thomasBotPose.getTagDistToCamera(0);
+      Telemetry.vision.tomVisibleTags = thomasBotPoseCache.getVisibleTags();
+      Telemetry.vision.tomTx = thomasBotPoseCache.getTagTxnc(0);
+      Telemetry.vision.tomDistanceToRobot = thomasBotPoseCache.getTagDistToRobot(0);
+      Telemetry.vision.tomDistanceToCam = thomasBotPoseCache.getTagDistToCamera(0);
     }
 
     if (poseUpdatesEnabled && visionPoseEstimate != null) {
