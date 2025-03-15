@@ -85,7 +85,7 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
   @Override
   public void end(boolean interrupted) {
     logCommandEnd(interrupted);
-    visionSubsystem.clearTargetTagId();
+    vision.clearTargetTagId();
     swerve.stop();
   }
 }
