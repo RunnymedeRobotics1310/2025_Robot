@@ -55,10 +55,8 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
     final double vY;
     if (Math.abs(tX) > 20) {
       vX = 0;
-      System.out.println("too far to go forwards");
     } else {
       vX = 0.25;
-      System.out.println("going forwards");
     }
     vY = 0.02 * tX;
 
