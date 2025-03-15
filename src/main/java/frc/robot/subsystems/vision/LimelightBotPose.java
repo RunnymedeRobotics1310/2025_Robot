@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.TimestampedDoubleArray;
+import frc.robot.Constants;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -51,6 +52,12 @@ public class LimelightBotPose {
 
   public Translation2d getTranslation() {
     return new Translation2d(getPoseX(), getPoseY());
+  }
+
+  public boolean isPoseValid() {
+    return (getTagCount() > 0
+        && isPoseXInBounds(0, Constants.FieldConstants.FIELD_EXTENT_METRES_X)
+        && isPoseYInBounds(0, Constants.FieldConstants.FIELD_EXTENT_METRES_Y));
   }
 
   public Pose2d getPose() {

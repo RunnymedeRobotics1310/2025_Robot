@@ -288,14 +288,12 @@ public class LimelightVisionSubsystem extends SubsystemBase {
     double yaw = swerve.getYaw();
 
     LimelightPoseEstimate.PoseConfidence poseConfidence = LimelightPoseEstimate.PoseConfidence.NONE;
-    LimelightBotPose botPose = nikolaBotPoseCache;
 
-    // If pose is 0,0 or no tags in view, we don't actually have data - return null
-    if (nikolaBotPoseCache.getTagCount() > 0
-        && nikolaBotPoseCache.isPoseXInBounds(0, fieldExtentMetresX)
-        && nikolaBotPoseCache.isPoseYInBounds(0, fieldExtentMetresY)) {
+    // Make sure tags are visible and pose is on-field
+    if (nikolaBotPoseCache.isPoseValid()) {
 
       if (megatag2) {
+        /* MegaTag 2 Handling */
         poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG2;
         visionPoseEstimate =
             new LimelightPoseEstimate(
@@ -303,23 +301,28 @@ public class LimelightVisionSubsystem extends SubsystemBase {
                 nikolaBotPoseCache.getTimestampSeconds()
                     - nikolaBotPoseCache.getTotalLatencySeconds(),
                 poseDeviation);
-      }
-      // MT1: Do we have a decent signal?  i.e. Ambiguity < 0.7
-      else if (tagAmbiguity < maxAmbiguity) {
-        // If the ambiguity is very low, use the data as is (or when disabled, to allow for bot
-        // repositioning
+        /* End MegaTag 2 Handling */
+      } else if (tagAmbiguity < maxAmbiguity) {
+        /* MegaTag 1 Handling - only is Ambiguity < 0.7 */
+
         if (tagAmbiguity < highQualityAmbiguity || DriverStation.isDisabled()) {
+          // If the ambiguity is very low (< 0.1) or DriverStation disabled, high confidence pose
+          // update
           poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG1_HIGH;
           visionPoseEstimate =
               new LimelightPoseEstimate(
                   nikolaBotPoseCache.getPose(),
                   nikolaBotPoseCache.getTimestampSeconds(),
                   poseDeviation);
+
         } else {
-          // We need to be careful with this data set. If the location is too far off,
-          // don't use it. Otherwise, scale confidence by distance.
+          // For medium Ambiguity, only use it if we're within 0.5m.  Scale standard deviation by
+          // distance.
           compareDistance =
-              botPose.getPose().getTranslation().getDistance(odometryPose.getTranslation());
+              nikolaBotPoseCache
+                  .getPose()
+                  .getTranslation()
+                  .getDistance(odometryPose.getTranslation());
           if (compareDistance < maxVisposDeltaDistanceMetres) {
             poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG1_MED;
             double stdDevRatio = Math.pow(nikolaBotPoseCache.getTagDistToRobot(0), 2) / 2;
@@ -331,6 +334,7 @@ public class LimelightVisionSubsystem extends SubsystemBase {
                     deviations);
           }
         }
+        /* End MegaTag 1 Handling */
       }
     }
 
@@ -339,9 +343,10 @@ public class LimelightVisionSubsystem extends SubsystemBase {
         || Telemetry.vision.telemetryLevel == VisionTelemetryLevel.VERBOSE) {
 
       compareDistance =
-          botPose.getPose().getTranslation().getDistance(odometryPose.getTranslation());
+          nikolaBotPoseCache.getPose().getTranslation().getDistance(odometryPose.getTranslation());
       compareHeading =
-          botPose.getPose().getRotation().getDegrees() - odometryPose.getRotation().getDegrees();
+          nikolaBotPoseCache.getPose().getRotation().getDegrees()
+              - odometryPose.getRotation().getDegrees();
 
       Telemetry.vision.tagAmbiguity = tagAmbiguity;
       Telemetry.vision.poseConfidence = poseConfidence;
@@ -350,17 +355,17 @@ public class LimelightVisionSubsystem extends SubsystemBase {
       Telemetry.vision.poseMetresX = odometryPose.getX();
       Telemetry.vision.poseMetresY = odometryPose.getY();
       Telemetry.vision.poseHeadingDegrees = odometryPose.getRotation().getDegrees();
-      Telemetry.vision.visionPoseX = botPose.getPoseX();
-      Telemetry.vision.visionPoseY = botPose.getPoseY();
-      Telemetry.vision.visionPoseHeading = botPose.getPoseRotationYaw();
+      Telemetry.vision.visionPoseX = nikolaBotPoseCache.getPoseX();
+      Telemetry.vision.visionPoseY = nikolaBotPoseCache.getPoseY();
+      Telemetry.vision.visionPoseHeading = nikolaBotPoseCache.getPoseRotationYaw();
       Telemetry.vision.navxYaw = yaw;
       Telemetry.vision.navxYawDelta = odometryPose.getRotation().getDegrees() - yaw;
     }
 
     if (Telemetry.vision.telemetryLevel == VisionTelemetryLevel.VERBOSE) {
-      Telemetry.vision.poseXSeries.add(botPose.getPoseX());
-      Telemetry.vision.poseYSeries.add(botPose.getPoseY());
-      Telemetry.vision.poseDegSeries.add(botPose.getPoseRotationYaw());
+      Telemetry.vision.poseXSeries.add(nikolaBotPoseCache.getPoseX());
+      Telemetry.vision.poseYSeries.add(nikolaBotPoseCache.getPoseY());
+      Telemetry.vision.poseDegSeries.add(nikolaBotPoseCache.getPoseRotationYaw());
 
       Telemetry.vision.nikVisibleTags = nikolaBotPoseCache.getVisibleTags();
       Telemetry.vision.nikTx = nikolaBotPoseCache.getTagTxnc(0);
