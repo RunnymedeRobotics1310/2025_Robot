@@ -37,17 +37,25 @@ public class LimelightBotPose {
   private static final int OFFSET_TAG_DIST_TO_ROBOT = 5;
   private static final int OFFSET_TAG_AMBIGUITY = 6;
 
-  public LimelightBotPose(double[] botPose, long timestampMicros) {
-    update(botPose, timestampMicros);
+  /**
+   * Create a new LimelightBotPose object, initialized with no data.
+   *
+   * @see #update(TimestampedDoubleArray)'
+   */
+  public LimelightBotPose() {
+    this.botPose = new double[0];
+    this.timestampMicros = 0;
   }
 
+  /**
+   * Update the LimelightBotPose with new data
+   *
+   * @param botPoseData new data from the Limelight; never null
+   */
   public void update(TimestampedDoubleArray botPoseData) {
-    update(botPoseData.value, botPoseData.timestamp);
-  }
-
-  public void update(double[] botPose, long timestampMicros) {
-    this.botPose = Objects.requireNonNullElseGet(botPose, () -> new double[0]);
-    this.timestampMicros = timestampMicros;
+    Objects.requireNonNull(botPoseData, "botPoseData must not be null");
+    this.botPose = botPoseData.value;
+    this.timestampMicros = botPoseData.timestamp;
   }
 
   public Translation2d getTranslation() {
