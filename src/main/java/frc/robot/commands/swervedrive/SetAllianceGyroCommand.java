@@ -5,14 +5,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.RunnymedeUtils;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
-public class SetAutoGyroCommand extends InstantCommand {
+public class SetAllianceGyroCommand extends InstantCommand {
 
   /**
    * Set the current heading in the driveSubsystem
    *
    * @param driveSubsystem
    */
-  public SetAutoGyroCommand(SwerveSubsystem driveSubsystem, double yaw) {
+  public SetAllianceGyroCommand(SwerveSubsystem driveSubsystem, double yaw) {
     super(
         () -> {
           double headingOffset = 0;

@@ -14,7 +14,7 @@ public class Score3L4RightAutoCommand extends BaseAutoCommand {
       SwerveSubsystem swerve, CoralSubsystem coral, LimelightVisionSubsystem vision, double delay) {
     super(swerve, vision, coral);
 
-    addCommands(new SetAutoGyroCommand(swerve, 180));
+    addCommands(new SetAllianceGyroCommand(swerve, 180));
     addCommands(new WaitCommand(delay));
 
     goScoreL4Coral(PRE_SCORE_RIGHT_4);

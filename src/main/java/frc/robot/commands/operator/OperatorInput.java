@@ -1,7 +1,5 @@
 package frc.robot.commands.operator;
 
-import static frc.robot.Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_4;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -20,7 +18,7 @@ import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.pneumatics.ToggleCompressorCommand;
 import frc.robot.commands.swervedrive.DriveToVisibleTagCommand;
-import frc.robot.commands.swervedrive.SetAutoGyroCommand;
+import frc.robot.commands.swervedrive.SetAllianceGyroCommand;
 import frc.robot.commands.test.SystemTestCommand;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
@@ -105,12 +103,12 @@ public class OperatorInput extends SubsystemBase {
 
     // Reset Gyro
     new Trigger(() -> driverController.getBackButton())
-        .onTrue(new SetAutoGyroCommand(driveSubsystem, 0));
+        .onTrue(new SetAllianceGyroCommand(driveSubsystem, 0));
 
     // Set Yaw
     // TODO: Remove!  Practice Field Only!
     new Trigger(() -> operatorController.getBackButton())
-        .onTrue(new SetAutoGyroCommand(driveSubsystem, -60));
+        .onTrue(new SetAllianceGyroCommand(driveSubsystem, -60));
 
     // Compact (X button)
     new Trigger(() -> driverController.getXButton() || operatorController.getXButton())

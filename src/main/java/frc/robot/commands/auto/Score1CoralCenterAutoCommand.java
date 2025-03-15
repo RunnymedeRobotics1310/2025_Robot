@@ -13,7 +13,7 @@ public class Score1CoralCenterAutoCommand extends BaseAutoCommand {
       SwerveSubsystem swerve, CoralSubsystem coral, LimelightVisionSubsystem vision, double delay) {
     super(swerve, vision, coral);
 
-    addCommands(new SetAutoGyroCommand(swerve, 180));
+    addCommands(new SetAllianceGyroCommand(swerve, 180));
     addCommands(new WaitCommand(delay));
 
     goScoreL4Coral(FieldLocation.PRE_SCORE_LEFT_6);
