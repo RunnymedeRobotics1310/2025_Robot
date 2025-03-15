@@ -40,11 +40,10 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
     }
 
     // get offset
-    vision.setTargetTagId(tagId);
     final double tX;
     if (vision.isTagInView(tagId, isLeftBranch)) {
       noDataCount = 0;
-      tX = vision.angleToTarget(isLeftBranch);
+      tX = vision.angleToTarget(tagId, isLeftBranch);
     } else {
       noDataCount++;
       return;
@@ -85,7 +84,6 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
   @Override
   public void end(boolean interrupted) {
     logCommandEnd(interrupted);
-    vision.clearTargetTagId();
     swerve.stop();
   }
 }

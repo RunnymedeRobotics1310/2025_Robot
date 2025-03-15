@@ -15,7 +15,6 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.TimestampedDoubleArray;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.telemetry.Telemetry;
 
 public class LimelightVisionSubsystem extends SubsystemBase implements VisionPoseCallback {
@@ -64,8 +63,6 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   private final boolean megatag2;
 
   private boolean poseUpdatesEnabled = true;
-
-  private int targetTagId = 0;
 
   public LimelightVisionSubsystem(VisionConfig visionConfig) {
     this.fieldExtentMetresX = visionConfig.fieldExtentMetresX();
@@ -132,29 +129,6 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   }
 
   /**
-   * Set the target tag to track - used by the other tag functions in this class
-   *
-   * @param tag the tag to track as defined in Constants.FieldConstants.TAGS
-   */
-  public void setTargetTagId(Constants.FieldConstants.TAGS tag) {
-    this.targetTagId = tag.tagId;
-  }
-
-  /**
-   * Set the target tag to track - used by the other tag functions in this class
-   *
-   * @param tagId Numeric AprilTag ID to track
-   */
-  public void setTargetTagId(int tagId) {
-    this.targetTagId = tagId;
-  }
-
-  /** Clear the target tag to track - revert to returning data based on nearest tag */
-  public void clearTargetTagId() {
-    this.targetTagId = 0;
-  }
-
-  /**
    * Get the tag ID of the closest visible target to default limelight (nikola)
    *
    * @return the tag ID of the closest visible target to default limelight (nikola)
@@ -166,6 +140,7 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   /**
    * Get the tag ID of the closest visible target to the limelight handling left or right branch
    *
+   * @param leftBranch Left or Right branch?
    * @return the tag ID of the closest visible target to the limelight handling left or right branch
    */
   public double getVisibleTargetTagId(boolean leftBranch) {
@@ -188,21 +163,23 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
    * @return the distance to robot centre to the nearest or targeted tag
    */
   public double distanceTagToRobot() {
-    return distanceTagToRobot(true);
+    return distanceTagToRobot(0, true);
   }
 
   /**
    * Obtain the distance to robot centre to the tag either nearest to, or targeted if one has been
    * set by setTargetTag(), to the limelight handling left or right branch.
    *
+   * @param tagId Tag to use, or 0 if looking for nearest tag
+   * @param leftBranch Left or Right branch?
    * @return the distance to robot centre to the nearest or targeted tag
    */
-  public double distanceTagToRobot(boolean leftBranch) {
+  public double distanceTagToRobot(int tagId, boolean leftBranch) {
     LimelightBotPose botPose = getBotPose(leftBranch);
 
     int index = 0;
-    if (targetTagId > 0) {
-      index = botPose.getTagIndex(targetTagId);
+    if (tagId > 0) {
+      index = botPose.getTagIndex(tagId);
     }
     return botPose.getTagDistToRobot(index);
   }
@@ -214,21 +191,23 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
    * @return the distance to camera to the nearest or targeted tag
    */
   public double distanceTagToCamera() {
-    return distanceTagToCamera(true);
+    return distanceTagToCamera(0, true);
   }
 
   /**
    * Obtain the distance to camera to the tag either nearest to, or targeted if one has been set by
    * setTargetTag(), to the limelight handling left or right branch.
    *
+   * @param tagId Tag to use, or 0 if looking for nearest tag
+   * @param leftBranch Left or Right branch?
    * @return the distance to camera to the nearest or targeted tag
    */
-  public double distanceTagToCamera(boolean leftBranch) {
+  public double distanceTagToCamera(int tagId, boolean leftBranch) {
     LimelightBotPose botPose = getBotPose(leftBranch);
 
     int index = 0;
-    if (targetTagId > 0) {
-      index = botPose.getTagIndex(targetTagId);
+    if (tagId > 0) {
+      index = botPose.getTagIndex(tagId);
     }
     return botPose.getTagDistToCamera(index);
   }
@@ -240,21 +219,23 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
    * @return the angle to the nearest or targeted tag
    */
   public double angleToTarget() {
-    return angleToTarget(true);
+    return angleToTarget(0, true);
   }
 
   /**
    * Obtain the angle to the tag either nearest to, or targeted if one has been set by
    * setTargetTag(), to the limelight handling left or right branch.
    *
+   * @param tagId Tag to use, or 0 if looking for nearest tag
+   * @param leftBranch Left or Right branch?
    * @return the angle to the nearest or targeted tag
    */
-  public double angleToTarget(boolean leftBranch) {
+  public double angleToTarget(int tagId, boolean leftBranch) {
     LimelightBotPose botPose = getBotPose(leftBranch);
 
     int index = 0;
-    if (targetTagId > 0) {
-      index = botPose.getTagIndex(targetTagId);
+    if (tagId > 0) {
+      index = botPose.getTagIndex(tagId);
     }
     return -botPose.getTagTxnc(index);
   }
