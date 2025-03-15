@@ -39,8 +39,6 @@ public class LimelightVisionSubsystem extends SubsystemBase {
   private final LimelightBotPose thomasBotPoseCache = new LimelightBotPose(null, 0);
 
   private final SwerveSubsystem swerve;
-  private final double fieldExtentMetresX;
-  private final double fieldExtentMetresY;
   private final double maxAmbiguity;
   private final double highQualityAmbiguity;
   private final double maxVisposDeltaDistanceMetres;
@@ -49,8 +47,6 @@ public class LimelightVisionSubsystem extends SubsystemBase {
   private boolean poseUpdatesEnabled = true;
 
   public LimelightVisionSubsystem(VisionConfig visionConfig, SwerveSubsystem swerve) {
-    this.fieldExtentMetresX = visionConfig.fieldExtentMetresX();
-    this.fieldExtentMetresY = visionConfig.fieldExtentMetresY();
     this.maxAmbiguity = visionConfig.maxAmbiguity();
     this.highQualityAmbiguity = visionConfig.highQualityAmbiguity();
     this.maxVisposDeltaDistanceMetres = visionConfig.maxVisposeDeltaDistanceMetres();
@@ -85,12 +81,12 @@ public class LimelightVisionSubsystem extends SubsystemBase {
     nikolaRobotOrientation.set(orientationSet);
     thomasRobotOrientation.set(orientationSet);
 
-    // Next, pull updated data from the limelights
+    // Next, pull updated data from the limelights and update our cache of it
     nikolaBotPoseCache.update(nikolaMegaTag.getAtomic());
     thomasBotPoseCache.update(thomasMegaTag.getAtomic());
 
-    // Lastly, publish the pose estimate to the PoseEstimator
-    updateVisionPose();
+    // Lastly, publish the pose estimate to the PoseEstimator, and update telemetry
+    processVisionPose();
   }
 
   /**
@@ -276,7 +272,7 @@ public class LimelightVisionSubsystem extends SubsystemBase {
    *       </ul>
    * </ol>
    */
-  private void updateVisionPose() {
+  private void processVisionPose() {
 
     VisionPoseEstimate visionPoseEstimate = null;
 
@@ -385,6 +381,6 @@ public class LimelightVisionSubsystem extends SubsystemBase {
 
   @Override
   public String toString() {
-    return "ACDC Vision Subsystem";
+    return "AC/DeepSea Vision Subsystem";
   }
 }
