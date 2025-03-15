@@ -11,7 +11,6 @@ import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.TimestampedDoubleArray;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -93,10 +92,8 @@ public class LimelightVisionSubsystem extends SubsystemBase {
     thomasRobotOrientation.set(orientationSet);
 
     // Next, pull updated data from the limelights
-    TimestampedDoubleArray nikolaBotPoseBlue = nikolaMegaTag.getAtomic();
-    nikolaBotPose.update(nikolaBotPoseBlue.value, nikolaBotPoseBlue.timestamp);
-    TimestampedDoubleArray thomasBotPoseBlue = thomasMegaTag.getAtomic();
-    thomasBotPose.update(thomasBotPoseBlue.value, thomasBotPoseBlue.timestamp);
+    nikolaBotPose.update(nikolaMegaTag.getAtomic());
+    thomasBotPose.update(thomasMegaTag.getAtomic());
 
     // Lastly, publish the pose estimate to the PoseEstimator
     updateVisionPose();
