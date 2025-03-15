@@ -72,7 +72,7 @@ public class LimelightVisionSubsystem extends SubsystemBase {
     this.highQualityAmbiguity = visionConfig.highQualityAmbiguity();
     this.maxVisposDeltaDistanceMetres = visionConfig.maxVisposeDeltaDistanceMetres();
     this.megatag2 = visionConfig.megatag2();
-    Telemetry.vision.enabled = visionConfig.telemetryEnabled();
+    Telemetry.vision.telemetryLevel = visionConfig.telemetryLevel();
     this.swerve = swerve;
 
     nikolaPipeline.setNumber(visionConfig.pipelineAprilTagDetect());
@@ -355,7 +355,9 @@ public class LimelightVisionSubsystem extends SubsystemBase {
     }
 
     // Telemetry Handling
-    if (Telemetry.vision.enabled) {
+    if (Telemetry.vision.telemetryLevel == VisionTelemetryLevel.REGULAR
+        || Telemetry.vision.telemetryLevel == VisionTelemetryLevel.VERBOSE) {
+
       compareDistance =
           botPose.getPose().getTranslation().getDistance(odometryPose.getTranslation());
       compareHeading =
@@ -373,6 +375,9 @@ public class LimelightVisionSubsystem extends SubsystemBase {
       Telemetry.vision.visionPoseHeading = botPose.getPoseRotationYaw();
       Telemetry.vision.navxYaw = yaw;
       Telemetry.vision.navxYawDelta = odometryPose.getRotation().getDegrees() - yaw;
+    }
+
+    if (Telemetry.vision.telemetryLevel == VisionTelemetryLevel.VERBOSE) {
       Telemetry.vision.poseXSeries.add(botPose.getPoseX());
       Telemetry.vision.poseYSeries.add(botPose.getPoseY());
       Telemetry.vision.poseDegSeries.add(botPose.getPoseRotationYaw());
