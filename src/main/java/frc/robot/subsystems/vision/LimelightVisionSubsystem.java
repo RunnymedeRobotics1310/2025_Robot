@@ -9,7 +9,6 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,14 +22,8 @@ public class LimelightVisionSubsystem extends SubsystemBase {
   private final NetworkTable thomasVision =
       NetworkTableInstance.getDefault().getTable("limelight-thomas");
 
-  // inputs/configs
-  private final NetworkTableEntry nikolaCamMode = nikolaVision.getEntry("camMode");
-  private final NetworkTableEntry nikolaPipeline = nikolaVision.getEntry("pipeline");
   private final DoubleArrayPublisher nikolaRobotOrientation =
       nikolaVision.getDoubleArrayTopic("robot_orientation_set").publish();
-
-  private final NetworkTableEntry thomasCamMode = thomasVision.getEntry("camMode");
-  private final NetworkTableEntry thomsPipeline = thomasVision.getEntry("pipeline");
   private final DoubleArrayPublisher thomasRobotOrientation =
       thomasVision.getDoubleArrayTopic("robot_orientation_set").publish();
 
@@ -39,9 +32,7 @@ public class LimelightVisionSubsystem extends SubsystemBase {
   private final DoubleArraySubscriber thomasMegaTag;
 
   // Standard Deviations Used for most of the Pose Updates
-  private static final Matrix<N3, N1> POSE_DEVIATION_MEGATAG1 = VecBuilder.fill(0.01, 0.01, 0.05);
-  private static final Matrix<N3, N1> POSE_DEVIATION_MEGATAG2 =
-      VecBuilder.fill(0.06, 0.06, 9999999);
+  private final Matrix<N3, N1> poseDeviation;
 
   // These hold the data from the limelights, updated every periodic()
   private final LimelightBotPose nikolaBotPoseCache = new LimelightBotPose(null, 0);
@@ -73,15 +64,18 @@ public class LimelightVisionSubsystem extends SubsystemBase {
           nikolaVision.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
       thomasMegaTag =
           thomasVision.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
+      poseDeviation = VecBuilder.fill(0.06, 0.06, 9999999);
     } else {
       nikolaMegaTag = nikolaVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
       thomasMegaTag = thomasVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
+      poseDeviation = VecBuilder.fill(0.01, 0.01, 0.05);
     }
 
-    nikolaPipeline.setNumber(visionConfig.pipelineAprilTagDetect());
-    nikolaCamMode.setNumber(visionConfig.camModeVision());
-    thomsPipeline.setNumber(visionConfig.pipelineAprilTagDetect());
-    thomasCamMode.setNumber(visionConfig.camModeVision());
+    // inputs/configs
+    nikolaVision.getEntry("pipeline").setNumber(visionConfig.pipelineAprilTagDetect());
+    nikolaVision.getEntry("camMode").setNumber(visionConfig.camModeVision());
+    thomasVision.getEntry("pipeline").setNumber(visionConfig.pipelineAprilTagDetect());
+    thomasVision.getEntry("camMode").setNumber(visionConfig.camModeVision());
   }
 
   @Override
@@ -308,7 +302,7 @@ public class LimelightVisionSubsystem extends SubsystemBase {
                 nikolaBotPoseCache.getPose(),
                 nikolaBotPoseCache.getTimestampSeconds()
                     - nikolaBotPoseCache.getTotalLatencySeconds(),
-                POSE_DEVIATION_MEGATAG2);
+                poseDeviation);
       }
       // MT1: Do we have a decent signal?  i.e. Ambiguity < 0.7
       else if (tagAmbiguity < maxAmbiguity) {
@@ -320,7 +314,7 @@ public class LimelightVisionSubsystem extends SubsystemBase {
               new LimelightPoseEstimate(
                   nikolaBotPoseCache.getPose(),
                   nikolaBotPoseCache.getTimestampSeconds(),
-                  POSE_DEVIATION_MEGATAG1);
+                  poseDeviation);
         } else {
           // We need to be careful with this data set. If the location is too far off,
           // don't use it. Otherwise, scale confidence by distance.
