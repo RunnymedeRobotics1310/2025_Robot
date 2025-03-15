@@ -70,14 +70,13 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
     this.maxAmbiguity = visionConfig.maxAmbiguity();
     this.highQualityAmbiguity = visionConfig.highQualityAmbiguity();
     this.maxVisposDeltaDistanceMetres = visionConfig.maxVisposeDeltaDistanceMetres();
-
-    this.nikolaPipeline.setNumber(visionConfig.pipelineAprilTagDetect());
-    this.nikolaCamMode.setNumber(visionConfig.camModeVision());
-    this.thomsPipeline.setNumber(visionConfig.pipelineAprilTagDetect());
-    this.thomasCamMode.setNumber(visionConfig.camModeVision());
     this.megatag2 = visionConfig.megatag2();
-
     Telemetry.vision.enabled = visionConfig.telemetryEnabled();
+
+    nikolaPipeline.setNumber(visionConfig.pipelineAprilTagDetect());
+    nikolaCamMode.setNumber(visionConfig.camModeVision());
+    thomsPipeline.setNumber(visionConfig.pipelineAprilTagDetect());
+    thomasCamMode.setNumber(visionConfig.camModeVision());
   }
 
   @Override
