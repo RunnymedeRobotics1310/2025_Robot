@@ -36,15 +36,8 @@ public class LimelightVisionSubsystem extends SubsystemBase {
       thomasVision.getDoubleArrayTopic("robot_orientation_set").publish();
 
   // MegaTags
-  private final DoubleArraySubscriber nikolaMegaTag1 =
-      nikolaVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
-  private final DoubleArraySubscriber thomasMegaTag1 =
-      thomasVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
-
-  private final DoubleArraySubscriber nikolaMegaTag2 =
-      nikolaVision.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
-  private final DoubleArraySubscriber thomasMegaTag2 =
-      thomasVision.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
+  private final DoubleArraySubscriber nikolaMegaTag;
+  private final DoubleArraySubscriber thomasMegaTag;
 
   // Standard Deviations Used for most of the Pose Updates
   private static final Matrix<N3, N1> POSE_DEVIATION_MEGATAG1 = VecBuilder.fill(0.01, 0.01, 0.05);
@@ -75,6 +68,17 @@ public class LimelightVisionSubsystem extends SubsystemBase {
     Telemetry.vision.telemetryLevel = visionConfig.telemetryLevel();
     this.swerve = swerve;
 
+    // Initialize the NT subscribers for whichever of MT1/2 is used
+    if (megatag2) {
+      nikolaMegaTag =
+          nikolaVision.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
+      thomasMegaTag =
+          thomasVision.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
+    } else {
+      nikolaMegaTag = nikolaVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
+      thomasMegaTag = thomasVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
+    }
+
     nikolaPipeline.setNumber(visionConfig.pipelineAprilTagDetect());
     nikolaCamMode.setNumber(visionConfig.camModeVision());
     thomsPipeline.setNumber(visionConfig.pipelineAprilTagDetect());
@@ -89,9 +93,9 @@ public class LimelightVisionSubsystem extends SubsystemBase {
     thomasRobotOrientation.set(orientationSet);
 
     // Next, pull updated data from the limelights
-    TimestampedDoubleArray nikolaBotPoseBlue = getNikolaMegaTagData();
+    TimestampedDoubleArray nikolaBotPoseBlue = nikolaMegaTag.getAtomic();
     nikolaBotPose.update(nikolaBotPoseBlue.value, nikolaBotPoseBlue.timestamp);
-    TimestampedDoubleArray thomasBotPoseBlue = getThomasMegaTagData();
+    TimestampedDoubleArray thomasBotPoseBlue = thomasMegaTag.getAtomic();
     thomasBotPose.update(thomasBotPoseBlue.value, thomasBotPoseBlue.timestamp);
 
     // Lastly, publish the pose estimate to the PoseEstimator
@@ -106,24 +110,6 @@ public class LimelightVisionSubsystem extends SubsystemBase {
    */
   private LimelightBotPose getBotPose(boolean leftBranch) {
     return leftBranch ? nikolaBotPose : thomasBotPose;
-  }
-
-  /**
-   * Get the latest MegaTag 1 or 2 data from Nikola limelight
-   *
-   * @return the latest MegaTag data
-   */
-  private TimestampedDoubleArray getNikolaMegaTagData() {
-    return megatag2 ? nikolaMegaTag2.getAtomic() : nikolaMegaTag1.getAtomic();
-  }
-
-  /**
-   * Get the latest MegaTag 1 or 2 data from Thomas limelight
-   *
-   * @return the latest MegaTag data
-   */
-  private TimestampedDoubleArray getThomasMegaTagData() {
-    return megatag2 ? thomasMegaTag2.getAtomic() : thomasMegaTag1.getAtomic();
   }
 
   /* Public API */
