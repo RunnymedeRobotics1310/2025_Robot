@@ -58,8 +58,6 @@ public class VisionTelemetry {
   /** The tag ambiguity of the currently in focus tag */
   public double tagAmbiguity = Double.MIN_VALUE;
 
-  public double[] standardDeviations = new double[] {-1, -1, -1};
-
   public double navxYaw = Double.MIN_VALUE;
 
   public double navxYawDelta = Double.MIN_VALUE;
@@ -104,12 +102,6 @@ public class VisionTelemetry {
     SmartDashboard.putString(PREFIX + "Vision/pose_confidence", poseConfidence.toString());
 
     SmartDashboard.putNumber(PREFIX + "Vision/tag_ambiguity", tagAmbiguity);
-
-    String stdDevs =
-        String.format(
-            "(%.2fx, %.2fy) %.1f°",
-            standardDeviations[0], standardDeviations[1], standardDeviations[2]);
-    SmartDashboard.putString(PREFIX + "Vision/std_devs", stdDevs);
 
     SmartDashboard.putString(PREFIX + "Vision/yaw_navx", String.format("%.2f°", navxYaw));
 

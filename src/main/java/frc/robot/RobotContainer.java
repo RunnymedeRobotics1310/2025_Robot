@@ -29,7 +29,7 @@ public class RobotContainer {
       new LimelightVisionSubsystem(Constants.VISION_CONFIG);
   private final SwerveSubsystem swerveDriveSubsystem =
       new SwerveSubsystem(Swerve.SUBSYSTEM_CONFIG, visionSubsystem);
-  private final CoralSubsystem coralSubsystem = new CoralSubsystem(visionSubsystem);
+  private final CoralSubsystem coralSubsystem = new CoralSubsystem();
   private final PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
   private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
@@ -54,11 +54,7 @@ public class RobotContainer {
 
     // Configure the button bindings - pass in all subsystems
     operatorInput.configureButtonBindings(
-        swerveDriveSubsystem,
-        coralSubsystem,
-        pneumaticsSubsystem,
-        climbSubsystem,
-        visionSubsystem);
+        swerveDriveSubsystem, coralSubsystem, pneumaticsSubsystem, climbSubsystem, visionSubsystem);
 
     operatorInput.initAutoSelectors();
   }

@@ -10,7 +10,6 @@ public class LimelightBotPose {
 
   private double[] botPose;
   private long timestampMicros;
-  private double[] standardDeviations;
 
   /* Pose Data & Avg Tag Info */
   private static final int OFFSET_POSE_X = 0;
@@ -36,18 +35,13 @@ public class LimelightBotPose {
   private static final int OFFSET_TAG_DIST_TO_ROBOT = 5;
   private static final int OFFSET_TAG_AMBIGUITY = 6;
 
-  public LimelightBotPose(double[] botPose, long timestampMicros, double[] standardDeviations) {
-    update(botPose, timestampMicros, standardDeviations);
+  public LimelightBotPose(double[] botPose, long timestampMicros) {
+    update(botPose, timestampMicros);
   }
 
-  public void update(double[] botPose, long timestampMicros, double[] standardDeviations) {
+  public void update(double[] botPose, long timestampMicros) {
     this.botPose = Objects.requireNonNullElseGet(botPose, () -> new double[0]);
     this.timestampMicros = timestampMicros;
-    this.standardDeviations = standardDeviations;
-  }
-
-  public double[] getStandardDeviations() {
-    return standardDeviations;
   }
 
   public Translation2d getTranslation() {

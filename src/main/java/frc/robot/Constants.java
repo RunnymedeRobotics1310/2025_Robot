@@ -43,7 +43,7 @@ public final class Constants {
           FieldConstants.FIELD_EXTENT_METRES_X,
           FieldConstants.FIELD_EXTENT_METRES_Y,
           0.7,
-          0.3,
+          0.1,
           .5,
           true,
           true);
@@ -280,7 +280,7 @@ public final class Constants {
       SCORE_3_LEFT,
       SCORE_3_RIGHT,
       SCORE_1_CENTER,
-      }
+    }
 
     public enum Delay {
       NO_DELAY,

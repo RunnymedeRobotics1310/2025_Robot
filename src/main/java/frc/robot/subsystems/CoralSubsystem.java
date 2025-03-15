@@ -14,7 +14,6 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,7 +21,6 @@ import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.CoralConstants.ArmAngle;
 import frc.robot.Constants.CoralConstants.ElevatorHeight;
 import frc.robot.Robot;
-import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 
 public class CoralSubsystem extends SubsystemBase {
 
@@ -103,11 +101,7 @@ public class CoralSubsystem extends SubsystemBase {
   private double simulationPreviousIntakeSpeed = 0;
   private int simulationIntakeEncoder = 0;
 
-  private LimelightVisionSubsystem visionSubsystem;
-
-  public CoralSubsystem(LimelightVisionSubsystem visionSubsystem) {
-    this.visionSubsystem = visionSubsystem;
-
+  public CoralSubsystem() {
     /*
      * Elevator Motor Config
      */
@@ -152,7 +146,6 @@ public class CoralSubsystem extends SubsystemBase {
 
     armAboveThreshold =
         armAngleEncoder.getPosition() > CoralConstants.ARM_CAMERA_THRESHOLD_POSITION;
-    setCamStream();
 
     /*
      * Intake Motor Config
@@ -232,23 +225,6 @@ public class CoralSubsystem extends SubsystemBase {
     sensorCache.intakeEncoderPosition = intakeEncoder.getPosition();
     sensorCache.intakeEncoderSpeed = intakeEncoder.getVelocity();
     sensorCache.coralDetected = intakeCoralDetector.isPressed();
-  }
-
-  private void updateVision() {
-    // Update CamStream if the Arm Angle has crossed the threshold
-    boolean newAboveThreshold = getArmAngle() > CoralConstants.ARM_CAMERA_THRESHOLD_POSITION;
-    if (newAboveThreshold != armAboveThreshold) {
-      armAboveThreshold = newAboveThreshold;
-      setCamStream();
-    }
-
-    // Update the Thomas Height if the elevator has moved at least 2 encoder counts
-    double newThomasHeight = getThomasHeightM();
-    if (Math.abs(newThomasHeight - lastKnownElevatorHeight)
-        >= ELEVATOR_METERS_PER_ENCODER_COUNT * 2) {
-      lastKnownElevatorHeight = newThomasHeight;
-      visionSubsystem.setThomasHeight(newThomasHeight);
-    }
   }
 
   /*
@@ -457,7 +433,6 @@ public class CoralSubsystem extends SubsystemBase {
   public void periodic() {
 
     updateSensorCache();
-    updateVision();
 
     if (isSimulation) {
       simulate();
@@ -646,13 +621,6 @@ public class CoralSubsystem extends SubsystemBase {
      */
 
     intakeMotor.set(intakeSetpoint);
-  }
-
-  private void setCamStream() {
-    visionSubsystem.setCameraView(
-        armAboveThreshold
-            ? LimelightVisionSubsystem.CamStreamType.WEBCAM
-            : LimelightVisionSubsystem.CamStreamType.LIMELIGHT);
   }
 
   @Override

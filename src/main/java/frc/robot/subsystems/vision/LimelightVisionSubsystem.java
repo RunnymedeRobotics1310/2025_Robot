@@ -40,12 +40,8 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   // MegaTags
   private final DoubleArraySubscriber nikolaMegaTag1 =
       nikolaVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
-  private final DoubleArraySubscriber nikolaStddevs =
-      nikolaVision.getDoubleArrayTopic("stddevs").subscribe(new double[0]);
   private final DoubleArraySubscriber thomasMegaTag1 =
       thomasVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
-  private final DoubleArraySubscriber thomasStddevs =
-      thomasVision.getDoubleArrayTopic("stddevs").subscribe(new double[0]);
 
   private final DoubleArraySubscriber nikolaMegaTag2 =
       nikolaVision.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
@@ -107,8 +103,8 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
   private static final Matrix<N3, N1> POSE_DEVIATION_MEGATAG2 =
       VecBuilder.fill(0.06, 0.06, 9999999);
 
-  private final LimelightBotPose nikolaBotPose = new LimelightBotPose(null, 0, null);
-  private final LimelightBotPose thomasBotPose = new LimelightBotPose(null, 0, null);
+  private final LimelightBotPose nikolaBotPose = new LimelightBotPose(null, 0);
+  private final LimelightBotPose thomasBotPose = new LimelightBotPose(null, 0);
 
   private double[] orientationSet = new double[] {0, 0, 0, 0, 0, 0};
   private double[] thomasPositionSet = new double[] {0.155, 0.13, 0.88, 179, 0, 0};
@@ -152,10 +148,8 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
       thomasBotPoseBlue = thomasMegaTag1.getAtomic();
     }
 
-    double[] nikolaStddevData = nikolaStddevs.get();
-    double[] thomasStddevData = thomasStddevs.get();
-    nikolaBotPose.update(nikolaBotPoseBlue.value, nikolaBotPoseBlue.timestamp, nikolaStddevData);
-    thomasBotPose.update(thomasBotPoseBlue.value, thomasBotPoseBlue.timestamp, thomasStddevData);
+    nikolaBotPose.update(nikolaBotPoseBlue.value, nikolaBotPoseBlue.timestamp);
+    thomasBotPose.update(thomasBotPoseBlue.value, thomasBotPoseBlue.timestamp);
   }
 
   /** If targetting the left reef, use the left reef pose, otherwise use the right reef pose */
@@ -253,17 +247,8 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
     return botPose.getTagIndex(tagId) != -1;
   }
 
-  /**
-   * Set the camera view to the specified stream.
-   *
-   * @param stream the camera stream to set the view to
-   */
-  public void setCameraView(CamStreamType stream) {
-    // thomasStream.set(stream.getIndex());  //TODO: Remove properly when not needed
-  }
-
   public LimelightBotPose getBotPose() {
-    return nikolaBotPose;
+    return getBotPose(true);
   }
 
   /**
@@ -300,7 +285,6 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
     double compareDistance = -1;
     double compareHeading = -1;
     double tagAmbiguity = nikolaBotPose.getTagAmbiguity(0);
-    double[] deviations = new double[] {-1, -1, -1};
 
     LimelightPoseEstimate.PoseConfidence poseConfidence = LimelightPoseEstimate.PoseConfidence.NONE;
     LimelightBotPose botPose = nikolaBotPose;
@@ -316,22 +300,32 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
             new LimelightPoseEstimate(
                 nikolaBotPose.getPose(),
                 nikolaBotPose.getTimestampSeconds() - nikolaBotPose.getTotalLatencySeconds(),
-                POSE_DEVIATION_MEGATAG2.getData());
+                POSE_DEVIATION_MEGATAG2);
       }
       // MT1: Do we have a decent signal?  i.e. Ambiguity < 0.7
       else if (tagAmbiguity < maxAmbiguity) {
-        // Check for super good signal - ambiguity < 0.1, or we're disabled (field setup)
+        // If the ambiguity is very low, use the data as is (or when disabled, to allow for bot
+        // repositioning
         if (tagAmbiguity < highQualityAmbiguity || DriverStation.isDisabled()) {
-          // use megatag1 as is, it's rock solid
-          double[] stddevs = nikolaBotPose.getStandardDeviations();
-          deviations[0] = stddevs[0]; // MegaTag1 X Standard Deviation
-          deviations[1] = stddevs[1]; // MegaTag1 Y Standard Deviation
-          deviations[2] = stddevs[5]; // MegaTag Deg Standard Deviation
-          poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG1;
-
+          poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG1_HIGH;
           returnVal =
               new LimelightPoseEstimate(
-                  nikolaBotPose.getPose(), nikolaBotPose.getTimestampSeconds(), deviations);
+                  nikolaBotPose.getPose(),
+                  nikolaBotPose.getTimestampSeconds(),
+                  POSE_DEVIATION_MEGATAG1);
+        } else {
+          // We need to be careful with this data set. If the location is too far off,
+          // don't use it. Otherwise, scale confidence by distance.
+          compareDistance =
+              botPose.getPose().getTranslation().getDistance(odometryPose.getTranslation());
+          if (compareDistance < maxVisposDeltaDistanceMetres) {
+            poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG1_MED;
+            double stdDevRatio = Math.pow(nikolaBotPose.getTagDistToRobot(0), 2) / 2;
+            Matrix<N3, N1> deviations = VecBuilder.fill(stdDevRatio, stdDevRatio, stdDevRatio * 5);
+            returnVal =
+                new LimelightPoseEstimate(
+                    nikolaBotPose.getPose(), nikolaBotPose.getTimestampSeconds(), deviations);
+          }
         }
       }
 
@@ -355,7 +349,6 @@ public class LimelightVisionSubsystem extends SubsystemBase implements VisionPos
       Telemetry.vision.visionPoseX = botPose.getPoseX();
       Telemetry.vision.visionPoseY = botPose.getPoseY();
       Telemetry.vision.visionPoseHeading = botPose.getPoseRotationYaw();
-      Telemetry.vision.standardDeviations = deviations;
       Telemetry.vision.navxYaw = yaw;
       Telemetry.vision.navxYawDelta = odometryPose.getRotation().getDegrees() - yaw;
       Telemetry.vision.poseXSeries.add(botPose.getPoseX());
