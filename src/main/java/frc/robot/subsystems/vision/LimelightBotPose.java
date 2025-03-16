@@ -62,6 +62,11 @@ public class LimelightBotPose {
     return new Translation2d(getPoseX(), getPoseY());
   }
 
+  /**
+   * Make sure tags are visible and pose is on-field
+   *
+   * @return true if the pose is valid
+   */
   public boolean isPoseValid() {
     return (getTagCount() > 0
         && isPoseXInBounds(0, Constants.FieldConstants.FIELD_EXTENT_METRES_X)
