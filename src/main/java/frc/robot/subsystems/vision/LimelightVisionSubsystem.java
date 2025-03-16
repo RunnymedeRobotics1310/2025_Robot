@@ -73,17 +73,20 @@ public class LimelightVisionSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // First, update the limelight and let it know our orientation for MegaTag2
+    // Update the limelight and let it know our orientation for MegaTag2
     double[] orientationSet = new double[] {swerve.getYaw(), 0, 0, 0, 0, 0};
     nikolaRobotOrientation.set(orientationSet);
     thomasRobotOrientation.set(orientationSet);
 
-    // Next, pull updated data from the limelights and update our cache of it
+    // Pull data from the limelights and update our cache
     nikolaBotPoseCache.update(nikolaMegaTag.getAtomic());
     thomasBotPoseCache.update(thomasMegaTag.getAtomic());
 
-    // Lastly, publish the pose estimate to the PoseEstimator, and update telemetry
-    processVisionPose();
+    // Publish the pose estimate to the PoseEstimator, and update telemetry
+    publishVisionPoseMeasurement();
+
+    // Update telemetry
+    updateTelemetry();
   }
 
   /**
@@ -250,99 +253,106 @@ public class LimelightVisionSubsystem extends SubsystemBase {
   }
 
   /**
-   * Get the pose estimate from the vision system to swerve's odometry
-   *
-   * <p>Logic In This Function:
-   *
-   * <ol>
-   *   <li>Set the orientation of the robot from odometry into the limelight for MegaTag2 to work
-   *   <li>Ensure the latest vision pose data is valid (on field, >=1 tags visible, robot not
-   *       spinning like crazy
-   *   <li>If megatag2 was set, just use the data with recommended standard deviation data.
-   *   <li>If using megatag1:
-   *       <ul>
-   *         <li>Check tag ambiguity - if it's very low (<0.1) it means we've got a high confidence
-   *             set of data, so use low standard deviation.
-   *         <li>If ambiguity is medium (0.1-0.7), use distance from tag to scale standard
-   *             deviations and trust this data as medium confidence.
-   *         <li>If ambiguity is > 0.7, don't use the data at all.
-   *       </ul>
-   * </ol>
+   * Get the pose estimate from the vision system and update swerve's odometry. This function will
+   * check there is a valid pose to be used, and then obtain either the MegaTag2 or MegaTag1 pose
+   * based on config.
    */
-  private void processVisionPose() {
-
+  private void publishVisionPoseMeasurement() {
+    // Make sure tags are visible and pose is on-field
     VisionPoseEstimate visionPoseEstimate = null;
 
-    // Get the current pose delta
-    double compareDistance = -1;
-    double compareHeading = -1;
-    double tagAmbiguity = nikolaBotPoseCache.getTagAmbiguity(0);
-    Pose2d odometryPose = swerve.getPose();
-    double yaw = swerve.getYaw();
-
-    LimelightPoseEstimate.PoseConfidence poseConfidence = LimelightPoseEstimate.PoseConfidence.NONE;
-
-    // Make sure tags are visible and pose is on-field
-    if (nikolaBotPoseCache.isPoseValid()) {
-
+    if (poseUpdatesEnabled && nikolaBotPoseCache.isPoseValid()) {
       if (megatag2) {
-        /* MegaTag 2 Handling */
-        poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG2;
-        visionPoseEstimate =
-            new LimelightPoseEstimate(
-                nikolaBotPoseCache.getPose(),
-                nikolaBotPoseCache.getTimestampSeconds()
-                    - nikolaBotPoseCache.getTotalLatencySeconds(),
-                MEGATAG2_STDDEV);
-        /* End MegaTag 2 Handling */
-      } else if (tagAmbiguity < maxAmbiguity) {
-        /* MegaTag 1 Handling - only is Ambiguity < 0.7 */
-
-        if (tagAmbiguity < highQualityAmbiguity || DriverStation.isDisabled()) {
-          // If the ambiguity is very low (< 0.1) or DriverStation disabled, high confidence pose
-          // update
-          poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG1_HIGH;
-          visionPoseEstimate =
-              new LimelightPoseEstimate(
-                  nikolaBotPoseCache.getPose(),
-                  nikolaBotPoseCache.getTimestampSeconds(),
-                  MEGATAG1_STDDEV);
-
-        } else {
-          // For medium Ambiguity, only use it if we're within 0.5m.  Scale standard deviation by
-          // distance.
-          compareDistance =
-              nikolaBotPoseCache
-                  .getPose()
-                  .getTranslation()
-                  .getDistance(odometryPose.getTranslation());
-          if (compareDistance < maxVisposDeltaDistanceMetres) {
-            poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG1_MED;
-            double stdDevRatio = Math.pow(nikolaBotPoseCache.getTagDistToRobot(0), 2) / 2;
-            Matrix<N3, N1> deviations = VecBuilder.fill(stdDevRatio, stdDevRatio, stdDevRatio * 5);
-            visionPoseEstimate =
-                new LimelightPoseEstimate(
-                    nikolaBotPoseCache.getPose(),
-                    nikolaBotPoseCache.getTimestampSeconds(),
-                    deviations);
-          }
-        }
-        /* End MegaTag 1 Handling */
+        visionPoseEstimate = getVisionPoseMeasurementMegaTag2();
+      } else {
+        visionPoseEstimate = getVisionPoseMeasurementMegaTag1();
       }
     }
 
-    // Telemetry Handling
+    // If we have an update, send it to swerve.  If not, set PoseConfidence to NONE
+    if (visionPoseEstimate != null) {
+      swerve.addVisionMeasurement(visionPoseEstimate);
+    } else {
+      Telemetry.vision.poseConfidence = LimelightPoseEstimate.PoseConfidence.NONE;
+    }
+  }
+
+  /**
+   * Get the vision pose measurement for MegaTag2. If it exists, it's pretty high quality, so use
+   * it.
+   *
+   * @return The vision pose measurement for MegaTag2
+   */
+  private VisionPoseEstimate getVisionPoseMeasurementMegaTag2() {
+    Telemetry.vision.poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG2;
+    return new LimelightPoseEstimate(
+        nikolaBotPoseCache.getPose(),
+        nikolaBotPoseCache.getTimestampSeconds() - nikolaBotPoseCache.getTotalLatencySeconds(),
+        MEGATAG2_STDDEV);
+  }
+
+  /**
+   * Get the vision pose measurement for MegaTag1. Logic is as follows:
+   *
+   * <ul>
+   *   <li>Check tag ambiguity - if it's very low (<0.1) it means we've got a high confidence set of
+   *       data, so use low standard deviation.
+   *   <li>If ambiguity is medium (0.1-0.7), use distance from tag to scale standard deviations and
+   *       trust this data as medium confidence.
+   *   <li>If ambiguity is > 0.7, don't use the data at all.
+   * </ul>
+   *
+   * @return The vision pose measurement for MegaTag1, or null if no acceptable data
+   */
+  private VisionPoseEstimate getVisionPoseMeasurementMegaTag1() {
+    double tagAmbiguity = nikolaBotPoseCache.getTagAmbiguity(0);
+
+    if (tagAmbiguity < maxAmbiguity) {
+
+      if (tagAmbiguity < highQualityAmbiguity || DriverStation.isDisabled()) {
+        // If the ambiguity is very low (< 0.1) or DriverStation disabled, high confidence pose
+        // update
+        Telemetry.vision.poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG1_HIGH;
+        return new LimelightPoseEstimate(
+            nikolaBotPoseCache.getPose(),
+            nikolaBotPoseCache.getTimestampSeconds(),
+            MEGATAG1_STDDEV);
+      } else {
+        // For medium Ambiguity, only use it if we're within 0.5m.  Scale standard deviation by
+        // distance.
+        double compareDistance =
+            nikolaBotPoseCache
+                .getPose()
+                .getTranslation()
+                .getDistance(swerve.getPose().getTranslation());
+        if (compareDistance < maxVisposDeltaDistanceMetres) {
+          Telemetry.vision.poseConfidence = LimelightPoseEstimate.PoseConfidence.MEGATAG1_MED;
+          double stdDevRatio = Math.pow(nikolaBotPoseCache.getTagDistToRobot(0), 2) / 2;
+          Matrix<N3, N1> deviations = VecBuilder.fill(stdDevRatio, stdDevRatio, stdDevRatio * 5);
+          return new LimelightPoseEstimate(
+              nikolaBotPoseCache.getPose(), nikolaBotPoseCache.getTimestampSeconds(), deviations);
+        }
+      }
+    }
+
+    // If we make it here, we're lacking good vision data
+    return null;
+  }
+
+  /** Update telemetry with vision data */
+  private void updateTelemetry() {
     if (Telemetry.vision.telemetryLevel == VisionTelemetryLevel.REGULAR
         || Telemetry.vision.telemetryLevel == VisionTelemetryLevel.VERBOSE) {
 
-      compareDistance =
+      Pose2d odometryPose = swerve.getPose();
+      double yaw = swerve.getYaw();
+
+      double compareDistance =
           nikolaBotPoseCache.getPose().getTranslation().getDistance(odometryPose.getTranslation());
-      compareHeading =
+      double compareHeading =
           nikolaBotPoseCache.getPose().getRotation().getDegrees()
               - odometryPose.getRotation().getDegrees();
 
-      Telemetry.vision.tagAmbiguity = tagAmbiguity;
-      Telemetry.vision.poseConfidence = poseConfidence;
       Telemetry.vision.poseDeltaMetres = compareDistance;
       Telemetry.vision.headingDeltaDegrees = compareHeading;
       Telemetry.vision.poseMetresX = odometryPose.getX();
@@ -369,10 +379,6 @@ public class LimelightVisionSubsystem extends SubsystemBase {
       Telemetry.vision.tomTx = thomasBotPoseCache.getTagTxnc(0);
       Telemetry.vision.tomDistanceToRobot = thomasBotPoseCache.getTagDistToRobot(0);
       Telemetry.vision.tomDistanceToCam = thomasBotPoseCache.getTagDistToCamera(0);
-    }
-
-    if (poseUpdatesEnabled && visionPoseEstimate != null) {
-      swerve.addVisionMeasurement(visionPoseEstimate);
     }
   }
 
