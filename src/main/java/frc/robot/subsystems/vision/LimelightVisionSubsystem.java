@@ -17,26 +17,21 @@ import frc.robot.telemetry.Telemetry;
 
 public class LimelightVisionSubsystem extends SubsystemBase {
 
-  private final NetworkTable nikolaVision =
-      NetworkTableInstance.getDefault().getTable("limelight-nikola");
-  private final NetworkTable thomasVision =
-      NetworkTableInstance.getDefault().getTable("limelight-thomas");
+  // Standard Deviations Used for most of the Pose Updates
+  private static final Matrix<N3, N1> MEGATAG1_STDDEV = VecBuilder.fill(0.01, 0.01, 0.05);
+  private static final Matrix<N3, N1> MEGATAG2_STDDEV = VecBuilder.fill(0.06, 0.06, 9999999);
 
-  private final DoubleArrayPublisher nikolaRobotOrientation =
-      nikolaVision.getDoubleArrayTopic("robot_orientation_set").publish();
-  private final DoubleArrayPublisher thomasRobotOrientation =
-      thomasVision.getDoubleArrayTopic("robot_orientation_set").publish();
+  // Orientation publishers
+  private final DoubleArrayPublisher nikolaRobotOrientation;
+  private final DoubleArrayPublisher thomasRobotOrientation;
 
   // MegaTags
   private final DoubleArraySubscriber nikolaMegaTag;
   private final DoubleArraySubscriber thomasMegaTag;
 
-  // Standard Deviations Used for most of the Pose Updates
-  private final Matrix<N3, N1> poseDeviation;
-
   // These hold the data from the limelights, updated every periodic()
-  private final LimelightBotPose nikolaBotPoseCache = new LimelightBotPose(null, 0);
-  private final LimelightBotPose thomasBotPoseCache = new LimelightBotPose(null, 0);
+  private final LimelightBotPose nikolaBotPoseCache = new LimelightBotPose();
+  private final LimelightBotPose thomasBotPoseCache = new LimelightBotPose();
 
   private final SwerveSubsystem swerve;
   private final double maxAmbiguity;
@@ -54,24 +49,26 @@ public class LimelightVisionSubsystem extends SubsystemBase {
     Telemetry.vision.telemetryLevel = visionConfig.telemetryLevel();
     this.swerve = swerve;
 
+    final NetworkTable nikola = NetworkTableInstance.getDefault().getTable("limelight-nikola");
+    final NetworkTable thomas = NetworkTableInstance.getDefault().getTable("limelight-thomas");
+
+    nikolaRobotOrientation = nikola.getDoubleArrayTopic("robot_orientation_set").publish();
+    thomasRobotOrientation = thomas.getDoubleArrayTopic("robot_orientation_set").publish();
+
     // Initialize the NT subscribers for whichever of MT1/2 is used
     if (megatag2) {
-      nikolaMegaTag =
-          nikolaVision.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
-      thomasMegaTag =
-          thomasVision.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
-      poseDeviation = VecBuilder.fill(0.06, 0.06, 9999999);
+      nikolaMegaTag = nikola.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
+      thomasMegaTag = thomas.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
     } else {
-      nikolaMegaTag = nikolaVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
-      thomasMegaTag = thomasVision.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
-      poseDeviation = VecBuilder.fill(0.01, 0.01, 0.05);
+      nikolaMegaTag = nikola.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
+      thomasMegaTag = thomas.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
     }
 
     // inputs/configs
-    nikolaVision.getEntry("pipeline").setNumber(visionConfig.pipelineAprilTagDetect());
-    nikolaVision.getEntry("camMode").setNumber(visionConfig.camModeVision());
-    thomasVision.getEntry("pipeline").setNumber(visionConfig.pipelineAprilTagDetect());
-    thomasVision.getEntry("camMode").setNumber(visionConfig.camModeVision());
+    nikola.getEntry("pipeline").setNumber(visionConfig.pipelineAprilTagDetect());
+    nikola.getEntry("camMode").setNumber(visionConfig.camModeVision());
+    thomas.getEntry("pipeline").setNumber(visionConfig.pipelineAprilTagDetect());
+    thomas.getEntry("camMode").setNumber(visionConfig.camModeVision());
   }
 
   @Override
@@ -296,7 +293,7 @@ public class LimelightVisionSubsystem extends SubsystemBase {
                 nikolaBotPoseCache.getPose(),
                 nikolaBotPoseCache.getTimestampSeconds()
                     - nikolaBotPoseCache.getTotalLatencySeconds(),
-                poseDeviation);
+                MEGATAG2_STDDEV);
         /* End MegaTag 2 Handling */
       } else if (tagAmbiguity < maxAmbiguity) {
         /* MegaTag 1 Handling - only is Ambiguity < 0.7 */
@@ -309,7 +306,7 @@ public class LimelightVisionSubsystem extends SubsystemBase {
               new LimelightPoseEstimate(
                   nikolaBotPoseCache.getPose(),
                   nikolaBotPoseCache.getTimestampSeconds(),
-                  poseDeviation);
+                  MEGATAG1_STDDEV);
 
         } else {
           // For medium Ambiguity, only use it if we're within 0.5m.  Scale standard deviation by

@@ -15,9 +15,9 @@ public class LimelightPoseEstimate implements VisionPoseEstimate {
     MEGATAG2
   }
 
-  private Pose2d pose;
-  private double timestamp;
-  private Matrix<N3, N1> standardDeviations;
+  private final Pose2d pose;
+  private final double timestamp;
+  private final Matrix<N3, N1> standardDeviations;
 
   public LimelightPoseEstimate(Pose2d pose, double timestamp, Matrix<N3, N1> standardDeviations) {
     this.pose = pose;
@@ -38,17 +38,5 @@ public class LimelightPoseEstimate implements VisionPoseEstimate {
   @Override
   public Matrix<N3, N1> getStandardDeviations() {
     return standardDeviations;
-  }
-
-  public void setPose(Pose2d pose) {
-    this.pose = pose;
-  }
-
-  public void setTimestamp(double timestamp) {
-    this.timestamp = timestamp;
-  }
-
-  public void setStandardDeviations(Matrix<N3, N1> standardDeviations) {
-    this.standardDeviations = standardDeviations;
   }
 }
