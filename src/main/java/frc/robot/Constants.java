@@ -38,16 +38,7 @@ public final class Constants {
   }
 
   public static final VisionConfig VISION_CONFIG =
-      new VisionConfig(
-          0,
-          0,
-          FieldConstants.FIELD_EXTENT_METRES_X,
-          FieldConstants.FIELD_EXTENT_METRES_Y,
-          0.7,
-          0.1,
-          .5,
-          true,
-          VisionTelemetryLevel.VERBOSE);
+      new VisionConfig(0, 0, 0.7, 0.1, .5, true, VisionTelemetryLevel.VERBOSE);
 
   public static final class OiConstants {
 
