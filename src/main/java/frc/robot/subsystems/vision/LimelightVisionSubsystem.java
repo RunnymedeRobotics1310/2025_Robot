@@ -78,7 +78,7 @@ public class LimelightVisionSubsystem extends SubsystemBase {
     nikolaRobotOrientation.set(orientationSet);
     thomasRobotOrientation.set(orientationSet);
 
-    // Next, pull updated data from the limelights
+    // Next, pull updated data from the limelights and update our cache of it
     nikolaBotPoseCache.update(nikolaMegaTag.getAtomic());
     thomasBotPoseCache.update(thomasMegaTag.getAtomic());
 
@@ -284,7 +284,7 @@ public class LimelightVisionSubsystem extends SubsystemBase {
    *   <li>If ambiguity is > 0.7, don't use the data at all.
    * </ul>
    *
-   * @return
+   * @return valid vision pose estimate or null
    */
   private VisionPoseEstimate getMegatag1PoseEstimate() {
     double tagAmbiguity = nikolaBotPoseCache.getTagAmbiguity(0);
@@ -366,6 +366,6 @@ public class LimelightVisionSubsystem extends SubsystemBase {
 
   @Override
   public String toString() {
-    return "ACDC Vision Subsystem";
+    return "AC/DeepSea Vision Subsystem";
   }
 }

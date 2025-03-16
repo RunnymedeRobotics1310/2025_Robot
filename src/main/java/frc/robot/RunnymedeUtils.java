@@ -50,8 +50,8 @@ public class RunnymedeUtils {
    */
   public static Translation2d getRedAllianceLocation(Translation2d blueAllianceTranslation) {
     return new Translation2d(
-        Constants.VISION_CONFIG.fieldExtentMetresX() - blueAllianceTranslation.getX(),
-        Constants.VISION_CONFIG.fieldExtentMetresY() - blueAllianceTranslation.getY());
+        Constants.FieldConstants.FIELD_EXTENT_METRES_X - blueAllianceTranslation.getX(),
+        Constants.FieldConstants.FIELD_EXTENT_METRES_Y - blueAllianceTranslation.getY());
   }
 
   /**
@@ -64,8 +64,8 @@ public class RunnymedeUtils {
    */
   public static Pose2d getRedAlliancePose(Pose2d blueAlliancePose) {
     return new Pose2d(
-        Constants.VISION_CONFIG.fieldExtentMetresX() - blueAlliancePose.getX(),
-        Constants.VISION_CONFIG.fieldExtentMetresY() - blueAlliancePose.getY(),
+        Constants.FieldConstants.FIELD_EXTENT_METRES_X - blueAlliancePose.getX(),
+        Constants.FieldConstants.FIELD_EXTENT_METRES_Y - blueAlliancePose.getY(),
         Rotation2d.fromDegrees(
             SwerveUtils.normalizeDegrees(blueAlliancePose.getRotation().getDegrees() + 180)));
   }
