@@ -42,16 +42,9 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
         double xDif = allianceLocation.getX() - currentPose.getX();
         double yDif = allianceLocation.getY() - currentPose.getY();
 
-        System.out.println("xDif: " + xDif + " yDif: " + yDif + " Alliance: " + RunnymedeUtils.getRunnymedeAlliance());
-
-        double factor = Math.max(xDif, yDif);
-        double vX = xDif / factor * speed;
-        double vY = yDif / factor * speed;
-
-
         swerve.driveFieldOriented(
-                vX,
-                vY,
+                swerve.computeTranslateVelocity(xDif, 0.02),
+                swerve.computeTranslateVelocity(yDif, 0.02),
                 swerve.computeOmega(targetHeadingDeg));
     }
 
