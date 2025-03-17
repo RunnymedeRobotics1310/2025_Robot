@@ -84,6 +84,9 @@ public class VisionTelemetry {
   }
 
   void post() {
+    // Always post poseConfidence
+    SmartDashboard.putString(PREFIX + "Vision/pose_confidence", poseConfidence.toString());
+
     if (Telemetry.vision.telemetryLevel == VisionTelemetryLevel.REGULAR
         || Telemetry.vision.telemetryLevel == VisionTelemetryLevel.VERBOSE) {
       String poseOdo =
@@ -96,8 +99,6 @@ public class VisionTelemetry {
 
       String poseDelta = String.format("%.2fm, %.1f°", poseDeltaMetres, headingDeltaDegrees);
       SmartDashboard.putString(PREFIX + "Vision/pose_delta", poseDelta);
-
-      SmartDashboard.putString(PREFIX + "Vision/pose_confidence", poseConfidence.toString());
 
       SmartDashboard.putNumber(PREFIX + "Vision/tag_ambiguity", tagAmbiguity);
 
