@@ -35,6 +35,8 @@ public final class Constants {
     public static boolean test = false;
     public static boolean oi = false;
     public static boolean coral = false;
+    public static boolean climb = false;
+    public static boolean pneumatics = false;
   }
 
   public static final double DEFAULT_COMMAND_TIMEOUT_SECONDS = 5;
