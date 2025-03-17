@@ -28,6 +28,13 @@ import java.util.Map;
  */
 public final class Constants {
 
+  public static final class TelemetryConfig {
+    public static boolean drive = false;
+    public static VisionTelemetryLevel vision = VisionTelemetryLevel.NONE;
+    public static TelemetryLevel swerve = TelemetryLevel.NONE;
+    public static boolean test = false;
+  }
+
   public static final double DEFAULT_COMMAND_TIMEOUT_SECONDS = 5;
 
   public static final class RobotConfig {
@@ -38,7 +45,7 @@ public final class Constants {
   }
 
   public static final VisionConfig VISION_CONFIG =
-      new VisionConfig(0, 0, 0.7, 0.1, .5, true, VisionTelemetryLevel.VERBOSE);
+      new VisionConfig(0, 0, 0.7, 0.1, .5, true, Constants.TelemetryConfig.vision);
 
   public static final class OiConstants {
 
@@ -253,11 +260,11 @@ public final class Constants {
             FRONT_RIGHT,
             BACK_LEFT,
             BACK_RIGHT,
-            TelemetryLevel.VERBOSE);
+            Constants.TelemetryConfig.swerve);
 
     public static final SwerveDriveSubsystemConfig SUBSYSTEM_CONFIG =
         new SwerveDriveSubsystemConfig(
-            true, CORE_SWERVE_CONFIG, TRANSLATION_CONFIG, ROTATION_CONFIG);
+            true, CORE_SWERVE_CONFIG, TRANSLATION_CONFIG, ROTATION_CONFIG, TelemetryConfig.drive);
 
     // Ultrasonic port
     public static final int ULTRASONIC_SENSOR_PORT = 0;

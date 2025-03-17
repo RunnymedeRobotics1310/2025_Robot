@@ -29,7 +29,9 @@ public class RunnymedeUtilsTests {
     double s = calculateSpeed(distToTravel, currentSpeed, minSpeed, maxSpeed, accelZone, decelZone);
     String str =
         String.format(
-            "toTravel: %.2f currSpd: %.2f minSpd: %.2f maxSpd: %.2f accelZone: %.2f decelZone: %.2f s: %.2f, expectedSpd: %.2f\n",
+            "toTravel: %.2f currSpd: %.2f minSpd: %.2f maxSpd: %.2f "
+                + "accelZone: %.2f decelZone: %.2f s: %.2f, "
+                + "expectedSpd: %.2f\n",
             distToTravel, currentSpeed, minSpeed, maxSpeed, accelZone, decelZone, s, expectedSpeed);
     System.out.println(str);
     assertEquals(expectedSpeed, s, 1e-2, str);

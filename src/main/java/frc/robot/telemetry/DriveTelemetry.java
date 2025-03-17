@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class DriveTelemetry {
 
+  public boolean enabled = true;
+
   /** The x velocity of the robot with respect to the field in metres per second */
   public double fieldOrientedVelocityX = Double.MIN_VALUE;
 
@@ -44,27 +46,29 @@ public class DriveTelemetry {
   public double ultrasonicVoltage = Double.MIN_VALUE;
 
   void post() {
-    double fieldSpeed = Math.hypot(fieldOrientedVelocityX, fieldOrientedVelocityY);
-    String vField =
-        String.format(
-            "%.1f (%.1f, %.1f) m/s %.1f deg/s",
-            fieldSpeed,
-            fieldOrientedVelocityX,
-            fieldOrientedVelocityY,
-            Math.toDegrees(fieldOrientedVelocityOmega));
-    SmartDashboard.putString(PREFIX + "Drive/desired_velocity_field", vField);
+    if (enabled) {
+      double fieldSpeed = Math.hypot(fieldOrientedVelocityX, fieldOrientedVelocityY);
+      String vField =
+          String.format(
+              "%.1f (%.1f, %.1f) m/s %.1f deg/s",
+              fieldSpeed,
+              fieldOrientedVelocityX,
+              fieldOrientedVelocityY,
+              Math.toDegrees(fieldOrientedVelocityOmega));
+      SmartDashboard.putString(PREFIX + "Drive/desired_velocity_field", vField);
 
-    double dist = Math.hypot(fieldOrientedDeltaToPoseX, fieldOrientedDeltaToPoseY);
-    String delta =
-        String.format(
-            "%.2f (%.2f, %.2f) m %.1f deg",
-            dist,
-            fieldOrientedDeltaToPoseX,
-            fieldOrientedDeltaToPoseY,
-            fieldOrientedDeltaToPoseHeading);
-    SmartDashboard.putString(PREFIX + "Drive/distance_to_pose", delta);
+      double dist = Math.hypot(fieldOrientedDeltaToPoseX, fieldOrientedDeltaToPoseY);
+      String delta =
+          String.format(
+              "%.2f (%.2f, %.2f) m %.1f deg",
+              dist,
+              fieldOrientedDeltaToPoseX,
+              fieldOrientedDeltaToPoseY,
+              fieldOrientedDeltaToPoseHeading);
+      SmartDashboard.putString(PREFIX + "Drive/distance_to_pose", delta);
 
-    SmartDashboard.putNumber(PREFIX + "Drive/Ultrasonic Distance M", ultrasonicDistanceM);
-    SmartDashboard.putNumber(PREFIX + "Drive/Ultrasonic Voltage", ultrasonicVoltage);
+      SmartDashboard.putNumber(PREFIX + "Drive/Ultrasonic Distance M", ultrasonicDistanceM);
+      SmartDashboard.putNumber(PREFIX + "Drive/Ultrasonic Voltage", ultrasonicVoltage);
+    }
   }
 }

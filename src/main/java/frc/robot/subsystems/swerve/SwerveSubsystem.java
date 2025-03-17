@@ -42,6 +42,7 @@ public class SwerveSubsystem extends SubsystemBase {
             config.rotationConfig().headingD());
     headingPIDController.enableContinuousInput(-180, 180);
     headingPIDController.setTolerance(2);
+    Telemetry.drive.enabled = config.telemetryEnabled();
   }
 
   public void periodic() {

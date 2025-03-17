@@ -8,7 +8,7 @@ public class Test {
 
   Test() {}
 
-  public boolean enabled;
+  public boolean enabled = false;
   public SystemTestCommand.Motor selectedMotor;
   public double motorSpeed = -1310.0;
   public double motor2Speed = -1310.0;
