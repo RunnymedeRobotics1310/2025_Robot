@@ -17,16 +17,16 @@ public class Score3L4RightAutoCommand extends BaseAutoCommand {
     addCommands(new SetAllianceGyroCommand(swerve, 180));
     addCommands(new WaitCommand(delay));
 
-    goScoreL4Coral(PRE_SCORE_RIGHT_4);
+    addCommands(goScoreL4Coral(PRE_SCORE_RIGHT_4));
 
-    autoIntake(blueRightOuterStation);
+    addCommands(autoIntake(blueRightOuterStation));
 
-    goScoreL4Coral(PRE_SCORE_RIGHT_2);
+    addCommands(goScoreL4Coral(PRE_SCORE_RIGHT_2));
 
-    autoIntake(blueRightOuterStation);
+    addCommands(autoIntake(blueRightOuterStation));
 
-    goScoreL4Coral(PRE_SCORE_RIGHT_3);
+    addCommands(goScoreL4Coral(PRE_SCORE_RIGHT_3));
 
-    autoIntake(blueRightOuterStation);
+    addCommands(autoIntake(blueRightOuterStation));
   }
 }

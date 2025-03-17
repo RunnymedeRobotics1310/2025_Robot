@@ -16,6 +16,6 @@ public class Score1CoralCenterAutoCommand extends BaseAutoCommand {
     addCommands(new SetAllianceGyroCommand(swerve, 180));
     addCommands(new WaitCommand(delay));
 
-    goScoreL4Coral(FieldLocation.PRE_SCORE_LEFT_6);
+    addCommands(goScoreL4Coral(FieldLocation.PRE_SCORE_LEFT_6));
   }
 }
