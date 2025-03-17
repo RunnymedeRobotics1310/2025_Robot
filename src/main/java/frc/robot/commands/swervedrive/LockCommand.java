@@ -1,15 +1,20 @@
 package frc.robot.commands.swervedrive;
 
+import frc.robot.commands.LoggingCommand;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 /**
  * Lock the robot pose as long as this command is active (i.e. as long as the operator is pressing
  * the button.
  */
-public class LockCommand extends BaseDriveCommand {
+public class LockCommand extends LoggingCommand {
+
+  private final SwerveSubsystem swerve;
 
   public LockCommand(SwerveSubsystem swerve) {
-    super(swerve);
+    this.swerve = swerve;
+
+    addRequirements(swerve);
   }
 
   @Override

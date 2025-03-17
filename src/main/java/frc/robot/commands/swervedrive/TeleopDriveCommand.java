@@ -17,12 +17,14 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.commands.LoggingCommand;
 import frc.robot.commands.operator.OperatorInput;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 
-public class TeleopDriveCommand extends BaseDriveCommand {
+public class TeleopDriveCommand extends LoggingCommand {
 
+  private final SwerveSubsystem swerve;
   private final OperatorInput oi;
   private final LimelightVisionSubsystem visionSubsystem;
   private boolean invert;
@@ -36,14 +38,15 @@ public class TeleopDriveCommand extends BaseDriveCommand {
       SwerveSubsystem swerve,
       LimelightVisionSubsystem visionSubsystem,
       OperatorInput operatorInput) {
-    super(swerve);
+    this.swerve = swerve;
     this.visionSubsystem = visionSubsystem;
     this.oi = operatorInput;
+    addRequirements(swerve);
   }
 
   @Override
   public void initialize() {
-    super.initialize();
+    logCommandStart();
     rotationSettleTimer.start();
     rotationSettleTimer.reset();
     headingSetpointDeg = null;
@@ -64,8 +67,6 @@ public class TeleopDriveCommand extends BaseDriveCommand {
   // @Override
   @Override
   public void execute() {
-    super.execute();
-
     final boolean isZeroGyro = oi.isZeroGyro();
 
     // With the driver standing behind the driver station glass, "forward" on the left stick is
@@ -204,7 +205,7 @@ public class TeleopDriveCommand extends BaseDriveCommand {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    super.end(interrupted);
+    logCommandEnd(interrupted);
     headingSetpointDeg = null;
     rotationSettleTimer.reset();
   }
@@ -212,7 +213,6 @@ public class TeleopDriveCommand extends BaseDriveCommand {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    super.isFinished();
     return false;
   }
 

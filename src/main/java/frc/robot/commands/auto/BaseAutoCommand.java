@@ -13,6 +13,7 @@ import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.coral.intake.PlantCoralCommand;
 import frc.robot.commands.swervedrive.DriveRobotOrientedCommand;
+import frc.robot.commands.swervedrive.DriveThroughFieldLocationCommand;
 import frc.robot.commands.swervedrive.DriveToFieldLocationCommand;
 import frc.robot.commands.swervedrive.DriveToVisibleTagCommand;
 import frc.robot.subsystems.CoralSubsystem;
@@ -39,6 +40,10 @@ public class BaseAutoCommand extends SequentialCommandGroup {
         return new DriveToFieldLocationCommand(swerve, location);
     }
 
+    protected Command driveThroughLocation(FieldLocation location, double speed) {
+        return new DriveThroughFieldLocationCommand(swerve, location, speed);
+    }
+
     protected Command setCoralPose(CoralPose pose) {
         return new MoveToCoralPoseCommand(pose, coral);
     }
@@ -57,7 +62,7 @@ public class BaseAutoCommand extends SequentialCommandGroup {
     public Command goScoreL4Coral(FieldLocation location) {
         double locationHeading = location.pose.getRotation().getDegrees() + allianceOffset;
 
-        return driveToLocation(location)
+        return driveThroughLocation(location, 2)
         .andThen(approachReef(location.isLeftSide))
         .andThen(plant())
         .andThen(new DriveRobotOrientedCommand(swerve, -0.2, 0, locationHeading).withTimeout(1))
@@ -67,7 +72,7 @@ public class BaseAutoCommand extends SequentialCommandGroup {
     public Command autoIntake(FieldLocation location) {
         double locationHeading = location.pose.getRotation().getDegrees() + allianceOffset;
 
-        return driveToLocation(location)
+        return driveThroughLocation(location, 2)
                 .andThen(new IntakeCoralCommand(coral, false)
                 .deadlineFor(new DriveRobotOrientedCommand(swerve, 0.25, 0, locationHeading)));
     }

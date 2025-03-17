@@ -4,19 +4,28 @@ import static frc.robot.Constants.AutoConstants.*;
 
 import ca.team1310.swerve.utils.SwerveUtils;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.RunnymedeUtils;
 import frc.robot.commands.LoggingCommand;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
 public class DriveThroughFieldLocationCommand extends LoggingCommand {
 
     private final SwerveSubsystem swerve;
-    private final FieldLocation location;
+    private final Pose2d allianceLocation;
     private final double speed;
 
     public DriveThroughFieldLocationCommand(SwerveSubsystem swerve, FieldLocation location, double speed) {
         this.swerve = swerve;
-        this.location = location;
+
+        if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
+      allianceLocation = RunnymedeUtils.getRedAlliancePose(location.pose);
+        } else {
+            allianceLocation = location.pose;
+        }
         this.speed = speed;
+
+        addRequirements(swerve);
     }
 
     @Override
@@ -28,9 +37,9 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
     public void execute() {
         Pose2d currentPose = swerve.getPose();
 
-        double xDif = location.pose.getX() - currentPose.getX();
-        double yDif = location.pose.getY() - currentPose.getY();
-        double targetAngle = location.pose.getRotation().getDegrees();
+        double xDif = allianceLocation.getX() - currentPose.getX();
+        double yDif = allianceLocation.getY() - currentPose.getY();
+        double targetAngle = allianceLocation.getRotation().getDegrees();
 
         double factor = Math.max(xDif, yDif);
         double vX = xDif / factor * speed;
@@ -46,7 +55,7 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
     @Override
     public boolean isFinished() {
         return (SwerveUtils.isCloseEnough(
-                swerve.getPose().getTranslation(), location.pose.getTranslation(), 0.20));
+                swerve.getPose().getTranslation(), allianceLocation.getTranslation(), 0.20));
     }
 
     @Override

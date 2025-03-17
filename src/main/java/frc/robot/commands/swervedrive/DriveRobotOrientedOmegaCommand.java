@@ -15,6 +15,7 @@ public class DriveRobotOrientedOmegaCommand extends LoggingCommand {
     this.x = x;
     this.y = y;
     this.omega = omega;
+    addRequirements(swerve);
   }
 
   @Override
