@@ -14,6 +14,7 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
     private final SwerveSubsystem swerve;
     private final Pose2d allianceLocation;
     private final double speed;
+    private final double targetHeadingDeg;
 
     public DriveThroughFieldLocationCommand(SwerveSubsystem swerve, FieldLocation location, double speed) {
         this.swerve = swerve;
@@ -24,6 +25,7 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
             allianceLocation = location.pose;
         }
         this.speed = speed;
+        this.targetHeadingDeg = SwerveUtils.normalizeDegrees(allianceLocation.getRotation().getDegrees());
 
         addRequirements(swerve);
     }
@@ -39,7 +41,8 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
 
         double xDif = allianceLocation.getX() - currentPose.getX();
         double yDif = allianceLocation.getY() - currentPose.getY();
-        double targetAngle = allianceLocation.getRotation().getDegrees();
+
+        System.out.println("xDif: " + xDif + " yDif: " + yDif + " Alliance: " + RunnymedeUtils.getRunnymedeAlliance());
 
         double factor = Math.max(xDif, yDif);
         double vX = xDif / factor * speed;
@@ -49,7 +52,7 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
         swerve.driveFieldOriented(
                 vX,
                 vY,
-                swerve.computeOmega(targetAngle));
+                swerve.computeOmega(targetHeadingDeg));
     }
 
     @Override
