@@ -33,6 +33,7 @@ public final class Constants {
     public static VisionTelemetryLevel vision = VisionTelemetryLevel.NONE;
     public static TelemetryLevel swerve = TelemetryLevel.NONE;
     public static boolean test = false;
+    public static boolean oi = false;
   }
 
   public static final double DEFAULT_COMMAND_TIMEOUT_SECONDS = 5;

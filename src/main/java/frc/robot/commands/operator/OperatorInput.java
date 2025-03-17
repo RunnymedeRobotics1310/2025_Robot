@@ -310,7 +310,9 @@ public class OperatorInput extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putString("Driver Controller", driverController.toString());
+    if (Constants.TelemetryConfig.oi) {
+      SmartDashboard.putString("Driver Controller", driverController.toString());
+    }
   }
 
   public enum Stick {
