@@ -13,6 +13,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.CoralConstants.CoralPose;
 import frc.robot.commands.CancelCommand;
 import frc.robot.commands.auto.*;
+import frc.robot.commands.climb.AutoClimbCommand;
 import frc.robot.commands.climb.ClimbCommand;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
@@ -156,7 +157,10 @@ public class OperatorInput extends SubsystemBase {
 
     // anti-climb
     new Trigger(() -> driverController.getPOV() == 180)
-        .onTrue(new ClimbCommand(false, climbSubsystem));
+      .onTrue(new ClimbCommand(false, climbSubsystem));
+        
+          new Trigger(() -> driverController.getPOV() == 270)
+    .onTrue(new AutoClimbCommand(climbSubsystem));
 
     new Trigger(this::isToggleCompressor).onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
 
