@@ -2,6 +2,8 @@ package frc.robot.commands.operator;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -157,19 +159,18 @@ public class OperatorInput extends SubsystemBase {
 
     // anti-climb
     new Trigger(() -> driverController.getPOV() == 180)
-      .onTrue(new ClimbCommand(false, climbSubsystem));
-        
-          new Trigger(() -> driverController.getPOV() == 270)
-    .onTrue(new AutoClimbCommand(climbSubsystem));
+        .onTrue(new ClimbCommand(false, climbSubsystem));
+
+    new Trigger(() -> driverController.getPOV() == 270)
+        .onTrue(new AutoClimbCommand(climbSubsystem));
+
+    new Trigger(() -> Timer.getMatchTime() < 15 && RobotState.isTeleop())
+        .onTrue(new AutoClimbCommand(climbSubsystem));
 
     new Trigger(this::isToggleCompressor).onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
 
     new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
-        .onTrue(
-            new DriveToVisibleTagCommand(
-                driveSubsystem,
-                visionSubsystem,
-                true));
+        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, true));
   }
 
   /*
@@ -326,11 +327,14 @@ public class OperatorInput extends SubsystemBase {
 
     SmartDashboard.putData("1310/auto/Auto Selector", autoPatternChooser);
 
-    autoPatternChooser.setDefaultOption("Do Nothing", Constants.AutoConstants.AutoPattern.DO_NOTHING);
+    autoPatternChooser.setDefaultOption(
+        "Do Nothing", Constants.AutoConstants.AutoPattern.DO_NOTHING);
     autoPatternChooser.addOption("Exit Zone", Constants.AutoConstants.AutoPattern.EXIT_ZONE);
-    autoPatternChooser.addOption("1 Coral Center", Constants.AutoConstants.AutoPattern.SCORE_1_CENTER);
+    autoPatternChooser.addOption(
+        "1 Coral Center", Constants.AutoConstants.AutoPattern.SCORE_1_CENTER);
     autoPatternChooser.addOption("3 Coral Left", Constants.AutoConstants.AutoPattern.SCORE_3_LEFT);
-    autoPatternChooser.addOption("3 Coral Right", Constants.AutoConstants.AutoPattern.SCORE_3_RIGHT);
+    autoPatternChooser.addOption(
+        "3 Coral Right", Constants.AutoConstants.AutoPattern.SCORE_3_RIGHT);
 
     SmartDashboard.putData("1310/auto/Delay Selector", delayChooser);
 
