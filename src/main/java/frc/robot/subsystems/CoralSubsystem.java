@@ -441,20 +441,21 @@ public class CoralSubsystem extends SubsystemBase {
 
     checkSafety();
 
+    SmartDashboard.putNumber("Coral/Elevator Position", getElevatorEncoder());
+    SmartDashboard.putBoolean("Coral/Elevator Upper Limit", isElevatorAtUpperLimit());
+    SmartDashboard.putBoolean("Coral/Elevator Lower Limit", isElevatorAtLowerLimit());
+    SmartDashboard.putNumber("Coral/Arm Angle", getArmAngle());
+    SmartDashboard.putBoolean("Coral/Coral Detected", isCoralDetected());
+
     if (Constants.TelemetryConfig.coral) {
       SmartDashboard.putNumber("Coral/Elevator Setpoint", elevatorSetpoint);
       SmartDashboard.putNumber("Coral/Elevator Speed", elevatorSpeed);
-      SmartDashboard.putNumber("Coral/Elevator Position", getElevatorEncoder());
-      SmartDashboard.putBoolean("Coral/Elevator Upper Limit", isElevatorAtUpperLimit());
-      SmartDashboard.putBoolean("Coral/Elevator Lower Limit", isElevatorAtLowerLimit());
 
       SmartDashboard.putNumber("Coral/Arm Speed", armSetpoint);
-      SmartDashboard.putNumber("Coral/Arm Angle", getArmAngle());
       SmartDashboard.putBoolean("Coral/Arm Upper Limit", isArmAtUpperLimit());
       SmartDashboard.putBoolean("Coral/Arm Lower Limit", isArmAtLowerLimit());
 
       SmartDashboard.putNumber("Coral/Intake Speed", intakeSetpoint);
-      SmartDashboard.putBoolean("Coral/Coral Detected", isCoralDetected());
     }
   }
 
