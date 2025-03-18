@@ -22,6 +22,7 @@ public class BaseAutoCommand extends SequentialCommandGroup {
   private final LimelightVisionSubsystem vision;
   private final CoralSubsystem coral;
   private double allianceOffset = 0;
+  private final double speed = 3;
 
   public BaseAutoCommand(
       SwerveSubsystem swerve, LimelightVisionSubsystem vision, CoralSubsystem coral) {
@@ -56,17 +57,24 @@ public class BaseAutoCommand extends SequentialCommandGroup {
   public Command goScoreL4Coral(FieldLocation location) {
     double locationHeading = location.pose.getRotation().getDegrees() + allianceOffset;
 
-    return driveThroughLocation(location, 2)
+    return driveThroughLocation(location, speed)
         .andThen(approachReef(location))
         .andThen(plant())
-        .andThen(new DriveRobotOrientedCommand(swerve, -0.2, 0, locationHeading).withTimeout(1))
+
+        .andThen(new DriveRobotOrientedCommand(swerve, -0.5, 0, locationHeading).withTimeout(0.25))
         .andThen(setCoralPose(COMPACT));
+  }
+
+  public Command scoreL4CoralStop(FieldLocation location) {
+    return driveThroughLocation(location, speed)
+            .andThen(approachReef(location))
+            .andThen(plant());
   }
 
   public Command autoIntake(FieldLocation location) {
     double locationHeading = location.pose.getRotation().getDegrees() + allianceOffset;
 
-    return driveThroughLocation(location, 2)
+    return driveThroughLocation(location, speed)
         .andThen(
             new IntakeCoralCommand(coral, false)
                 .deadlineFor(new DriveRobotOrientedCommand(swerve, 0.25, 0, locationHeading)));
