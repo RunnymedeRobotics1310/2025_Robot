@@ -75,8 +75,7 @@ public class BaseAutoCommand extends SequentialCommandGroup {
     double locationHeading = location.pose.getRotation().getDegrees() + allianceOffset;
 
     return driveThroughLocation(location, speed)
-        .andThen(
-            new IntakeCoralCommand(coral, false)
-                .deadlineFor(new DriveRobotOrientedCommand(swerve, 0.25, 0, locationHeading)));
+        .andThen(new DriveIntoWallCommand(swerve, 0.25, 0, locationHeading))
+            .deadlineFor(new IntakeCoralCommand(coral, false));
   }
 }

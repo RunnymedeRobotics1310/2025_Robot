@@ -505,7 +505,7 @@ public class CoralSubsystem extends SubsystemBase {
     if (elLowerLimit) {
       resetElevatorEncoder();
 
-      if (elevatorSpeed < 0) {
+      if (elGoingDown) {
         elevatorSpeed = 0;
         // Directly set the motor speed, do not call the setter method (recursive loop)
         elevatorMotor.set(0);
@@ -515,7 +515,7 @@ public class CoralSubsystem extends SubsystemBase {
     if (elUpperLimit) {
       elevatorEncoder.setPosition(ELEVATOR_MAX_HEIGHT);
 
-      if (elevatorSpeed > 0) {
+      if (elGoingUp) {
         elevatorSpeed = 0;
         // Directly set the motor speed, do not call the setter method (recursive loop)
         elevatorMotor.set(0);

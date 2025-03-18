@@ -32,8 +32,12 @@ public class IntakeCoralCommand extends LoggingCommand {
     } else {
       coralSubsystem.moveElevatorToHeight(ElevatorHeight.CLOSE_INTAKE);
     }
-    coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_INTAKE_SPEED);
 
+    if (coralSubsystem.isCoralDetected()) {
+      coralSubsystem.setIntakeSpeed(0);
+    } else {
+      coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_INTAKE_SPEED);
+    }
     coralSubsystem.moveArmToAngle(ArmAngle.INTAKE);
   }
 
