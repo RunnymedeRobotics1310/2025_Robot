@@ -4,6 +4,7 @@ import ca.team1310.swerve.utils.SwerveUtils;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import java.util.Objects;
 
@@ -125,7 +126,7 @@ public class RunnymedeUtils {
       double maxSpeed,
       double accelDistance,
       double decelDistance) {
-    boolean DEBUG = false;
+    boolean DEBUG = true;
     if (distanceToTravel < 0)
       throw new IllegalArgumentException(
           "Distance to travel " + distanceToTravel + " must not be negative");
@@ -158,22 +159,37 @@ public class RunnymedeUtils {
       DECEL
     }
 
+    final double requestedAcceleration = (maxSpeed - minSpeed) / accelDistance;
+    final double requestedDeceleration = (minSpeed - maxSpeed) / decelDistance;
+
     // figure out zone
     final Zone zone;
     final double distanceToTravelInAccelZone;
 
+    // our current speed affects how much space we need to accel or decel.
+
+    // how far are we from min?
+    double pctMin = currentSpeed / minSpeed;
+    // we are part way to min, so we only care about the rest of the distance to min
+    if (pctMin < 1) {
+      decelDistance *= (1 - pctMin);
+    }
+
+    // how far are we from max?
+    double pctMax = currentSpeed / maxSpeed;
+    // we are part way to max, so we only care about the rest of the distance to max
+    if (pctMax < 1) {
+      accelDistance *= (1 - pctMax);
+    }
+
+    // given current location, speed, and deceleration distance, are we in the deceleration zone?
     if (distanceToTravel < decelDistance) {
       zone = Zone.DECEL;
       distanceToTravelInAccelZone = 0;
     } else {
-      // how far are we from max?
-      double pctMax = currentSpeed / maxSpeed;
-      // we are part way to max, so we only care about the rest of the distance to max
-      if (pctMax < 1) {
-        accelDistance *= (1 - pctMax);
-      }
 
-      if (distanceToTravel > accelDistance + decelDistance) {
+      // we are either in the cruise zone or the acceleration zone
+      if (distanceToTravel >= accelDistance + decelDistance) {
         // we will get to max speed
         if (currentSpeed < maxSpeed) {
           zone = Zone.ACCEL;
@@ -184,8 +200,12 @@ public class RunnymedeUtils {
         }
       } else {
         // we cannot get to max speed - scale it down
-        maxSpeed = (distanceToTravel / (accelDistance + decelDistance)) * maxSpeed;
-        if (DEBUG) System.out.println("SCALE DOWN - new max: " + String.format("%.2f", maxSpeed));
+        double newMax = (distanceToTravel / (accelDistance + decelDistance)) * maxSpeed;
+        if (DEBUG)
+          System.out.printf(
+              "SCALE DOWN not enough room to reach speed - old max %.2f, new max %.2f\n",
+              maxSpeed, newMax);
+        maxSpeed = newMax;
         if (currentSpeed < maxSpeed) {
           zone = Zone.ACCEL;
           distanceToTravelInAccelZone = accelDistance;
@@ -196,8 +216,6 @@ public class RunnymedeUtils {
       }
     }
 
-    if (DEBUG)
-      System.out.println("Distance to travel in accel zone: " + distanceToTravelInAccelZone);
     final double FACTOR = 5;
 
     final double speed;
@@ -205,74 +223,79 @@ public class RunnymedeUtils {
       case CRUISE:
         {
           double delta = currentSpeed - maxSpeed;
-          if (Math.abs(delta) < 1e-6) {
-            if (DEBUG) System.out.println("CRUISE: at max speed");
+          if (Math.abs(delta) < 1e-3) {
+            if (DEBUG) System.out.printf("CRUISE: at max speed %.2f\n", maxSpeed);
             speed = maxSpeed;
           } else if (delta > 0) {
             // too fast! slow down ASAP but not discontinuously
-            if (DEBUG)
-              System.out.println(
-                  "CRUISE: too fast! slow down ASAP but not discontinuously - can't do target "
-                      + String.format("%.2f", maxSpeed));
-            ;
             speed = Math.max(currentSpeed - (delta / FACTOR), maxSpeed); // todo: smooth this
+            if (DEBUG)
+              System.out.printf(
+                  "CRUISE: too fast! slow down - current %.2f, max %.2f, delta %.2f, return %.2f\n",
+                  currentSpeed, maxSpeed, delta, speed);
           } else {
             // too slow! speed up ASAP but not discontinuously
-            if (DEBUG)
-              System.out.println(
-                  "CRUISE: too slow! speed up ASAP but not discontinuously - can't do target "
-                      + String.format("%.2f", maxSpeed));
             speed = Math.min(currentSpeed + (-delta / FACTOR), maxSpeed); // todo: smooth this
+            if (DEBUG)
+              System.out.printf(
+                  "CRUISE: too slow! speed up - current %.2f, max %.2f, delta %.2f, return %.2f\n",
+                  currentSpeed, maxSpeed, delta, speed);
           }
           break;
         }
       case ACCEL:
         {
           double target =
-              maxSpeedAccelZone(minSpeed, maxSpeed, distanceToTravelInAccelZone, accelDistance);
+              maxSpeedAccelZone(
+                  requestedAcceleration, minSpeed, distanceToTravelInAccelZone, accelDistance);
           double delta = currentSpeed - target;
-          if (Math.abs(delta) < 1e-6) {
+          if (Math.abs(delta) < 1e-3) {
             speed = target;
-            if (DEBUG) System.out.println("ACCEL: at target " + String.format("%.2f", target));
+            if (DEBUG)
+              System.out.printf(
+                  "ACCEL: at target %.2f, left in zone: %.2f\n",
+                  target, distanceToTravelInAccelZone);
           } else if (delta > 0) {
             // too fast! slow down ASAP but not discontinuously
-            if (DEBUG)
-              System.out.println(
-                  "ACCEL: too fast! slow down ASAP but not discontinuously - can't do target "
-                      + String.format("%.2f", target));
             speed = Math.max(currentSpeed - (delta / FACTOR), target); // todo: smooth this
+            if (DEBUG)
+              System.out.printf(
+                  "ACCEL: too fast! slow down - current %.2f, target %.2f, delta %.2f, return %.2f, left in zone: %.2f\n",
+                  currentSpeed, target, delta, speed, distanceToTravelInAccelZone);
+
           } else {
             // too slow! speed up ASAP but not discontinuously
-            if (DEBUG)
-              System.out.println(
-                  "ACCEL: too slow! speed up ASAP but not discontinuously - can't do target "
-                      + String.format("%.2f", target));
             speed = Math.min(currentSpeed + (-delta / FACTOR), target); // todo: smooth this
+            if (DEBUG)
+              System.out.printf(
+                  "ACCEL: too slow! speed up - current %.2f, target %.2f, delta %.2f, return %.2f, left in zone: %.2f\n",
+                  currentSpeed, target, delta, speed, distanceToTravelInAccelZone);
           }
           break;
         }
       case DECEL:
         {
           // define the curve
-          double target = maxSpeedDecelZone(minSpeed, maxSpeed, distanceToTravel, decelDistance);
+          double target =
+              maxSpeedDecelZone(requestedDeceleration, maxSpeed, distanceToTravel, decelDistance);
           double delta = currentSpeed - target;
-          if (Math.abs(delta) < 1e-6) {
+          if (Math.abs(delta) < 1e-3) {
             speed = target;
-            if (DEBUG) System.out.println("DECEL: at target " + String.format("%.2f", target));
+            if (DEBUG) System.out.printf("DECEL: at target %.2f\n", target);
           } else if (delta > 0) {
             // too fast! slow down ASAP but not discontinuously
-            if (DEBUG)
-              System.out.println(
-                  "DECEL: too fast! slow down ASAP but not discontinuously - can't do target "
-                      + String.format("%.2f", target));
             speed = Math.max(currentSpeed - (delta / FACTOR), target); // todo: smooth this
+            if (DEBUG)
+              System.out.printf(
+                  "DECEL: too fast! slow down - current %.2f, target %.2f, delta %.2f,  return %.2f\n",
+                  currentSpeed, target, delta, speed);
           } else {
             // too slow! speed up ASAP but not discontinuously
-            if (DEBUG)
-              System.out.println(
-                  "DECEL: too slow! speed up ASAP but not discontinuously - can't do target "
-                      + String.format("%.2f", target));
             speed = Math.min(currentSpeed + (-delta / FACTOR), target); // todo: smooth this
+            if (DEBUG)
+              System.out.printf(
+                  "DECEL: too slow! speed up - current %.2f, target %.2f, delta %.2f, return %.2f\n",
+                  currentSpeed, target, delta, speed);
           }
           break;
         }
@@ -286,27 +309,32 @@ public class RunnymedeUtils {
   }
 
   static double maxSpeedDecelZone(
-      double minSpeed, double maxSpeed, double distanceToTravelInDecelZone, double decelDistance) {
+      double deceleration,
+      double maxSpeed,
+      double distanceToTravelInDecelZone,
+      double decelDistance) {
     if (distanceToTravelInDecelZone > decelDistance)
       throw new IllegalArgumentException(
           "Distance to travel in deceleration zone ("
               + String.format("%.2f", distanceToTravelInDecelZone)
-              + ") cannot exceed the decleeration distance ("
+              + ") cannot exceed the deceleration distance ("
               + String.format("%.2f", decelDistance)
               + ")");
-    return (((minSpeed - maxSpeed) / decelDistance) * distanceToTravelInDecelZone) + maxSpeed;
+    return (deceleration * distanceToTravelInDecelZone) + maxSpeed;
   }
 
   static double maxSpeedAccelZone(
-      double minSpeed, double maxSpeed, double distanceToTravelInAccelZone, double accelDistance) {
+      double acceleration,
+      double minSpeed,
+      double distanceToTravelInAccelZone,
+      double accelDistance) {
     if (distanceToTravelInAccelZone > accelDistance)
       throw new IllegalArgumentException(
           "Distance to travel in acceleration zone ("
               + String.format("%.2f", distanceToTravelInAccelZone)
-              + ") cannot exceed the decleeration distance ("
+              + ") cannot exceed the acceleration distance ("
               + String.format("%.2f", accelDistance)
               + ")");
-    double m = (maxSpeed - minSpeed) / accelDistance;
-    return (m * distanceToTravelInAccelZone) + minSpeed;
+    return (acceleration * distanceToTravelInAccelZone) + minSpeed;
   }
 }
