@@ -480,6 +480,7 @@ public final class Constants {
     public static final double ELEVATOR_TOLERANCE = 1;
     public static final double ELEVATOR_MAX_SLEW = 0.2;
     public static final double ELEVATOR_P = 0.05;
+    public static final double ELEVATOR_HOLD_STEADY_SPEED = 0.02;
     // Maximum manual tuning speed
     public static final double ELEVATOR_TUNE_MAX_SPEED = 0.2;
     // Safety constants near the limits

@@ -32,7 +32,13 @@ public class DefaultCoralCommand extends LoggingCommand {
     boolean plant = operatorInput.getPlant();
 
     // Elevator commands
-    coralSubsystem.setElevatorSpeed(elevatorInput * CoralConstants.ELEVATOR_TUNE_MAX_SPEED);
+    if (elevatorInput == 0) {
+      if (!coralSubsystem.isElevatorAtLowerLimit()) {
+        coralSubsystem.setElevatorSpeed(CoralConstants.ELEVATOR_HOLD_STEADY_SPEED);
+      }
+    } else {
+      coralSubsystem.setElevatorSpeed(elevatorInput * CoralConstants.ELEVATOR_TUNE_MAX_SPEED);
+    }
 
     coralSubsystem.setArmSpeed(armInput * CoralConstants.ARM_TUNE_MAX_SPEED);
 
