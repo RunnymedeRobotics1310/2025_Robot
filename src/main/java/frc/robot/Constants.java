@@ -79,7 +79,7 @@ public final class Constants {
      * Operator tune factor for tuning robot oriented at reef. This factor will be multiplied
      * against the max translational speed.
      */
-    public static final double OPERATOR_SPEED_FACTOR = 0.05;
+    public static final double OPERATOR_SPEED_FACTOR = 0.1;
   }
 
   public static final class FieldConstants {
