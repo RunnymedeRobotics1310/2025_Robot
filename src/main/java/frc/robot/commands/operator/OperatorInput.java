@@ -123,18 +123,18 @@ public class OperatorInput extends SubsystemBase {
     // Y (delivery), A (intake) for arm position
     new Trigger(() -> operatorController.getPOV() == 0)
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coralSubsystem));
-    new Trigger(() -> operatorController.getPOV() == 270)
+    new Trigger(() -> operatorController.getPOV() == 270 && !isAutoAlignReef())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L3, coralSubsystem));
     new Trigger(() -> operatorController.getPOV() == 180)
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L2, coralSubsystem));
-    new Trigger(() -> operatorController.getPOV() == 90)
+    new Trigger(() -> operatorController.getPOV() == 90 && !isAutoAlignReef())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L1, coralSubsystem));
 
     /*
      * Set remove algae poses
      */
     new Trigger(
-            () -> operatorController.getPOV() == 270 && operatorController.getRightBumperButton())
+            () -> operatorController.getPOV() == 270 && operatorController.getRightBumperButton() && !isAutoAlignReef())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.REMOVE_HIGH_ALGAE, coralSubsystem));
     new Trigger(
             () -> operatorController.getPOV() == 180 && operatorController.getRightBumperButton())
@@ -169,8 +169,15 @@ public class OperatorInput extends SubsystemBase {
 
     new Trigger(this::isToggleCompressor).onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
 
-    new Trigger(() -> operatorController.getLeftTriggerAxis() > 0.5)
-        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, true));
+    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 270))
+        .onTrue(
+            new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, true)
+                .alongWith(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coral)));
+
+    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 90))
+            .onTrue(
+                    new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, false)
+                            .alongWith(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coral)));
   }
 
   /*
@@ -279,6 +286,10 @@ public class OperatorInput extends SubsystemBase {
 
   public boolean getPlant() {
     return operatorController.getRightTriggerAxis() > 0.5;
+  }
+
+  public boolean isAutoAlignReef() {
+    return operatorController.getLeftTriggerAxis() > 0.5;
   }
 
   // ALIGN CORAL STATION ANGLE

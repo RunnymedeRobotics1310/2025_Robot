@@ -25,6 +25,13 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
   }
 
   @Override
+  public void initialize() {
+    logCommandStart();
+    tagId = -1;
+    noDataCount = 0;
+  }
+
+  @Override
   public void execute() {
 
     // capture tag if we don't have one
@@ -55,7 +62,7 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
     if (Math.abs(tX) > 20) {
       vX = 0;
     } else {
-      vX = 0.25;
+      vX = 0.35;
     }
     vY = 0.02 * tX;
 
