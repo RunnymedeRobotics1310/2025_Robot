@@ -597,7 +597,7 @@ public final class Constants {
   }
 
   public static final class ClimbConstants {
-    public static final int CLIMB_FORWARDS_PNEUMATIC_PORT = 7;
+    public static final int CLIMB_FORWARDS_PNEUMATIC_PORT = 6;
     public static final int CLIMB_REVERSE_PNEUMATIC_PORT = 0;
     public static final int CLIMB_SENSOR_DIO_PORT = 9;
   }
