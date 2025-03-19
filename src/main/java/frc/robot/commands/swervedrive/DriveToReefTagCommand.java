@@ -52,6 +52,11 @@ public class DriveToReefTagCommand extends LoggingCommand {
       tX = vision.angleToTarget(tagId, isLeftBranch);
     } else {
       noDataCount++;
+
+      double theta = TAGS.getTagById(tagId).pose.getRotation().getDegrees();
+      double omega = swerve.computeOmega(theta);
+
+      swerve.driveRobotOriented(0, 0, omega);
       return;
     }
 
@@ -61,7 +66,7 @@ public class DriveToReefTagCommand extends LoggingCommand {
     if (Math.abs(tX) > 20) {
       vX = 0;
     } else {
-      vX = 0.25;
+      vX = 0.301;
     }
     vY = 0.02 * tX;
 
@@ -73,7 +78,9 @@ public class DriveToReefTagCommand extends LoggingCommand {
 
   @Override
   public boolean isFinished() {
-    if (noDataCount > MAX_NO_DATA_COUNT_CYCLES) {
+    double theta = TAGS.getTagById(tagId).pose.getRotation().getDegrees();
+
+    if (noDataCount > MAX_NO_DATA_COUNT_CYCLES && Math.abs(swerve.getYaw() - theta) < 5) {
       log("Finishing - no vision data for " + noDataCount + " cycles");
       return true;
     }

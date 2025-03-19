@@ -163,8 +163,8 @@ public final class Constants {
     public static final SwerveRotationConfig ROTATION_CONFIG =
         new SwerveRotationConfig(
             /* max rot vel (rad/s) */ Rotation2d.fromRotations(1.5).getRadians(),
-            /* defaultRotVelocityRadPS (rad/s) */ Rotation2d.fromRotations(0.75).getRadians(),
-            /* max rotation accel (rad/s/s) */ Rotation2d.fromRotations(2).getRadians(),
+            /* defaultRotVelocityRadPS (rad/s) */ Rotation2d.fromRotations(1).getRadians(),
+            /* max rotation accel (rad/s/s) */ Rotation2d.fromRotations(4).getRadians(),
             /* heading PID p */ 0.025, // Rads/Deg
             /* heading PID i */ 0,
             /* heading PID d */ 0);
@@ -222,7 +222,7 @@ public final class Constants {
             21,
             ANGLE_MOTOR_CONFIG,
             22,
-            Rotation2d.fromRotations(0.431152).getDegrees(),
+            Rotation2d.fromRotations(0.366943).getDegrees(),
             ANGLE_ENCODER_CONFIG);
 
     public static final ModuleConfig BACK_LEFT =
@@ -235,7 +235,7 @@ public final class Constants {
             36,
             ANGLE_MOTOR_CONFIG,
             37,
-            Rotation2d.fromRotations(-0.360596).getDegrees(),
+            Rotation2d.fromRotations(0.635986).getDegrees(),
             ANGLE_ENCODER_CONFIG);
 
     public static final ModuleConfig BACK_RIGHT =
@@ -248,7 +248,7 @@ public final class Constants {
             31,
             ANGLE_MOTOR_CONFIG,
             32,
-            Rotation2d.fromRotations(0.274658).getDegrees(),
+            Rotation2d.fromRotations(0.275146).getDegrees(),
             ANGLE_ENCODER_CONFIG);
 
     public static final CoreSwerveConfig CORE_SWERVE_CONFIG =
@@ -510,7 +510,7 @@ public final class Constants {
     /*
      * Intake Constants
      */
-    public static final double CORAL_INTAKE_SPEED = 0.5;
+    public static final double CORAL_INTAKE_SPEED = 0.4;
     public static final double CORAL_OUTAKE_SPEED = 0.8;
     public static final double CORAL_OUTAKE_SLOW_SPEED = -0.5;
     public static final double CORAL_EJECT_SPEED = 0.7;
@@ -519,7 +519,7 @@ public final class Constants {
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
       COMPACT(0),
-      CLOSE_INTAKE(41),
+      CLOSE_INTAKE(43),
       FAR_INTAKE(32),
       LEVEL_1(0),
       LEVEL_2(3),

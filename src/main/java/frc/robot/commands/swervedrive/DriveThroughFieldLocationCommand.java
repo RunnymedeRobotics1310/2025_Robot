@@ -13,10 +13,10 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
 
     private final SwerveSubsystem swerve;
     private final Pose2d allianceLocation;
-    private final double speed;
+    private final double maxSpeed;
     private final double targetHeadingDeg;
 
-    public DriveThroughFieldLocationCommand(SwerveSubsystem swerve, FieldLocation location, double speed) {
+    public DriveThroughFieldLocationCommand(SwerveSubsystem swerve, FieldLocation location, double maxSpeed) {
         this.swerve = swerve;
 
         if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
@@ -24,7 +24,7 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
         } else {
             allianceLocation = location.pose;
         }
-        this.speed = speed;
+        this.maxSpeed = maxSpeed;
         this.targetHeadingDeg = SwerveUtils.normalizeDegrees(allianceLocation.getRotation().getDegrees());
 
         addRequirements(swerve);
@@ -42,10 +42,10 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
         double xDif = allianceLocation.getX() - currentPose.getX();
         double yDif = allianceLocation.getY() - currentPose.getY();
 
-        swerve.driveFieldOriented(
-                swerve.computeTranslateVelocity(xDif, 0.02),
-                swerve.computeTranslateVelocity(yDif, 0.02),
-                swerve.computeOmega(targetHeadingDeg));
+        double xSpeed = swerve.computeTranslateVelocity(xDif, maxSpeed, 0.02);
+        double ySpeed = swerve.computeTranslateVelocity(yDif, maxSpeed, 0.02);
+
+        swerve.driveFieldOriented(xSpeed, ySpeed, swerve.computeOmega(targetHeadingDeg));
     }
 
     @Override

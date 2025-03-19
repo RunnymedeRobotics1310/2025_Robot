@@ -262,12 +262,12 @@ public class SwerveSubsystem extends SubsystemBase {
     return Math.min(omega, maxOmegaRadPerSec);
   }
 
-  public double computeTranslateVelocity(double distance, double tolerance) {
+  public double computeTranslateVelocity(double distance, double maxSpeedMPS, double tolerance) {
     final double decelZoneMetres = 1.2;
     final double verySlowZone = 0.2;
     final double verySlowSpeed = 0.15;
-    double maxSpeedMPS = Constants.Swerve.TRANSLATION_CONFIG.maxSpeedMPS();
-    maxSpeedMPS = 3;
+//    double maxSpeedMPS = Constants.Swerve.TRANSLATION_CONFIG.maxSpeedMPS();
+//    maxSpeedMPS = 3.5;
     double speed;
 
     final double absDist = Math.abs(distance);
