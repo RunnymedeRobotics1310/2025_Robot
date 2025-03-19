@@ -38,9 +38,13 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
     if (tagId == -1) {
       tagId = (int) vision.getVisibleTargetTagId(isLeftBranch);
       if (tagId == -1) {
-        noDataCount++;
-        return;
-      } else {
+        tagId = (int) vision.getVisibleTargetTagId(!isLeftBranch);
+        if (tagId == -1) {
+          noDataCount++;
+          return;
+        }
+      }
+      if (tagId != -1) {
         noDataCount = 0;
         log("Captured tag " + tagId + " on the " + (isLeftBranch ? "left" : "right") + " branch");
       }
@@ -51,6 +55,13 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
     if (vision.isTagInView(tagId, isLeftBranch)) {
       noDataCount = 0;
       tX = vision.angleToTarget(tagId, isLeftBranch);
+    } else if (vision.isTagInView(tagId, !isLeftBranch)) {
+      noDataCount = 0;
+      if (isLeftBranch) {
+        tX = 20;
+      } else {
+        tX = -20;
+      }
     } else {
       noDataCount++;
       return;
