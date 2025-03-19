@@ -8,6 +8,7 @@ public class AutoClimbCommand extends LoggingCommand {
 
   private final ClimbSubsystem climbSubsystem;
   Timer climbTimer = new Timer();
+  private boolean isClimbTriggered;
 
   public AutoClimbCommand(ClimbSubsystem climbSubsystem) {
 
@@ -21,6 +22,7 @@ public class AutoClimbCommand extends LoggingCommand {
     logCommandStart();
     climbTimer.stop();
     climbTimer.reset();
+    isClimbTriggered = false;
   }
 
   @Override
@@ -39,11 +41,13 @@ public class AutoClimbCommand extends LoggingCommand {
 
       climbSubsystem.setClimbDeployed(true);
     }
+
+    isClimbTriggered = climbSubsystem.isCageInPosition() && climbTimer.hasElapsed(0.3);
   }
 
   @Override
   public boolean isFinished() {
-    return climbSubsystem.isCageInPosition() && climbTimer.hasElapsed(0.3);
+    return isClimbTriggered;
   }
 
   @Override
