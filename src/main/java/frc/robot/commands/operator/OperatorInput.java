@@ -134,7 +134,10 @@ public class OperatorInput extends SubsystemBase {
      * Set remove algae poses
      */
     new Trigger(
-            () -> operatorController.getPOV() == 270 && operatorController.getRightBumperButton() && !isAutoAlignReef())
+            () ->
+                operatorController.getPOV() == 270
+                    && operatorController.getRightBumperButton()
+                    && !isAutoAlignReef())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.REMOVE_HIGH_ALGAE, coralSubsystem));
     new Trigger(
             () -> operatorController.getPOV() == 180 && operatorController.getRightBumperButton())
@@ -170,14 +173,13 @@ public class OperatorInput extends SubsystemBase {
     new Trigger(this::isToggleCompressor).onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
 
     new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 270))
-        .onTrue(
-            new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, true)
-                .alongWith(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coral)));
+        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, true));
+    //                .alongWith(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coral)));
 
     new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 90))
-            .onTrue(
-                    new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, false)
-                            .alongWith(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coral)));
+        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, false));
+    //                            .alongWith(new MoveToCoralPoseCommand(CoralPose.SCORE_L4,
+    // coral)));
   }
 
   /*

@@ -14,6 +14,8 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -31,6 +33,8 @@ public class CoralSubsystem extends SubsystemBase {
     double elevatorEncoderPosition = 0;
     double previousElevatorEncoderPosition = 0;
     double previousElevatorEncoderHeight = 0;
+
+    double digitalElevatorEncoderPosition = 0;
 
     boolean elevatorUpperLimitReached = false;
     boolean elevatorLowerLimitReached = false;
@@ -52,6 +56,8 @@ public class CoralSubsystem extends SubsystemBase {
   private final SparkMax intakeMotor =
       new SparkMax(CoralConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
 
+  private final Encoder digitalElevatorEncoder = new Encoder(0, 1);
+
   private double elevatorSetpoint = 0;
   private double elevatorSpeed = 0;
   private double armSetpoint = 0;
@@ -66,6 +72,7 @@ public class CoralSubsystem extends SubsystemBase {
   private SparkLimitSwitch elevatorUpperLimitSwitch = elevatorMotor.getForwardLimitSwitch();
 
   private double elevatorEncoderOffset = 0;
+  private double digitalElevatorEncoderOffset = 0;
 
   // Arm
 
@@ -188,6 +195,8 @@ public class CoralSubsystem extends SubsystemBase {
      */
     sensorCache.elevatorEncoderSpeed = elevatorEncoder.getVelocity();
     sensorCache.elevatorEncoderPosition = elevatorEncoder.getPosition();
+    
+    sensorCache.digitalElevatorEncoderPosition = digitalElevatorEncoder.getRaw();
 
     // The elevator encoder position can reset on SparkFlex brown out.  If the
     // elevator encoder jumps, then reset the position to the last known position.
@@ -318,11 +327,17 @@ public class CoralSubsystem extends SubsystemBase {
     if (isSimulation) {
       return simulationElevatorHeight + elevatorEncoderOffset;
     }
-    return sensorCache.elevatorEncoderPosition + elevatorEncoderOffset;
+    return getDigitalElevatorEncoder() * 163.05 / 116532;
+    // return sensorCache.elevatorEncoderPosition + elevatorEncoderOffset;
+  }
+
+  public double getDigitalElevatorEncoder() {
+    return sensorCache.digitalElevatorEncoderPosition + digitalElevatorEncoderOffset;
   }
 
   public void resetElevatorEncoder() {
     setElevatorEncoder(0);
+    setDigitalElevatorEncoder(0);
     // System.out.println("Resetting elevator encoder!");
   }
 
@@ -333,6 +348,12 @@ public class CoralSubsystem extends SubsystemBase {
 
     // Reset the previous value in the sensor cache
     sensorCache.previousElevatorEncoderHeight = encoderValue;
+    setDigitalElevatorEncoder(encoderValue / (163.05/116532));
+  }
+
+  public void setDigitalElevatorEncoder(double digitalEncoderValue) {
+    digitalElevatorEncoderOffset = 0;
+    digitalElevatorEncoderOffset = -getDigitalElevatorEncoder() + digitalEncoderValue;
   }
 
   /*
@@ -441,6 +462,7 @@ public class CoralSubsystem extends SubsystemBase {
 
     checkSafety();
 
+    SmartDashboard.putNumber("Coral/Digital Elevator Position", getDigitalElevatorEncoder());
     SmartDashboard.putNumber("Coral/Elevator Position", getElevatorEncoder());
     SmartDashboard.putBoolean("Coral/Elevator Upper Limit", isElevatorAtUpperLimit());
     SmartDashboard.putBoolean("Coral/Elevator Lower Limit", isElevatorAtLowerLimit());
