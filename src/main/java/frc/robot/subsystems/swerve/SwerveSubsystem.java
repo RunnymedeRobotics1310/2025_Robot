@@ -12,7 +12,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.RunnymedeUtils;
 import frc.robot.telemetry.Telemetry;
 
@@ -49,7 +48,7 @@ public class SwerveSubsystem extends SubsystemBase {
     ultrasonicVoltage = ultrasonicDistanceSensor.getVoltage();
     ultrasonicDistanceM = 1.29338 * ultrasonicVoltage - 0.51803;
 
-    Telemetry.drive.ultrasonicDistanceM = ultrasonicDistanceM;
+    Telemetry.drive.ultrasonicDistanceM = Math.round(ultrasonicDistanceM * 1000d) / 1000d;
     Telemetry.drive.ultrasonicVoltage = ultrasonicVoltage;
   }
 
