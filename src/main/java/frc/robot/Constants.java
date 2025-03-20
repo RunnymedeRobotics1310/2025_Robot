@@ -368,16 +368,16 @@ public final class Constants {
       PRE_SCORE_LEFT_5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240)), 20, 11, true),
       PRE_SCORE_LEFT_6(new Pose2d(6.1660, 4.16, Rotation2d.fromDegrees(180)), 21, 10, false),
       PRE_SCORE_RIGHT_1(new Pose2d(2.8126, 3.8609, Rotation2d.fromDegrees(0)), 18, 7, false),
-      PRE_SCORE_RIGHT_2(new Pose2d(2.39, 2.85, Rotation2d.fromDegrees(60)), 17, 8, true),
-      PRE_SCORE_RIGHT_3(new Pose2d(2.64, 2.7, Rotation2d.fromDegrees(60)), 17, 8, false),
-      PRE_SCORE_RIGHT_4(new Pose2d(4.4, 2.7, Rotation2d.fromDegrees(120)), 22, 9, true),
+      PRE_SCORE_RIGHT_2(new Pose2d(3.5, 2.8, Rotation2d.fromDegrees(60)), 17, 8, true),
+      PRE_SCORE_RIGHT_3(new Pose2d(3.7943, 2.64, Rotation2d.fromDegrees(60)), 17, 8, false),
+      PRE_SCORE_RIGHT_4(new Pose2d(5.1843, 2.7, Rotation2d.fromDegrees(120)), 22, 9, true),
       PRE_SCORE_RIGHT_5(new Pose2d(5.4701, 2.6570, Rotation2d.fromDegrees(120)), 22, 9, false),
       PRE_SCORE_RIGHT_6(new Pose2d(6.1660, 3.8609, Rotation2d.fromDegrees(180)), 21, 10, true),
       PRE_INTAKE_CENTRE_LEFT_STATION(new Pose2d(1.139, 7.000, Rotation2d.fromDegrees(126)), 13, 1),
       PRE_INTAKE_CENTRE_RIGHT_STATION(new Pose2d(1.139, 1.052, Rotation2d.fromDegrees(234)), 12, 2),
 
       // Legacy Alliance Specific Locations
-      blueRightOuterStation(new Pose2d(0.8, 1.17, Rotation2d.fromDegrees(234)), 12, 2),
+      blueRightOuterStation(new Pose2d(1.15, 1.17, Rotation2d.fromDegrees(234)), 12, 2),
       blueLeftOuterStation(new Pose2d(1.15, 7.03, Rotation2d.fromDegrees(-234)), 13, 1),
 
       // Reef Score Locations (Lettered as seen in manual - counter-clockwise starting from
