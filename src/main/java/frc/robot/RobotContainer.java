@@ -12,6 +12,7 @@ import frc.robot.commands.operator.OperatorInput;
 import frc.robot.commands.swervedrive.TeleopDriveCommand;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
+import frc.robot.subsystems.LightingSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
@@ -30,7 +31,8 @@ public class RobotContainer {
       new LimelightVisionSubsystem(Constants.VISION_CONFIG, swerveDriveSubsystem);
   private final CoralSubsystem coralSubsystem = new CoralSubsystem();
   private final PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
-  private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
+  private final LightingSubsystem lightingSubsystem = new LightingSubsystem();
+  private final ClimbSubsystem climbSubsystem = new ClimbSubsystem(lightingSubsystem);
 
   // Driver and operator controllers
   private final OperatorInput operatorInput =

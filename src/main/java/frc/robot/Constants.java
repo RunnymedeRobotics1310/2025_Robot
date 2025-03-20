@@ -602,7 +602,7 @@ public final class Constants {
     public static final int CLIMB_SENSOR_DIO_PORT = 9;
   }
 
-  public static final class LightsConstants {
+  public static final class LightingConstants {
 
     public static final int LED_STRING_PWM_PORT = 7;
     public static final int LED_STRING_LENGTH = 60;

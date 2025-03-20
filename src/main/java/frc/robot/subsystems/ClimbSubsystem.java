@@ -18,8 +18,11 @@ public class ClimbSubsystem extends SubsystemBase {
 
   private DigitalInput climbSensor = new DigitalInput(ClimbConstants.CLIMB_SENSOR_DIO_PORT);
 
-  public ClimbSubsystem() {
+  private LightingSubsystem lightingSubsystem;
+
+  public ClimbSubsystem(LightingSubsystem lightingSubsystem) {
     setClimbDeployed(false);
+    this.lightingSubsystem = lightingSubsystem;
   }
 
   /**
@@ -55,6 +58,8 @@ public class ClimbSubsystem extends SubsystemBase {
       SmartDashboard.putBoolean("Can deploy climb", true);
       SmartDashboard.putBoolean("Cage in position", isCageInPosition());
     }
+
+    lightingSubsystem.setClimbLEDPattern(isClimbDeployed());
   }
 
   private void checkSafety() {
