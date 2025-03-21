@@ -19,6 +19,7 @@ import frc.robot.commands.climb.AutoClimbCommand;
 import frc.robot.commands.climb.ClimbCommand;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
+import frc.robot.commands.coral.intake.IntakeCoralCommand2;
 import frc.robot.commands.pneumatics.ToggleCompressorCommand;
 import frc.robot.commands.swervedrive.DriveToVisibleTagCommand;
 import frc.robot.commands.swervedrive.SetAllianceGyroCommand;
@@ -150,7 +151,7 @@ public class OperatorInput extends SubsystemBase {
         .onTrue(new IntakeCoralCommand(coralSubsystem, false));
 
     new Trigger(() -> driverController.getYButton())
-        .onTrue(new IntakeCoralCommand(coralSubsystem, true));
+        .onTrue(new IntakeCoralCommand2(coralSubsystem, true));
 
     /*
      * Climb Buttons

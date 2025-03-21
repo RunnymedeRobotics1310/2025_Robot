@@ -83,10 +83,14 @@ public class CoralSubsystem extends SubsystemBase {
   private boolean armAboveThreshold;
 
   // Intake
-
+  SparkMaxConfig intakeMotorConfig;
+  
   private RelativeEncoder intakeEncoder = intakeMotor.getEncoder();
 
   private SparkLimitSwitch intakeCoralDetector = intakeMotor.getForwardLimitSwitch();
+
+  private boolean alignCoral;
+  private double alignCoralStartingPosition;
 
   // Sensor Cache
   private final SensorCache sensorCache = new SensorCache();
@@ -158,20 +162,20 @@ public class CoralSubsystem extends SubsystemBase {
     /*
      * Intake Motor Config
      */
-    SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
+    intakeMotorConfig = new SparkMaxConfig();
 
-    sparkMaxConfig.disableFollowerMode();
-    sparkMaxConfig.idleMode(IdleMode.kBrake);
-    sparkMaxConfig.inverted(CoralConstants.INTAKE_MOTOR_INVERTED);
+    intakeMotorConfig.disableFollowerMode();
+    intakeMotorConfig.idleMode(IdleMode.kBrake);
+    intakeMotorConfig.inverted(CoralConstants.INTAKE_MOTOR_INVERTED);
 
     // Limit the current to 20A max
     // flexConfig.smartCurrentLimit(20);
 
-    sparkMaxConfig.limitSwitch.forwardLimitSwitchEnabled(false);
-    sparkMaxConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyOpen);
+    intakeMotorConfig.limitSwitch.forwardLimitSwitchEnabled(false);
+    intakeMotorConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyOpen);
 
     intakeMotor.configure(
-        sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        intakeMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     /*
      * Simulation
@@ -422,6 +426,17 @@ public class CoralSubsystem extends SubsystemBase {
    */
   public void setIntakeSpeed(double speed) {
 
+    if (alignCoral) {
+        if (speed == 0) {
+            // continue the alignment
+            return;
+        }
+        else {
+            // the user manually set a speed so cancel the intake alignment
+            alignCoral = false;
+        }
+    }
+    
     this.intakeSetpoint = speed;
   }
 
@@ -440,6 +455,24 @@ public class CoralSubsystem extends SubsystemBase {
     }
 
     return sensorCache.intakeEncoderPosition;
+  }
+  
+  public void startCoralAlignment() {
+      alignCoral = true;
+      alignCoralStartingPosition = sensorCache.intakeEncoderPosition;
+      setIntakeHardLimit(false);
+      this.intakeSetpoint = CoralConstants.CORAL_INTAKE_ALIGNMENT_SPEED;
+    }
+
+  /**
+   * Set intake hard limit
+   * @param hardLimitValue {@code true} to enable the SparkMAX hard limit, false to disable the hard limit.
+   */
+  public void setIntakeHardLimit(boolean hardLimitValue) {
+
+      intakeMotorConfig.limitSwitch.forwardLimitSwitchEnabled(hardLimitValue);
+      
+      intakeMotor.configure(intakeMotorConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   public void stop() {
@@ -460,6 +493,14 @@ public class CoralSubsystem extends SubsystemBase {
       simulate();
     }
 
+    // align the coral in the intake if the alignment is enabled
+    if (alignCoral) {
+        if (Math.abs(sensorCache.intakeEncoderPosition - alignCoralStartingPosition) > CoralConstants.CORAL_INTAKE_ALIGNMENT_DISTANCE) {
+            alignCoral = false;
+            setIntakeSpeed(0);
+        } 
+    }
+    
     checkSafety();
 
     SmartDashboard.putNumber("Coral/Digital Elevator Position", getDigitalElevatorEncoder());
@@ -673,4 +714,5 @@ public class CoralSubsystem extends SubsystemBase {
 
     return sb.toString();
   }
+
 }
