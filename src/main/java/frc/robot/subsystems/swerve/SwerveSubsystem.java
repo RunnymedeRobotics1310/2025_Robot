@@ -5,7 +5,6 @@ import static frc.robot.Constants.Swerve.ULTRASONIC_SENSOR_PORT;
 import ca.team1310.swerve.core.SwerveMath;
 import ca.team1310.swerve.odometry.FieldAwareSwerveDrive;
 import ca.team1310.swerve.utils.SwerveUtils;
-import ca.team1310.swerve.vision.VisionPoseEstimate;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -214,15 +213,6 @@ public class SwerveSubsystem extends SubsystemBase {
     drive.setModuleState(moduleName, speed, angle);
   }
 
-  /**
-   * Update odometry with a sample from Vision
-   *
-   * @param visionPoseEstimate the pose estimate from vision
-   */
-  public void addVisionMeasurement(VisionPoseEstimate visionPoseEstimate) {
-    drive.addVisionMeasurement(visionPoseEstimate);
-  }
-
   @Override
   public String toString() {
     Pose2d pose = getPose();
@@ -265,8 +255,8 @@ public class SwerveSubsystem extends SubsystemBase {
     final double decelZoneMetres = 1.2;
     final double verySlowZone = 0.2;
     final double verySlowSpeed = 0.15;
-//    double maxSpeedMPS = Constants.Swerve.TRANSLATION_CONFIG.maxSpeedMPS();
-//    maxSpeedMPS = 3.5;
+    //    double maxSpeedMPS = Constants.Swerve.TRANSLATION_CONFIG.maxSpeedMPS();
+    //    maxSpeedMPS = 3.5;
     double speed;
 
     final double absDist = Math.abs(distance);
