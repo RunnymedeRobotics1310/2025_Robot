@@ -343,7 +343,7 @@ public class OperatorInput extends SubsystemBase {
     SmartDashboard.putData("1310/auto/Auto Selector", autoPatternChooser);
 
     autoPatternChooser.setDefaultOption(
-        "Do Nothing", Constants.AutoConstants.AutoPattern.DO_NOTHING);
+        "Do Nothing", Constants.AutoConstants.AutoPattern.SCORE_3_LEFT);
     autoPatternChooser.addOption("Exit Zone", Constants.AutoConstants.AutoPattern.EXIT_ZONE);
     autoPatternChooser.addOption(
         "1 Coral Center", Constants.AutoConstants.AutoPattern.SCORE_1_CENTER);

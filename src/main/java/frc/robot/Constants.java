@@ -520,8 +520,8 @@ public final class Constants {
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
       COMPACT(0),
-      CLOSE_INTAKE(43),
-      FAR_INTAKE(32),
+      CLOSE_INTAKE(39.5),
+      FAR_INTAKE(26),
       LEVEL_1(0),
       LEVEL_2(3),
       LEVEL_3(60),
