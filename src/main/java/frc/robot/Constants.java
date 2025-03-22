@@ -85,7 +85,7 @@ public final class Constants {
   public static final class FieldConstants {
 
     public static final double FIELD_EXTENT_METRES_Y = 8.211;
-    public static final double FIELD_EXTENT_METRES_X = 16.541;
+    public static final double FIELD_EXTENT_METRES_X = 17.55;
 
     // This is physical tag locations on field, from 2025FieldDrawings.pdf but the heading is
     // swapped 180 degrees to indicate heading to face the tag, vs the orientation the tag is facing
@@ -513,14 +513,14 @@ public final class Constants {
      */
     public static final double CORAL_INTAKE_SPEED = 0.4;
     public static final double CORAL_OUTAKE_SPEED = 0.8;
-    public static final double CORAL_OUTAKE_SLOW_SPEED = -0.5;
+    public static final double CORAL_OUTAKE_SLOW_SPEED = -0.25;
     public static final double CORAL_EJECT_SPEED = 0.7;
     public static final double PLANT_ROTATIONS = 30;
 
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
       COMPACT(0),
-      CLOSE_INTAKE(46.8),
+      CLOSE_INTAKE(39),
       FAR_INTAKE(26),
       LEVEL_1(0),
       LEVEL_2(3),
@@ -538,8 +538,8 @@ public final class Constants {
 
     // Arm Angles in degrees
     public enum ArmAngle {
-      COMPACT(-1),
-      INTAKE(19.7),
+      COMPACT(1.5),
+      INTAKE(21),
       LEVEL_1(33),
       LEVEL_2(120),
       LEVEL_3(126),
