@@ -88,6 +88,8 @@ public class CoralSubsystem extends SubsystemBase {
 
   private SparkLimitSwitch intakeCoralDetector = intakeMotor.getForwardLimitSwitch();
 
+  private SparkMaxConfig intakeSparkMaxConfig;
+
   // Sensor Cache
   private final SensorCache sensorCache = new SensorCache();
 
@@ -158,20 +160,20 @@ public class CoralSubsystem extends SubsystemBase {
     /*
      * Intake Motor Config
      */
-    SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
+    intakeSparkMaxConfig = new SparkMaxConfig();
 
-    sparkMaxConfig.disableFollowerMode();
-    sparkMaxConfig.idleMode(IdleMode.kBrake);
-    sparkMaxConfig.inverted(CoralConstants.INTAKE_MOTOR_INVERTED);
+    intakeSparkMaxConfig.disableFollowerMode();
+    intakeSparkMaxConfig.idleMode(IdleMode.kBrake);
+    intakeSparkMaxConfig.inverted(CoralConstants.INTAKE_MOTOR_INVERTED);
 
     // Limit the current to 20A max
     // flexConfig.smartCurrentLimit(20);
 
-    sparkMaxConfig.limitSwitch.forwardLimitSwitchEnabled(false);
-    sparkMaxConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyOpen);
+    intakeSparkMaxConfig.limitSwitch.forwardLimitSwitchEnabled(false);
+    intakeSparkMaxConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyOpen);
 
     intakeMotor.configure(
-        sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        intakeSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     /*
      * Simulation
@@ -413,6 +415,7 @@ public class CoralSubsystem extends SubsystemBase {
   public void setIntakeSpeed(double speed) {
 
     this.intakeSetpoint = speed;
+    intakeMotor.set(this.intakeSetpoint);
   }
 
   public boolean isCoralDetected() {
@@ -430,6 +433,13 @@ public class CoralSubsystem extends SubsystemBase {
     }
 
     return sensorCache.intakeEncoderPosition;
+  }
+
+  public void setIntakeHardLimit(boolean limitEnabled) {
+    
+    intakeSparkMaxConfig.limitSwitch.forwardLimitSwitchEnabled(limitEnabled);
+
+    intakeMotor.configure(intakeSparkMaxConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   public void stop() {
