@@ -345,7 +345,6 @@ public class CoralSubsystem extends SubsystemBase {
   public void setDigitalElevatorEncoder(double digitalEncoderValue) {
     digitalElevatorEncoderOffset = 0;
     digitalElevatorEncoderOffset = -getDigitalElevatorEncoder() + digitalEncoderValue;
-    sensorCache.digitalElevatorEncoderPosition = digitalEncoderValue;
   }
 
   /*
@@ -463,6 +462,8 @@ public class CoralSubsystem extends SubsystemBase {
     checkSafety();
 
     SmartDashboard.putNumber("Coral/Digital Elevator Position", getDigitalElevatorEncoder());
+    SmartDashboard.putNumber("Coral/Raw Digital Elevator Encoder", digitalElevatorEncoder.getRaw());
+    SmartDashboard.putNumber("Coral/Digital Elevator Encoder Offset", digitalElevatorEncoderOffset);
     SmartDashboard.putNumber("Coral/Elevator Position", getElevatorEncoder());
     SmartDashboard.putBoolean("Coral/Elevator Upper Limit", isElevatorAtUpperLimit());
     SmartDashboard.putBoolean("Coral/Elevator Lower Limit", isElevatorAtLowerLimit());

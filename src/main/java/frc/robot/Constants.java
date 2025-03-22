@@ -520,7 +520,7 @@ public final class Constants {
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
       COMPACT(0),
-      CLOSE_INTAKE(39.5),
+      CLOSE_INTAKE(46.8),
       FAR_INTAKE(26),
       LEVEL_1(0),
       LEVEL_2(3),
@@ -539,8 +539,8 @@ public final class Constants {
     // Arm Angles in degrees
     public enum ArmAngle {
       COMPACT(-1),
-      INTAKE(21),
-      LEVEL_1(0),
+      INTAKE(19.7),
+      LEVEL_1(33),
       LEVEL_2(120),
       LEVEL_3(126),
       LEVEL_4(112),
