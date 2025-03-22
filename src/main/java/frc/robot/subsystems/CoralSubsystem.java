@@ -198,25 +198,6 @@ public class CoralSubsystem extends SubsystemBase {
 
     sensorCache.digitalElevatorEncoderPosition = digitalElevatorEncoder.getRaw();
 
-    // The elevator encoder position can reset on SparkFlex brown out.  If the
-    // elevator encoder jumps, then reset the position to the last known position.
-    // Typically the elevator can move 180 encoder counts in about 2 seconds, or 2 encoder
-    // counts/loop
-    if (Math.abs(sensorCache.elevatorEncoderPosition - sensorCache.previousElevatorEncoderPosition)
-        > 10) {
-
-      System.out.println(
-          "*******************************************************************************");
-      System.out.println(
-          "Resetting elevator encoder from "
-              + getElevatorEncoder()
-              + " to known position "
-              + sensorCache.previousElevatorEncoderHeight);
-      System.out.println(
-          "*******************************************************************************");
-
-      setElevatorEncoder(sensorCache.previousElevatorEncoderHeight);
-    }
     sensorCache.previousElevatorEncoderPosition = sensorCache.elevatorEncoderPosition;
     sensorCache.previousElevatorEncoderHeight = getElevatorEncoder();
 
@@ -336,11 +317,12 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public void resetElevatorEncoder() {
-    double oldEncoder = sensorCache.digitalElevatorEncoderPosition;
-    if (oldEncoder > 100) {
+    // log a message if we reset the encoder if we are off by more than 4000 digital encoder counts.
+    // (the lower limit switch is active for a range of about 3650 counts).
+    if (sensorCache.digitalElevatorEncoderPosition > 4000) {
       System.out.println(
           "************ UNEXPECTED ELEVATOR ENCODER RESET!!! OLD VALUE: "
-              + oldEncoder
+              + sensorCache.digitalElevatorEncoderPosition
               + " ************");
     }
     setElevatorEncoder(0);
@@ -361,6 +343,7 @@ public class CoralSubsystem extends SubsystemBase {
   public void setDigitalElevatorEncoder(double digitalEncoderValue) {
     digitalElevatorEncoderOffset = 0;
     digitalElevatorEncoderOffset = -getDigitalElevatorEncoder() + digitalEncoderValue;
+    sensorCache.digitalElevatorEncoderPosition = digitalEncoderValue;
   }
 
   /*
