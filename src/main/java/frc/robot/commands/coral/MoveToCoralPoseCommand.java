@@ -23,7 +23,7 @@ public class MoveToCoralPoseCommand extends LoggingCommand {
   @Override
   public void initialize() {
 
-    logCommandStart();
+    logCommandStart("Pose: " + pose);
 
     atElevatorHeight = false;
     atArmAngle = false;
@@ -39,6 +39,17 @@ public class MoveToCoralPoseCommand extends LoggingCommand {
   @Override
   public boolean isFinished() {
 
+    if (hasElapsed(3)) {
+      return true;
+    }
+
     return atElevatorHeight && atArmAngle;
+  }
+
+  @Override
+  public void end(boolean interrupted) {
+    logCommandEnd(interrupted);
+    log("Elevator: " + coralSubsystem.getElevatorEncoder()
+    + " Arm: " + coralSubsystem.getArmAngle());
   }
 }
