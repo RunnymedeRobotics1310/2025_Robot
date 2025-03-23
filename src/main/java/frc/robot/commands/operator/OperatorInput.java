@@ -38,6 +38,9 @@ public class OperatorInput extends SubsystemBase {
   private final CoralSubsystem coral;
   private final LimelightVisionSubsystem vision;
 
+  private boolean matchNearEndTimerStarted = false;
+  private Timer matchNearEndTimer = new Timer();
+
   private final SendableChooser<Constants.AutoConstants.AutoPattern> autoPatternChooser =
       new SendableChooser<>();
   private final SendableChooser<Constants.AutoConstants.Delay> delayChooser =
@@ -325,6 +328,17 @@ public class OperatorInput extends SubsystemBase {
   public void periodic() {
     if (Constants.TelemetryConfig.oi) {
       SmartDashboard.putString("Driver Controller", driverController.toString());
+    }
+
+    if (DriverStation.getMatchTime() <= 30 && !matchNearEndTimerStarted) {
+      startVibrate();
+      matchNearEndTimerStarted = true;
+      matchNearEndTimer.start();
+    }
+
+    if (matchNearEndTimer.isRunning() && matchNearEndTimer.hasElapsed(0.5)) {
+      stopVibrate();
+      matchNearEndTimer.stop();
     }
   }
 
