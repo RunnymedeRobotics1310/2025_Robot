@@ -362,7 +362,7 @@ public final class Constants {
     public enum FieldLocation {
       // Generalized Multi Alliance Locations
       PRE_SCORE_LEFT_1(new Pose2d(2.8126, 4.1909, Rotation2d.fromDegrees(0)), 18, 7, true),
-      PRE_SCORE_LEFT_2(new Pose2d(3.7585, 4.9618, Rotation2d.fromDegrees(300)), 19, 6, false),
+      PRE_SCORE_LEFT_2(new Pose2d(3.2585, 5.8278, Rotation2d.fromDegrees(300)), 19, 6, false),
       PRE_SCORE_LEFT_3(new Pose2d(3.7943, 5.5598, Rotation2d.fromDegrees(300)), 19, 6, true),
       PRE_SCORE_LEFT_4(new Pose2d(5.1843, 5.5598, Rotation2d.fromDegrees(240)), 20, 11, false),
       PRE_SCORE_LEFT_5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240)), 20, 11, true),
