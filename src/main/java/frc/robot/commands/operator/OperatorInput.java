@@ -330,7 +330,7 @@ public class OperatorInput extends SubsystemBase {
       SmartDashboard.putString("Driver Controller", driverController.toString());
     }
 
-    if (DriverStation.getMatchTime() <= 30 && !matchNearEndTimerStarted) {
+    if (DriverStation.getMatchTime() <= 20 && !matchNearEndTimerStarted) {
       startVibrate();
       matchNearEndTimerStarted = true;
       matchNearEndTimer.start();
