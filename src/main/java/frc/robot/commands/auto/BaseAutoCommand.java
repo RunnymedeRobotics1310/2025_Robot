@@ -88,12 +88,14 @@ public class BaseAutoCommand extends SequentialCommandGroup {
     return scoreL4CoralStop(reefLocation)
         .andThen(
             new DriveRobotOrientedCommand(swerve, -0.5, 0, reefHeading)
-                .withTimeout(0.5)
-                .andThen(driveThroughLocation(intakeLocation, 3))
-                .andThen(new DriveIntoWallCommand(swerve, 0.25, 0, intakeHeading))
-                .alongWith(
-                    new WaitCommand(0.2)
-                        .andThen(setCoralPose(COMPACT))
-                        .andThen(new IntakeCoralCommand(coral, false))));
+                .withTimeout(0.5))
+
+            .andThen(new WaitCommand(0.2)
+                .andThen(setCoralPose(COMPACT))
+            .andThen(new IntakeCoralCommand(coral, false))
+                
+            .deadlineFor(driveThroughLocation(intakeLocation, 3)
+                .andThen(new DriveIntoWallCommand(swerve, 0.25, 0, intakeHeading))));
+
   }
 }

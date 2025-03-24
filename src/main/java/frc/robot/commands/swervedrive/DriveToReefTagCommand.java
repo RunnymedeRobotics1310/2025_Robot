@@ -11,7 +11,7 @@ import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 
 public class DriveToReefTagCommand extends LoggingCommand {
 
-  private static final int MAX_NO_DATA_COUNT_CYCLES = 20;
+  private static final int MAX_NO_DATA_COUNT_CYCLES = 50;
 
   private final SwerveSubsystem swerve;
   private final LimelightVisionSubsystem vision;
@@ -97,6 +97,7 @@ public class DriveToReefTagCommand extends LoggingCommand {
   @Override
   public void end(boolean interrupted) {
     logCommandEnd(interrupted);
+    noDataCount = 0;
     swerve.stop();
   }
 }

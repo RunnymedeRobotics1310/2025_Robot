@@ -84,8 +84,8 @@ public final class Constants {
 
   public static final class FieldConstants {
 
-    public static final double FIELD_EXTENT_METRES_Y = 8.211;
-    public static final double FIELD_EXTENT_METRES_X = 16.541;
+    public static final double FIELD_EXTENT_METRES_Y = 8.052;
+    public static final double FIELD_EXTENT_METRES_X = 17.55;
 
     // This is physical tag locations on field, from 2025FieldDrawings.pdf but the heading is
     // swapped 180 degrees to indicate heading to face the tag, vs the orientation the tag is facing
@@ -362,22 +362,22 @@ public final class Constants {
     public enum FieldLocation {
       // Generalized Multi Alliance Locations
       PRE_SCORE_LEFT_1(new Pose2d(2.8126, 4.1909, Rotation2d.fromDegrees(0)), 18, 7, true),
-      PRE_SCORE_LEFT_2(new Pose2d(3.5085, 5.3948, Rotation2d.fromDegrees(300)), 19, 6, false),
+      PRE_SCORE_LEFT_2(new Pose2d(3.2585, 5.8278, Rotation2d.fromDegrees(300)), 19, 6, false),
       PRE_SCORE_LEFT_3(new Pose2d(3.7943, 5.5598, Rotation2d.fromDegrees(300)), 19, 6, true),
       PRE_SCORE_LEFT_4(new Pose2d(5.1843, 5.5598, Rotation2d.fromDegrees(240)), 20, 11, false),
       PRE_SCORE_LEFT_5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240)), 20, 11, true),
       PRE_SCORE_LEFT_6(new Pose2d(6.1660, 4.16, Rotation2d.fromDegrees(180)), 21, 10, false),
       PRE_SCORE_RIGHT_1(new Pose2d(2.8126, 3.8609, Rotation2d.fromDegrees(0)), 18, 7, false),
-      PRE_SCORE_RIGHT_2(new Pose2d(3.5, 2.8, Rotation2d.fromDegrees(60)), 17, 8, true),
+      PRE_SCORE_RIGHT_2(new Pose2d(3.25, 2.23, Rotation2d.fromDegrees(60)), 17, 8, true),
       PRE_SCORE_RIGHT_3(new Pose2d(3.7943, 2.64, Rotation2d.fromDegrees(60)), 17, 8, false),
-      PRE_SCORE_RIGHT_4(new Pose2d(5.1843, 2.7, Rotation2d.fromDegrees(120)), 22, 9, true),
+      PRE_SCORE_RIGHT_4(new Pose2d(5.1843, 2.5, Rotation2d.fromDegrees(120)), 22, 9, true),
       PRE_SCORE_RIGHT_5(new Pose2d(5.4701, 2.6570, Rotation2d.fromDegrees(120)), 22, 9, false),
       PRE_SCORE_RIGHT_6(new Pose2d(6.1660, 3.8609, Rotation2d.fromDegrees(180)), 21, 10, true),
       PRE_INTAKE_CENTRE_LEFT_STATION(new Pose2d(1.139, 7.000, Rotation2d.fromDegrees(126)), 13, 1),
       PRE_INTAKE_CENTRE_RIGHT_STATION(new Pose2d(1.139, 1.052, Rotation2d.fromDegrees(234)), 12, 2),
 
       // Legacy Alliance Specific Locations
-      blueRightOuterStation(new Pose2d(1.15, 1.17, Rotation2d.fromDegrees(234)), 12, 2),
+      blueRightOuterStation(new Pose2d(1.15, 1.02, Rotation2d.fromDegrees(234)), 12, 2),
       blueLeftOuterStation(new Pose2d(1.15, 7.03, Rotation2d.fromDegrees(-234)), 13, 1),
 
       // Reef Score Locations (Lettered as seen in manual - counter-clockwise starting from
@@ -476,7 +476,7 @@ public final class Constants {
      * Elevator Constants
      */
     public static final double ELEVATOR_MAX_SPEED = 1;
-    public static final double ELEVATOR_MAX_HEIGHT = 160;
+    public static final double ELEVATOR_MAX_HEIGHT = 162;
     public static final double ELEVATOR_TOLERANCE = 1;
     public static final double ELEVATOR_MAX_SLEW = 0.2;
     public static final double ELEVATOR_P = 0.05;
@@ -513,21 +513,21 @@ public final class Constants {
      */
     public static final double CORAL_INTAKE_SPEED = 0.4;
     public static final double CORAL_OUTAKE_SPEED = 0.8;
-    public static final double CORAL_OUTAKE_SLOW_SPEED = -0.5;
+    public static final double CORAL_OUTAKE_SLOW_SPEED = -0.25;
     public static final double CORAL_EJECT_SPEED = 0.7;
     public static final double PLANT_ROTATIONS = 30;
 
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
       COMPACT(0),
-      CLOSE_INTAKE(39.5),
-      FAR_INTAKE(26),
+      CLOSE_INTAKE(37),
+      FAR_INTAKE(24),
       LEVEL_1(0),
-      LEVEL_2(3),
-      LEVEL_3(60),
+      LEVEL_2(1),
+      LEVEL_3(58),
       LEVEL_4(ELEVATOR_MAX_HEIGHT),
-      REMOVE_LOW_ALGAE(18.5),
-      REMOVE_HIGH_ALGAE(80);
+      REMOVE_LOW_ALGAE(16.5),
+      REMOVE_HIGH_ALGAE(78);
 
       public final double encoderCount;
 
@@ -538,9 +538,9 @@ public final class Constants {
 
     // Arm Angles in degrees
     public enum ArmAngle {
-      COMPACT(-1),
+      COMPACT(1.5),
       INTAKE(21),
-      LEVEL_1(0),
+      LEVEL_1(33),
       LEVEL_2(120),
       LEVEL_3(126),
       LEVEL_4(112),

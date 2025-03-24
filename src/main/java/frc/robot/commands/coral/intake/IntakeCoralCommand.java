@@ -23,21 +23,19 @@ public class IntakeCoralCommand extends LoggingCommand {
   @Override
   public void initialize() {
     logCommandStart();
+    coralSubsystem.setIntakeHardLimit(true);
+    coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_INTAKE_SPEED);
   }
 
   @Override
   public void execute() {
+
     if (isFar) {
       coralSubsystem.moveElevatorToHeight(ElevatorHeight.FAR_INTAKE);
     } else {
       coralSubsystem.moveElevatorToHeight(ElevatorHeight.CLOSE_INTAKE);
     }
 
-    if (coralSubsystem.isCoralDetected()) {
-      coralSubsystem.setIntakeSpeed(0);
-    } else {
-      coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_INTAKE_SPEED);
-    }
     coralSubsystem.moveArmToAngle(ArmAngle.INTAKE);
   }
 
@@ -51,6 +49,7 @@ public class IntakeCoralCommand extends LoggingCommand {
   @Override
   public void end(boolean interrupted) {
     coralSubsystem.setIntakeSpeed(0);
+    coralSubsystem.setIntakeHardLimit(false);
     logCommandEnd(interrupted);
   }
 }

@@ -14,7 +14,6 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -88,6 +87,8 @@ public class CoralSubsystem extends SubsystemBase {
 
   private SparkLimitSwitch intakeCoralDetector = intakeMotor.getForwardLimitSwitch();
 
+  private SparkMaxConfig intakeSparkMaxConfig;
+
   // Sensor Cache
   private final SensorCache sensorCache = new SensorCache();
 
@@ -158,20 +159,20 @@ public class CoralSubsystem extends SubsystemBase {
     /*
      * Intake Motor Config
      */
-    SparkMaxConfig sparkMaxConfig = new SparkMaxConfig();
+    intakeSparkMaxConfig = new SparkMaxConfig();
 
-    sparkMaxConfig.disableFollowerMode();
-    sparkMaxConfig.idleMode(IdleMode.kBrake);
-    sparkMaxConfig.inverted(CoralConstants.INTAKE_MOTOR_INVERTED);
+    intakeSparkMaxConfig.disableFollowerMode();
+    intakeSparkMaxConfig.idleMode(IdleMode.kBrake);
+    intakeSparkMaxConfig.inverted(CoralConstants.INTAKE_MOTOR_INVERTED);
 
     // Limit the current to 20A max
     // flexConfig.smartCurrentLimit(20);
 
-    sparkMaxConfig.limitSwitch.forwardLimitSwitchEnabled(false);
-    sparkMaxConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyOpen);
+    intakeSparkMaxConfig.limitSwitch.forwardLimitSwitchEnabled(false);
+    intakeSparkMaxConfig.limitSwitch.forwardLimitSwitchType(Type.kNormallyOpen);
 
     intakeMotor.configure(
-        sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        intakeSparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
     /*
      * Simulation
@@ -195,28 +196,9 @@ public class CoralSubsystem extends SubsystemBase {
      */
     sensorCache.elevatorEncoderSpeed = elevatorEncoder.getVelocity();
     sensorCache.elevatorEncoderPosition = elevatorEncoder.getPosition();
-    
+
     sensorCache.digitalElevatorEncoderPosition = digitalElevatorEncoder.getRaw();
 
-    // The elevator encoder position can reset on SparkFlex brown out.  If the
-    // elevator encoder jumps, then reset the position to the last known position.
-    // Typically the elevator can move 180 encoder counts in about 2 seconds, or 2 encoder
-    // counts/loop
-    if (Math.abs(sensorCache.elevatorEncoderPosition - sensorCache.previousElevatorEncoderPosition)
-        > 10) {
-
-      System.out.println(
-          "*******************************************************************************");
-      System.out.println(
-          "Resetting elevator encoder from "
-              + getElevatorEncoder()
-              + " to known position "
-              + sensorCache.previousElevatorEncoderHeight);
-      System.out.println(
-          "*******************************************************************************");
-
-      setElevatorEncoder(sensorCache.previousElevatorEncoderHeight);
-    }
     sensorCache.previousElevatorEncoderPosition = sensorCache.elevatorEncoderPosition;
     sensorCache.previousElevatorEncoderHeight = getElevatorEncoder();
 
@@ -336,6 +318,14 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public void resetElevatorEncoder() {
+    // log a message if we reset the encoder if we are off by more than 4000 digital encoder counts.
+    // (the lower limit switch is active for a range of about 3650 counts).
+    if (sensorCache.digitalElevatorEncoderPosition > 4000) {
+      System.out.println(
+          "************ UNEXPECTED ELEVATOR ENCODER RESET!!! OLD VALUE: "
+              + sensorCache.digitalElevatorEncoderPosition
+              + " ************");
+    }
     setElevatorEncoder(0);
     setDigitalElevatorEncoder(0);
     // System.out.println("Resetting elevator encoder!");
@@ -348,7 +338,7 @@ public class CoralSubsystem extends SubsystemBase {
 
     // Reset the previous value in the sensor cache
     sensorCache.previousElevatorEncoderHeight = encoderValue;
-    setDigitalElevatorEncoder(encoderValue / (163.05/116532));
+    setDigitalElevatorEncoder(encoderValue / (163.05 / 116532));
   }
 
   public void setDigitalElevatorEncoder(double digitalEncoderValue) {
@@ -423,6 +413,7 @@ public class CoralSubsystem extends SubsystemBase {
   public void setIntakeSpeed(double speed) {
 
     this.intakeSetpoint = speed;
+    intakeMotor.set(this.intakeSetpoint);
   }
 
   public boolean isCoralDetected() {
@@ -440,6 +431,14 @@ public class CoralSubsystem extends SubsystemBase {
     }
 
     return sensorCache.intakeEncoderPosition;
+  }
+
+  public void setIntakeHardLimit(boolean limitEnabled) {
+
+    intakeSparkMaxConfig.limitSwitch.forwardLimitSwitchEnabled(limitEnabled);
+
+    intakeMotor.configure(
+        intakeSparkMaxConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   public void stop() {
@@ -463,6 +462,8 @@ public class CoralSubsystem extends SubsystemBase {
     checkSafety();
 
     SmartDashboard.putNumber("Coral/Digital Elevator Position", getDigitalElevatorEncoder());
+    SmartDashboard.putNumber("Coral/Raw Digital Elevator Encoder", digitalElevatorEncoder.getRaw());
+    SmartDashboard.putNumber("Coral/Digital Elevator Encoder Offset", digitalElevatorEncoderOffset);
     SmartDashboard.putNumber("Coral/Elevator Position", getElevatorEncoder());
     SmartDashboard.putBoolean("Coral/Elevator Upper Limit", isElevatorAtUpperLimit());
     SmartDashboard.putBoolean("Coral/Elevator Lower Limit", isElevatorAtLowerLimit());
@@ -535,7 +536,8 @@ public class CoralSubsystem extends SubsystemBase {
     }
 
     if (elUpperLimit) {
-      elevatorEncoder.setPosition(ELEVATOR_MAX_HEIGHT);
+      // setElevatorEncoder(ELEVATOR_MAX_HEIGHT);
+      //      elevatorEncoder.setPosition(ELEVATOR_MAX_HEIGHT);
 
       if (elGoingUp) {
         elevatorSpeed = 0;
