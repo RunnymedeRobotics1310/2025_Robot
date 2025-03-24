@@ -1,10 +1,13 @@
 package frc.robot.subsystems.swerve;
 
+import static frc.robot.Constants.FieldConstants.*;
 import static frc.robot.Constants.Swerve.ULTRASONIC_SENSOR_PORT;
+import static frc.robot.Constants.VisionConstants.VISION_PRIMARY_LIMELIGHT_NAME;
 
 import ca.team1310.swerve.core.SwerveMath;
 import ca.team1310.swerve.odometry.FieldAwareSwerveDrive;
 import ca.team1310.swerve.utils.SwerveUtils;
+import ca.team1310.swerve.vision.LimelightAwareSwerveDrive;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -28,7 +31,12 @@ public class SwerveSubsystem extends SubsystemBase {
   private double ultrasonicDistanceM;
 
   public SwerveSubsystem(SwerveDriveSubsystemConfig config) {
-    this.drive = new FieldAwareSwerveDrive(config.coreConfig());
+    this.drive =
+        new LimelightAwareSwerveDrive(
+            config.coreConfig(),
+            VISION_PRIMARY_LIMELIGHT_NAME,
+            FIELD_EXTENT_METRES_X,
+            FIELD_EXTENT_METRES_Y);
     this.config = config;
     this.xLimiter = new SlewRateLimiter(this.config.translationConfig().maxAccelMPS2());
     this.yLimiter = new SlewRateLimiter(this.config.translationConfig().maxAccelMPS2());

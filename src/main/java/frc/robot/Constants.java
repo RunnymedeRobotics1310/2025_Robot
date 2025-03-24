@@ -48,8 +48,13 @@ public final class Constants {
     public static final double BUMPER_WIDTH = 0.089;
   }
 
-  public static final VisionConfig VISION_CONFIG =
-      new VisionConfig(0, 0, 0.7, 0.1, .5, true, Constants.TelemetryConfig.vision);
+  public static final class VisionConstants {
+    public static final VisionConfig VISION_CONFIG =
+        new VisionConfig(0, 0, 0.7, 0.1, .5, true, Constants.TelemetryConfig.vision);
+
+    public static final String VISION_PRIMARY_LIMELIGHT_NAME = "nikola";
+    public static final String VISION_SECONDARY_LIMELIGHT_NAME = "thomas";
+  }
 
   public static final class OiConstants {
 

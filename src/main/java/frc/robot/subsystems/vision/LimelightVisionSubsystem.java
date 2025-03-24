@@ -1,5 +1,7 @@
 package frc.robot.subsystems.vision;
 
+import static frc.robot.Constants.VisionConstants.*;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.NetworkTable;
@@ -23,8 +25,10 @@ public class LimelightVisionSubsystem extends SubsystemBase {
   public LimelightVisionSubsystem(VisionConfig visionConfig, SwerveSubsystem swerve) {
     this.swerve = swerve;
 
-    final NetworkTable nikola = NetworkTableInstance.getDefault().getTable("limelight-nikola");
-    final NetworkTable thomas = NetworkTableInstance.getDefault().getTable("limelight-thomas");
+    final NetworkTable nikola =
+        NetworkTableInstance.getDefault().getTable("limelight-" + VISION_PRIMARY_LIMELIGHT_NAME);
+    final NetworkTable thomas =
+        NetworkTableInstance.getDefault().getTable("limelight-" + VISION_SECONDARY_LIMELIGHT_NAME);
 
     // Initialize the NT subscribers for whichever of MT1/2 is used
     nikolaMegaTag = nikola.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
@@ -200,7 +204,7 @@ public class LimelightVisionSubsystem extends SubsystemBase {
     LimelightBotPose botPose = getBotPose(leftBranch);
     return botPose.getTagIndex(tagId) != -1;
   }
-  
+
   /** Update telemetry with vision data */
   private void updateTelemetry() {
     if (Telemetry.vision.telemetryLevel == VisionTelemetryLevel.REGULAR
