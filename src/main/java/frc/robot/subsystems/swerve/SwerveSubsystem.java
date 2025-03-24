@@ -4,8 +4,8 @@ import static frc.robot.Constants.FieldConstants.*;
 import static frc.robot.Constants.Swerve.ULTRASONIC_SENSOR_PORT;
 import static frc.robot.Constants.VisionConstants.VISION_PRIMARY_LIMELIGHT_NAME;
 
+import ca.team1310.swerve.RunnymedeSwerveDrive;
 import ca.team1310.swerve.core.SwerveMath;
-import ca.team1310.swerve.odometry.FieldAwareSwerveDrive;
 import ca.team1310.swerve.utils.SwerveUtils;
 import ca.team1310.swerve.vision.LimelightAwareSwerveDrive;
 import edu.wpi.first.math.controller.PIDController;
@@ -19,7 +19,7 @@ import frc.robot.telemetry.Telemetry;
 
 public class SwerveSubsystem extends SubsystemBase {
 
-  private final FieldAwareSwerveDrive drive;
+  private final RunnymedeSwerveDrive drive;
   private final SwerveDriveSubsystemConfig config;
   private final SlewRateLimiter xLimiter;
   private final SlewRateLimiter yLimiter;
