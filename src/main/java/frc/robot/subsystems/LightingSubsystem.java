@@ -24,7 +24,7 @@ public class LightingSubsystem extends SubsystemBase {
   private final LEDPattern rainbowLEDPattrn = LEDPattern.rainbow(255, 128);
   private final LEDPattern yellowLEDColour = LEDPattern.solid(Color.kYellow);
 
-  private final AddressableLEDBufferView botPOSLEDView;
+  private final AddressableLEDBufferView botPoseLEDView;
   private final AddressableLEDBufferView leftLEDView;
   private final AddressableLEDBufferView rightLEDView;
 
@@ -37,7 +37,7 @@ public class LightingSubsystem extends SubsystemBase {
     climbStatusTopic = lightingNetworkTable.getBooleanTopic("climbStatusTopic");
 
     // these values have not been checked
-    botPOSLEDView = ledBuffer.createView(20, 39);
+    botPoseLEDView = ledBuffer.createView(20, 39);
     leftLEDView = ledBuffer.createView(0, 19);
     rightLEDView = ledBuffer.createView(40, 59);
   }
