@@ -14,7 +14,6 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -435,10 +434,11 @@ public class CoralSubsystem extends SubsystemBase {
   }
 
   public void setIntakeHardLimit(boolean limitEnabled) {
-    
+
     intakeSparkMaxConfig.limitSwitch.forwardLimitSwitchEnabled(limitEnabled);
 
-    intakeMotor.configure(intakeSparkMaxConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+    intakeMotor.configure(
+        intakeSparkMaxConfig, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
   }
 
   public void stop() {
@@ -536,7 +536,7 @@ public class CoralSubsystem extends SubsystemBase {
     }
 
     if (elUpperLimit) {
-      setElevatorEncoder(ELEVATOR_MAX_HEIGHT);
+      // setElevatorEncoder(ELEVATOR_MAX_HEIGHT);
       //      elevatorEncoder.setPosition(ELEVATOR_MAX_HEIGHT);
 
       if (elGoingUp) {

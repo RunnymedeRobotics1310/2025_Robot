@@ -49,7 +49,10 @@ public class MoveToCoralPoseCommand extends LoggingCommand {
   @Override
   public void end(boolean interrupted) {
     logCommandEnd(interrupted);
-    log("Elevator: " + coralSubsystem.getElevatorEncoder()
-    + " Arm: " + coralSubsystem.getArmAngle());
+    log(
+        "Elevator: "
+            + coralSubsystem.getElevatorEncoder()
+            + " Arm: "
+            + coralSubsystem.getArmAngle());
   }
 }

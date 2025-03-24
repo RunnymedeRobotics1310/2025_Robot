@@ -476,7 +476,7 @@ public final class Constants {
      * Elevator Constants
      */
     public static final double ELEVATOR_MAX_SPEED = 1;
-    public static final double ELEVATOR_MAX_HEIGHT = 160;
+    public static final double ELEVATOR_MAX_HEIGHT = 162;
     public static final double ELEVATOR_TOLERANCE = 1;
     public static final double ELEVATOR_MAX_SLEW = 0.2;
     public static final double ELEVATOR_P = 0.05;
@@ -520,14 +520,14 @@ public final class Constants {
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
       COMPACT(0),
-      CLOSE_INTAKE(39),
-      FAR_INTAKE(26),
+      CLOSE_INTAKE(37),
+      FAR_INTAKE(24),
       LEVEL_1(0),
-      LEVEL_2(3),
-      LEVEL_3(60),
+      LEVEL_2(1),
+      LEVEL_3(58),
       LEVEL_4(ELEVATOR_MAX_HEIGHT),
-      REMOVE_LOW_ALGAE(18.5),
-      REMOVE_HIGH_ALGAE(80);
+      REMOVE_LOW_ALGAE(16.5),
+      REMOVE_HIGH_ALGAE(78);
 
       public final double encoderCount;
 
