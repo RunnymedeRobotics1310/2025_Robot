@@ -39,7 +39,7 @@ public class OperatorInput extends SubsystemBase {
   private final LimelightVisionSubsystem vision;
 
   private boolean matchNearEndTimerStarted = false;
-  private Timer matchNearEndTimer = new Timer();
+  private final Timer matchNearEndTimer = new Timer();
 
   private final SendableChooser<Constants.AutoConstants.AutoPattern> autoPatternChooser =
       new SendableChooser<>();
@@ -318,10 +318,12 @@ public class OperatorInput extends SubsystemBase {
    */
   public void startVibrate() {
     driverController.setRumble(GenericHID.RumbleType.kBothRumble, 1);
+    operatorController.setRumble(GenericHID.RumbleType.kBothRumble, 1);
   }
 
   public void stopVibrate() {
     driverController.setRumble(GenericHID.RumbleType.kBothRumble, 0);
+    operatorController.setRumble(GenericHID.RumbleType.kBothRumble, 0);
   }
 
   @Override
@@ -330,7 +332,10 @@ public class OperatorInput extends SubsystemBase {
       SmartDashboard.putString("Driver Controller", driverController.toString());
     }
 
-    if (DriverStation.getMatchTime() <= 20 && !matchNearEndTimerStarted) {
+    if (RobotState.isTeleop()
+        && DriverStation.getMatchTime() > 0
+        && DriverStation.getMatchTime() <= 20
+        && !matchNearEndTimerStarted) {
       startVibrate();
       matchNearEndTimerStarted = true;
       matchNearEndTimer.start();
@@ -357,11 +362,11 @@ public class OperatorInput extends SubsystemBase {
     SmartDashboard.putData("1310/auto/Auto Selector", autoPatternChooser);
 
     autoPatternChooser.setDefaultOption(
-        "Do Nothing", Constants.AutoConstants.AutoPattern.SCORE_3_LEFT);
+        "3 Coral Left", Constants.AutoConstants.AutoPattern.SCORE_3_LEFT);
+    autoPatternChooser.addOption("Do Nothing", Constants.AutoConstants.AutoPattern.DO_NOTHING);
     autoPatternChooser.addOption("Exit Zone", Constants.AutoConstants.AutoPattern.EXIT_ZONE);
     autoPatternChooser.addOption(
         "1 Coral Center", Constants.AutoConstants.AutoPattern.SCORE_1_CENTER);
-    autoPatternChooser.addOption("3 Coral Left", Constants.AutoConstants.AutoPattern.SCORE_3_LEFT);
     autoPatternChooser.addOption(
         "3 Coral Right", Constants.AutoConstants.AutoPattern.SCORE_3_RIGHT);
 
