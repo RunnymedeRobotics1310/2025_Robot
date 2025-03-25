@@ -50,10 +50,11 @@ public class ClimbSubsystem extends SubsystemBase {
 
     checkSafety();
 
+    SmartDashboard.putBoolean("1310/Climb/CageSensor", isCageInPosition());
+
     if (Constants.TelemetryConfig.climb) {
-      SmartDashboard.putBoolean("Climb Deployed", isClimbDeployed());
-      SmartDashboard.putBoolean("Can deploy climb", true);
-      SmartDashboard.putBoolean("Cage in position", isCageInPosition());
+      SmartDashboard.putBoolean("1310/Climb/Deployed", isClimbDeployed());
+      SmartDashboard.putBoolean("1310/Climb/CanDeploy", true);
     }
   }
 
