@@ -23,6 +23,7 @@ import frc.robot.Constants.CoralConstants;
 import frc.robot.Constants.CoralConstants.ArmAngle;
 import frc.robot.Constants.CoralConstants.ElevatorHeight;
 import frc.robot.Robot;
+import frc.robot.commands.operator.OperatorInput;
 
 public class CoralSubsystem extends SubsystemBase {
 
@@ -45,6 +46,7 @@ public class CoralSubsystem extends SubsystemBase {
     double intakeEncoderPosition = 0;
 
     boolean coralDetected = false;
+    boolean prevCoralDetected = false;
   }
 
   // Coral Subsystem Motors
@@ -216,6 +218,8 @@ public class CoralSubsystem extends SubsystemBase {
      */
     sensorCache.intakeEncoderPosition = intakeEncoder.getPosition();
     sensorCache.intakeEncoderSpeed = intakeEncoder.getVelocity();
+
+    sensorCache.prevCoralDetected = sensorCache.coralDetected;
     sensorCache.coralDetected = intakeCoralDetector.isPressed();
   }
 
@@ -454,6 +458,10 @@ public class CoralSubsystem extends SubsystemBase {
   public void periodic() {
 
     updateSensorCache();
+
+    if (!sensorCache.prevCoralDetected && sensorCache.coralDetected) {
+      OperatorInput.setRumblePattern(OperatorInput.RumblePattern.SHORT);
+    }
 
     if (isSimulation) {
       simulate();

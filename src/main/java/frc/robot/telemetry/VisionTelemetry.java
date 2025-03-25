@@ -7,7 +7,6 @@ import static frc.robot.telemetry.Telemetry.PREFIX;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.subsystems.vision.LimelightPoseEstimate;
 import frc.robot.subsystems.vision.VisionTelemetryLevel;
 
 /**
@@ -52,10 +51,6 @@ public class VisionTelemetry {
   /** The heading offset of vision pose to odometry */
   public double headingDeltaDegrees = Double.MIN_VALUE;
 
-  /** The confidence of the pose estimate */
-  public LimelightPoseEstimate.PoseConfidence poseConfidence =
-      LimelightPoseEstimate.PoseConfidence.NONE;
-
   /** The tag ambiguity of the currently in focus tag */
   public double tagAmbiguity = Double.MIN_VALUE;
 
@@ -84,8 +79,6 @@ public class VisionTelemetry {
   }
 
   void post() {
-    // Always post poseConfidence
-    SmartDashboard.putString(PREFIX + "Vision/pose_confidence", poseConfidence.toString());
 
     if (Telemetry.vision.telemetryLevel == VisionTelemetryLevel.REGULAR
         || Telemetry.vision.telemetryLevel == VisionTelemetryLevel.VERBOSE) {

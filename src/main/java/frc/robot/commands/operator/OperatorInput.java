@@ -38,6 +38,26 @@ public class OperatorInput extends SubsystemBase {
   private final CoralSubsystem coral;
   private final LimelightVisionSubsystem vision;
 
+  private boolean matchNearEndTimerStarted = false;
+  private final Timer matchNearEndTimer = new Timer();
+
+  public enum RumblePattern {
+    NONE(0),
+    BLIP(0.25),
+    SHORT(0.5),
+    MEDIUM(1),
+    RED_ALERT(2);
+
+    public final double seconds;
+
+    RumblePattern(double seconds) {
+      this.seconds = seconds;
+    }
+  }
+
+  private static RumblePattern currentRumblePattern = RumblePattern.NONE;
+  private static final Timer rumbleTimer = new Timer();
+
   private final SendableChooser<Constants.AutoConstants.AutoPattern> autoPatternChooser =
       new SendableChooser<>();
   private final SendableChooser<Constants.AutoConstants.Delay> delayChooser =
@@ -315,10 +335,12 @@ public class OperatorInput extends SubsystemBase {
    */
   public void startVibrate() {
     driverController.setRumble(GenericHID.RumbleType.kBothRumble, 1);
+    operatorController.setRumble(GenericHID.RumbleType.kBothRumble, 1);
   }
 
   public void stopVibrate() {
     driverController.setRumble(GenericHID.RumbleType.kBothRumble, 0);
+    operatorController.setRumble(GenericHID.RumbleType.kBothRumble, 0);
   }
 
   @Override
@@ -326,6 +348,16 @@ public class OperatorInput extends SubsystemBase {
     if (Constants.TelemetryConfig.oi) {
       SmartDashboard.putString("Driver Controller", driverController.toString());
     }
+
+    if (RobotState.isTeleop()
+        && DriverStation.getMatchTime() > 0
+        && DriverStation.getMatchTime() <= 20
+        && !matchNearEndTimerStarted) {
+      setRumblePattern(RumblePattern.SHORT);
+      matchNearEndTimerStarted = true;
+    }
+
+    rumbleUpdate();
   }
 
   public enum Stick {
@@ -338,16 +370,48 @@ public class OperatorInput extends SubsystemBase {
     Y
   }
 
+  public static void setRumblePattern(RumblePattern pattern) {
+    if (pattern != currentRumblePattern) {
+      currentRumblePattern = pattern;
+      rumbleTimer.restart();
+    }
+  }
+
+  private void rumbleUpdate() {
+    if (!rumbleTimer.isRunning()) {
+      return;
+    }
+
+    double time = rumbleTimer.get();
+    double rumbleAmount = 0.0;
+
+    // stop after rumble duration seconds
+    if (time > currentRumblePattern.seconds) {
+      currentRumblePattern = RumblePattern.NONE;
+      rumbleTimer.stop();
+      rumbleAmount = 0.0;
+    } else {
+      rumbleAmount =
+          switch (currentRumblePattern) {
+            case SHORT, MEDIUM, RED_ALERT -> 1.0;
+            default -> 0.0;
+          };
+    }
+
+    driverController.setRumble(XboxController.RumbleType.kBothRumble, rumbleAmount);
+    operatorController.setRumble(XboxController.RumbleType.kBothRumble, rumbleAmount);
+  }
+
   public void initAutoSelectors() {
 
     SmartDashboard.putData("1310/auto/Auto Selector", autoPatternChooser);
 
     autoPatternChooser.setDefaultOption(
-        "Do Nothing", Constants.AutoConstants.AutoPattern.SCORE_3_LEFT);
+        "3 Coral Left", Constants.AutoConstants.AutoPattern.SCORE_3_LEFT);
+    autoPatternChooser.addOption("Do Nothing", Constants.AutoConstants.AutoPattern.DO_NOTHING);
     autoPatternChooser.addOption("Exit Zone", Constants.AutoConstants.AutoPattern.EXIT_ZONE);
     autoPatternChooser.addOption(
         "1 Coral Center", Constants.AutoConstants.AutoPattern.SCORE_1_CENTER);
-    autoPatternChooser.addOption("3 Coral Left", Constants.AutoConstants.AutoPattern.SCORE_3_LEFT);
     autoPatternChooser.addOption(
         "3 Coral Right", Constants.AutoConstants.AutoPattern.SCORE_3_RIGHT);
 
