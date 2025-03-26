@@ -369,7 +369,7 @@ public final class Constants {
       PRE_SCORE_LEFT_1(new Pose2d(2.8126, 4.1909, Rotation2d.fromDegrees(0)), 18, 7, true),
       PRE_SCORE_LEFT_2(new Pose2d(3.2585, 5.8278, Rotation2d.fromDegrees(300)), 19, 6, false),
       PRE_SCORE_LEFT_3(new Pose2d(3.7943, 5.5598, Rotation2d.fromDegrees(300)), 19, 6, true),
-      PRE_SCORE_LEFT_4(new Pose2d(5.1843, 5.5598, Rotation2d.fromDegrees(240)), 20, 11, false),
+      PRE_SCORE_LEFT_4(new Pose2d(5.3843, 5.5598, Rotation2d.fromDegrees(240)), 20, 11, false),
       PRE_SCORE_LEFT_5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240)), 20, 11, true),
       PRE_SCORE_LEFT_6(new Pose2d(6.1660, 4.16, Rotation2d.fromDegrees(180)), 21, 10, false),
       PRE_SCORE_RIGHT_1(new Pose2d(2.8126, 3.8609, Rotation2d.fromDegrees(0)), 18, 7, false),
@@ -384,6 +384,8 @@ public final class Constants {
       // Legacy Alliance Specific Locations
       blueRightOuterStation(new Pose2d(1.15, 1.02, Rotation2d.fromDegrees(234)), 12, 2),
       blueLeftOuterStation(new Pose2d(1.15, 7.03, Rotation2d.fromDegrees(-234)), 13, 1),
+
+      funfun(new Pose2d(3, 6, Rotation2d.fromDegrees(-234)), 12, 2),
 
       // Reef Score Locations (Lettered as seen in manual - counter-clockwise starting from
       // close-left)
@@ -525,7 +527,7 @@ public final class Constants {
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
       COMPACT(0),
-      CLOSE_INTAKE(28.5),
+      CLOSE_INTAKE(30),
       FAR_INTAKE(19.4),
       LEVEL_1(0),
       LEVEL_2(0),

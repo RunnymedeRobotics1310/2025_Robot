@@ -145,7 +145,7 @@ public class OperatorInput extends SubsystemBase {
     // Set Yaw
     // TODO: Remove!  Practice Field Only!
     new Trigger(() -> operatorController.getBackButton())
-        .onTrue(new SetAllianceGyroCommand(driveSubsystem, -60));
+        .onTrue(new SetAllianceGyroCommand(driveSubsystem, 180));
 
     // Compact (X button)
     new Trigger(() -> driverController.getXButton() || operatorController.getXButton())
@@ -227,6 +227,10 @@ public class OperatorInput extends SubsystemBase {
 
   public boolean isZeroGyro() {
     return driverController.getBackButton();
+  }
+
+  public boolean is180Gyro() {
+    return operatorController.getBackButton();
   }
 
   /*

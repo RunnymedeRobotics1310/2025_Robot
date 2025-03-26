@@ -7,10 +7,8 @@ import static frc.robot.Constants.CoralConstants.CoralPose.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RunnymedeUtils;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
-import frc.robot.commands.coral.elevator.MoveElevatorToHeightCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.coral.intake.PlantCoralCommand;
 import frc.robot.commands.swervedrive.*;
@@ -86,16 +84,14 @@ public class BaseAutoCommand extends SequentialCommandGroup {
     double intakeHeading = intakeLocation.pose.getRotation().getDegrees() + allianceOffset;
 
     return scoreL4CoralStop(reefLocation)
+        .andThen(new DriveRobotOrientedCommand(swerve, -0.5, 0, reefHeading).withTimeout(0.2))
         .andThen(
-            new DriveRobotOrientedCommand(swerve, -0.5, 0, reefHeading)
-                .withTimeout(0.5))
-
-            .andThen(new WaitCommand(0.2)
-                .andThen(setCoralPose(COMPACT))
-            .andThen(new IntakeCoralCommand(coral, false))
-                
-            .deadlineFor(driveThroughLocation(intakeLocation, 3)
-                .andThen(new DriveIntoWallCommand(swerve, 0.25, 0, intakeHeading))));
-
+            new IntakeCoralCommand(coral, false)
+                .deadlineFor(
+                    driveThroughLocation(FieldLocation.funfun, 1.5)
+                        .andThen(driveThroughLocation(intakeLocation, 3))
+                        .andThen(new NullDriveCommand(swerve))
+                    //        .andThen(new DriveIntoWallCommand(swerve, 0.25, 0, intakeHeading))
+                    ));
   }
 }

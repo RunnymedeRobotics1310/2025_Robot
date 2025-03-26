@@ -11,9 +11,11 @@ import ca.team1310.swerve.vision.LimelightAwareSwerveDrive;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Robot;
 import frc.robot.RunnymedeUtils;
 import frc.robot.telemetry.Telemetry;
 
@@ -78,7 +80,8 @@ public class SwerveSubsystem extends SubsystemBase {
     omega = omegaLimiter.calculate(omega);
 
     if (this.config.enabled()) {
-      this.drive.drive(x, y, omega);
+      var spds = ChassisSpeeds.discretize(x, y, omega, Robot.kDefaultPeriod);
+      this.drive.drive(spds.vxMetersPerSecond, spds.vyMetersPerSecond, spds.omegaRadiansPerSecond);
     }
   }
 
