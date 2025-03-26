@@ -64,8 +64,8 @@
               "topic": "/SmartDashboard/Coral/Coral Detected",
               "period": 0.06,
               "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
+              "true_color": 4294967295,
+              "false_color": 4280098077,
               "true_icon": "None",
               "false_icon": "None"
             }
@@ -104,20 +104,6 @@
               "divisions": 8,
               "inverted": false,
               "orientation": "horizontal"
-            }
-          },
-          {
-            "title": "pose_confidence",
-            "x": 1152.0,
-            "y": 128.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/1310/Vision/pose_confidence",
-              "period": 0.06,
-              "data_type": "string",
-              "show_submit_button": false
             }
           },
           {
@@ -171,6 +157,86 @@
             "type": "ComboBox Chooser",
             "properties": {
               "topic": "/SmartDashboard/1310/auto/Auto Selector",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "Elevator Lower Limit",
+            "x": 1152.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Coral/Elevator Lower Limit",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4280098077,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Elevator Upper Limit",
+            "x": 1152.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Coral/Elevator Upper Limit",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4280098077,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "hasVisPose",
+            "x": 1152.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/swerve/hasVisPose",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4280098077,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "CageSensor",
+            "x": 1152.0,
+            "y": 640.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/1310/Climb/CageSensor",
+              "period": 0.06,
+              "true_color": 4283215696,
+              "false_color": 4280098077,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Delay Selector",
+            "x": 896.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/1310/auto/Delay Selector",
               "period": 0.06,
               "sort_options": false
             }
