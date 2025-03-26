@@ -45,16 +45,26 @@ public class OperatorInput extends SubsystemBase {
   private final Timer matchNearEndTimer = new Timer();
 
   public enum RumblePattern {
-    NONE(0),
-    BLIP(0.25),
-    SHORT(0.5),
-    MEDIUM(1),
-    RED_ALERT(2);
+    NONE(0, XboxController.RumbleType.kBothRumble, true, true),
+    BLIP(0.25, XboxController.RumbleType.kBothRumble, true, true),
+    SHORT(0.5, XboxController.RumbleType.kBothRumble, true, true),
+    MEDIUM(1, XboxController.RumbleType.kBothRumble, true, true),
+    RED_ALERT(2, XboxController.RumbleType.kBothRumble, true, true);
 
     public final double seconds;
+    public final XboxController.RumbleType rumbleType;
+    public final boolean driverController;
+    public final boolean operatorController;
 
-    RumblePattern(double seconds) {
+    RumblePattern(
+        double seconds,
+        XboxController.RumbleType rumbleType,
+        boolean driverController,
+        boolean operatorController) {
       this.seconds = seconds;
+      this.rumbleType = rumbleType;
+      this.driverController = driverController;
+      this.operatorController = operatorController;
     }
   }
 
@@ -401,8 +411,12 @@ public class OperatorInput extends SubsystemBase {
           };
     }
 
-    driverController.setRumble(XboxController.RumbleType.kBothRumble, rumbleAmount);
-    operatorController.setRumble(XboxController.RumbleType.kBothRumble, rumbleAmount);
+    if (currentRumblePattern.driverController) {
+      driverController.setRumble(currentRumblePattern.rumbleType, rumbleAmount);
+    }
+    if (currentRumblePattern.operatorController) {
+      operatorController.setRumble(currentRumblePattern.rumbleType, rumbleAmount);
+    }
   }
 
   public void initAutoSelectors() {
