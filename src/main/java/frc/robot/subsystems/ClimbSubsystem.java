@@ -3,10 +3,10 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ClimbConstants;
+import frc.robot.telemetry.Telemetry;
 
 public class ClimbSubsystem extends SubsystemBase {
 
@@ -19,6 +19,7 @@ public class ClimbSubsystem extends SubsystemBase {
   private DigitalInput climbSensor = new DigitalInput(ClimbConstants.CLIMB_SENSOR_DIO_PORT);
 
   public ClimbSubsystem() {
+    Telemetry.climb.enabled = Constants.TelemetryConfig.climb;
     setClimbDeployed(false);
   }
 
@@ -50,11 +51,11 @@ public class ClimbSubsystem extends SubsystemBase {
 
     checkSafety();
 
-    SmartDashboard.putBoolean("1310/Climb/CageSensor", isCageInPosition());
+    Telemetry.climb.cageDetected = isCageInPosition();
 
-    if (Constants.TelemetryConfig.climb) {
-      SmartDashboard.putBoolean("1310/Climb/Deployed", isClimbDeployed());
-      SmartDashboard.putBoolean("1310/Climb/CanDeploy", true);
+    if (Telemetry.climb.enabled) {
+      Telemetry.climb.climbDeployed = isClimbDeployed();
+      Telemetry.climb.canDeploy = true;
     }
   }
 

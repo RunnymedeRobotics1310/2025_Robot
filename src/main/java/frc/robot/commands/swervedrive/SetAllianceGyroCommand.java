@@ -20,8 +20,6 @@ public class SetAllianceGyroCommand extends InstantCommand {
             headingOffset = 180;
           }
 
-          System.out.println("ZeroGyroCommand: Set the current heading to " + yaw + headingOffset);
-
           driveSubsystem.setYaw(yaw + headingOffset);
         });
   }

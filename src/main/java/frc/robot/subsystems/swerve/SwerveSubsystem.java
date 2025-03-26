@@ -227,7 +227,17 @@ public class SwerveSubsystem extends SubsystemBase {
     double x = pose.getX();
     double y = pose.getY();
     double theta = pose.getRotation().getDegrees();
-    return String.format("SwerveDriveSubsystem Pose: %.2f,%.2f @ %.1f deg", x, y, theta);
+
+    StringBuilder sb = new StringBuilder();
+    sb.append(this.getClass().getSimpleName())
+        .append(": Pose: ")
+        .append(Math.round(x * 100d) / 100d)
+        .append(",")
+        .append(Math.round(y * 100d) / 100d)
+        .append(",")
+        .append(Math.round(theta * 10d) / 10d);
+
+    return sb.toString();
   }
 
   /*

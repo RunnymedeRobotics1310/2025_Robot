@@ -16,7 +16,6 @@ import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.CoralConstants;
@@ -24,6 +23,7 @@ import frc.robot.Constants.CoralConstants.ArmAngle;
 import frc.robot.Constants.CoralConstants.ElevatorHeight;
 import frc.robot.Robot;
 import frc.robot.commands.operator.OperatorInput;
+import frc.robot.telemetry.Telemetry;
 
 public class CoralSubsystem extends SubsystemBase {
 
@@ -113,6 +113,8 @@ public class CoralSubsystem extends SubsystemBase {
   private int simulationIntakeEncoder = 0;
 
   public CoralSubsystem() {
+    Telemetry.coral.enabled = Constants.TelemetryConfig.coral;
+
     /*
      * Elevator Motor Config
      */
@@ -469,24 +471,24 @@ public class CoralSubsystem extends SubsystemBase {
 
     checkSafety();
 
-    SmartDashboard.putNumber("Coral/Digital Elevator Position", getDigitalElevatorEncoder());
-    SmartDashboard.putNumber("Coral/Raw Digital Elevator Encoder", digitalElevatorEncoder.getRaw());
-    SmartDashboard.putNumber("Coral/Digital Elevator Encoder Offset", digitalElevatorEncoderOffset);
-    SmartDashboard.putNumber("Coral/Elevator Position", getElevatorEncoder());
-    SmartDashboard.putBoolean("Coral/Elevator Upper Limit", isElevatorAtUpperLimit());
-    SmartDashboard.putBoolean("Coral/Elevator Lower Limit", isElevatorAtLowerLimit());
-    SmartDashboard.putNumber("Coral/Arm Angle", getArmAngle());
-    SmartDashboard.putBoolean("Coral/Coral Detected", isCoralDetected());
+    Telemetry.coral.digitalElevatorPosition = getDigitalElevatorEncoder();
+    Telemetry.coral.rawDigitalElevatorEncoder = digitalElevatorEncoder.getRaw();
+    Telemetry.coral.digitalElevatorEncoderOffset = digitalElevatorEncoderOffset;
+    Telemetry.coral.elevatorPosition = getElevatorEncoder();
+    Telemetry.coral.elevatorUpperLimit = isElevatorAtUpperLimit();
+    Telemetry.coral.elevatorLowerLimit = isElevatorAtLowerLimit();
+    Telemetry.coral.armAngle = getArmAngle();
+    Telemetry.coral.coralDetected = isCoralDetected();
 
-    if (Constants.TelemetryConfig.coral) {
-      SmartDashboard.putNumber("Coral/Elevator Setpoint", elevatorSetpoint);
-      SmartDashboard.putNumber("Coral/Elevator Speed", elevatorSpeed);
+    if (Telemetry.coral.enabled) {
+      Telemetry.coral.elevatorSetpoint = elevatorSetpoint;
+      Telemetry.coral.elevatorSpeed = elevatorSpeed;
 
-      SmartDashboard.putNumber("Coral/Arm Speed", armSetpoint);
-      SmartDashboard.putBoolean("Coral/Arm Upper Limit", isArmAtUpperLimit());
-      SmartDashboard.putBoolean("Coral/Arm Lower Limit", isArmAtLowerLimit());
+      Telemetry.coral.armSpeed = armSetpoint;
+      Telemetry.coral.armUpperLimit = isArmAtUpperLimit();
+      Telemetry.coral.armLowerLimit = isArmAtLowerLimit();
 
-      SmartDashboard.putNumber("Coral/Intake Speed", intakeSetpoint);
+      Telemetry.coral.intakeSpeed = intakeSetpoint;
     }
   }
 

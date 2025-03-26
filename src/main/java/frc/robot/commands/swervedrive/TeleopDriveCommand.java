@@ -229,9 +229,6 @@ public class TeleopDriveCommand extends LoggingCommand {
     double magnitude = input.getNorm();
     Rotation2d angle = magnitude > 1e-6 ? input.getAngle() : new Rotation2d();
 
-    // cube to allow more fine-grained control for user at low values
-    magnitude = Math.pow(magnitude, 3);
-
     // apply boost factor
     magnitude *= boostFactor;
 

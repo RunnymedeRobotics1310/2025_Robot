@@ -66,7 +66,7 @@ public final class Constants {
      * Standard drive speed factor. Regular teleop drive will use this factor of the max
      * translational speed.
      */
-    public static final double GENERAL_SPEED_FACTOR = .4;
+    public static final double GENERAL_SPEED_FACTOR = .5;
 
     /**
      * Maximum drive speed factor. When boosting, this factor will be multiplied against the max
@@ -78,7 +78,7 @@ public final class Constants {
      * Slow mode drive speed factor. When running in slow mode, this factor will be multiplied
      * against the max translational speed.
      */
-    public static final double SLOW_SPEED_FACTOR = .05;
+    public static final double SLOW_SPEED_FACTOR = .1;
 
     /**
      * Operator tune factor for tuning robot oriented at reef. This factor will be multiplied
@@ -516,7 +516,7 @@ public final class Constants {
     /*
      * Intake Constants
      */
-    public static final double CORAL_INTAKE_SPEED = 0.4;
+    public static final double CORAL_INTAKE_SPEED = 0.8;
     public static final double CORAL_OUTAKE_SPEED = 0.8;
     public static final double CORAL_OUTAKE_SLOW_SPEED = -0.25;
     public static final double CORAL_EJECT_SPEED = 0.7;
@@ -525,11 +525,11 @@ public final class Constants {
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
       COMPACT(0),
-      CLOSE_INTAKE(37),
-      FAR_INTAKE(24),
+      CLOSE_INTAKE(28.5),
+      FAR_INTAKE(19.4),
       LEVEL_1(0),
-      LEVEL_2(1),
-      LEVEL_3(58),
+      LEVEL_2(0),
+      LEVEL_3(53),
       LEVEL_4(ELEVATOR_MAX_HEIGHT),
       REMOVE_LOW_ALGAE(16.5),
       REMOVE_HIGH_ALGAE(78);
@@ -544,7 +544,8 @@ public final class Constants {
     // Arm Angles in degrees
     public enum ArmAngle {
       COMPACT(1.5),
-      INTAKE(21),
+      CLOSE_INTAKE(40.0),
+      FAR_INTAKE(35),
       LEVEL_1(33),
       LEVEL_2(120),
       LEVEL_3(126),
@@ -558,32 +559,10 @@ public final class Constants {
       }
     }
 
-    public enum DesiredDistanceToTargetCM {
-      INTAKE(20),
-      LEVEL_1(20),
-      LEVEL_2(20),
-      LEVEL_3(20),
-      LEVEL_4(26),
-      REMOVE_ALGAE(20);
-
-      public final double distance;
-
-      DesiredDistanceToTargetCM(double distance) {
-        this.distance = distance;
-      }
-
-      public double getDistance() {
-        return distance;
-      }
-    }
-
-    // How far to the left or right you need to be from a reef tag to score
-    public static final double OFFSET_FROM_TAG_FOR_SCORING = 14;
-
     public enum CoralPose {
       COMPACT(ElevatorHeight.COMPACT, ArmAngle.COMPACT),
-      CLOSE_INTAKE(ElevatorHeight.CLOSE_INTAKE, ArmAngle.INTAKE),
-      FAR_INTAKE(ElevatorHeight.FAR_INTAKE, ArmAngle.INTAKE),
+      CLOSE_INTAKE(ElevatorHeight.CLOSE_INTAKE, ArmAngle.CLOSE_INTAKE),
+      FAR_INTAKE(ElevatorHeight.FAR_INTAKE, ArmAngle.FAR_INTAKE),
       SCORE_L1(ElevatorHeight.LEVEL_1, ArmAngle.LEVEL_1),
       SCORE_L2(ElevatorHeight.LEVEL_2, ArmAngle.LEVEL_2),
       SCORE_L3(ElevatorHeight.LEVEL_3, ArmAngle.LEVEL_3),

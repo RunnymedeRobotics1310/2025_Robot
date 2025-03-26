@@ -28,6 +28,7 @@ import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
+import java.util.function.Consumer;
 
 /** The DriverController exposes all driver functions */
 public class OperatorInput extends SubsystemBase {
@@ -37,6 +38,8 @@ public class OperatorInput extends SubsystemBase {
   private final SwerveSubsystem swerve;
   private final CoralSubsystem coral;
   private final LimelightVisionSubsystem vision;
+
+  private Command autonomousCommand = new InstantCommand();
 
   private boolean matchNearEndTimerStarted = false;
   private final Timer matchNearEndTimer = new Timer();
@@ -311,7 +314,7 @@ public class OperatorInput extends SubsystemBase {
   }
 
   public boolean isAutoAlignReef() {
-    return operatorController.getLeftTriggerAxis() > 0.5;
+    return operatorController.getLeftTriggerAxis() > 0.1;
   }
 
   // ALIGN CORAL STATION ANGLE
@@ -415,6 +418,14 @@ public class OperatorInput extends SubsystemBase {
     autoPatternChooser.addOption(
         "3 Coral Right", Constants.AutoConstants.AutoPattern.SCORE_3_RIGHT);
 
+    autoPatternChooser.onChange(
+        new Consumer<Constants.AutoConstants.AutoPattern>() {
+          @Override
+          public void accept(Constants.AutoConstants.AutoPattern pattern) {
+            autonomousCommand = generateAutonomousCommand(delayChooser.getSelected(), pattern);
+          }
+        });
+
     SmartDashboard.putData("1310/auto/Delay Selector", delayChooser);
 
     delayChooser.setDefaultOption("No Delay", Constants.AutoConstants.Delay.NO_DELAY);
@@ -425,12 +436,26 @@ public class OperatorInput extends SubsystemBase {
     delayChooser.addOption("2 1/2 Seconds", Constants.AutoConstants.Delay.WAIT_2_5_SECONDS);
     delayChooser.addOption("3 Seconds", Constants.AutoConstants.Delay.WAIT_3_SECONDS);
     delayChooser.addOption("5 Seconds", Constants.AutoConstants.Delay.WAIT_5_SECONDS);
+
+    delayChooser.onChange(
+        new Consumer<Constants.AutoConstants.Delay>() {
+          @Override
+          public void accept(Constants.AutoConstants.Delay delay) {
+            autonomousCommand = generateAutonomousCommand(delay, autoPatternChooser.getSelected());
+          }
+        });
+
+    // Set default autonomous command
+    autonomousCommand =
+        generateAutonomousCommand(delayChooser.getSelected(), autoPatternChooser.getSelected());
   }
 
-  public Command getAutonomousCommand() {
+  private Command generateAutonomousCommand(
+      Constants.AutoConstants.Delay delayChoice,
+      Constants.AutoConstants.AutoPattern patternChoice) {
 
     double delay =
-        switch (delayChooser.getSelected()) {
+        switch (delayChoice) {
           case WAIT_0_5_SECOND -> 0.5;
           case WAIT_1_SECOND -> 1;
           case WAIT_1_5_SECONDS -> 1.5;
@@ -441,7 +466,7 @@ public class OperatorInput extends SubsystemBase {
           default -> 0;
         };
 
-    return switch (autoPatternChooser.getSelected()) {
+    return switch (patternChoice) {
       case EXIT_ZONE -> new ExitZoneAutoCommand(swerve, delay);
       case SCORE_3_LEFT -> new Score3L4LeftAutoCommand(swerve, coral, vision, delay);
       case SCORE_3_RIGHT -> new Score3L4RightAutoCommand(swerve, coral, vision, delay);
@@ -449,5 +474,9 @@ public class OperatorInput extends SubsystemBase {
 
       default -> new InstantCommand();
     };
+  }
+
+  public Command getAutonomousCommand() {
+    return autonomousCommand;
   }
 }

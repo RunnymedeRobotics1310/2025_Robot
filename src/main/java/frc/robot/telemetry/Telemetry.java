@@ -7,6 +7,8 @@ public class Telemetry {
   public static Test test = new Test();
   public static DriveTelemetry drive = new DriveTelemetry();
   public static VisionTelemetry vision = new VisionTelemetry();
+  public static CoralTelemetry coral = new CoralTelemetry();
+  public static ClimbTelemetry climb = new ClimbTelemetry();
 
   private Telemetry() {}
 
@@ -14,5 +16,7 @@ public class Telemetry {
     test.post();
     drive.post();
     vision.post();
+    coral.post();
+    climb.post();
   }
 }

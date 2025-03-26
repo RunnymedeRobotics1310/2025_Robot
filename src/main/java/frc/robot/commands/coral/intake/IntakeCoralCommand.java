@@ -32,17 +32,16 @@ public class IntakeCoralCommand extends LoggingCommand {
 
     if (isFar) {
       coralSubsystem.moveElevatorToHeight(ElevatorHeight.FAR_INTAKE);
+      coralSubsystem.moveArmToAngle(ArmAngle.FAR_INTAKE);
     } else {
       coralSubsystem.moveElevatorToHeight(ElevatorHeight.CLOSE_INTAKE);
+      coralSubsystem.moveArmToAngle(ArmAngle.CLOSE_INTAKE);
     }
-
-    coralSubsystem.moveArmToAngle(ArmAngle.INTAKE);
   }
 
   @Override
   public boolean isFinished() {
 
-    
     return coralSubsystem.isCoralDetected();
   }
 
