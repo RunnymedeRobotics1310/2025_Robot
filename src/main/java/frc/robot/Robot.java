@@ -28,9 +28,6 @@ public class Robot extends TimedRobot {
   private double lastDashUpdate = 0;
 
   private double periodicDisabledTime = 0;
-  private double periodicTeleopTime = 0;
-  private double initDisabledTime = 0;
-  private double initTeleopTime = 0;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -77,15 +74,11 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {
-    this.initDisabledTime = Timer.getFPGATimestamp();
-    SmartDashboard.putNumber("1310/Robot/InitDisabledTime", initDisabledTime);
-  }
+  public void disabledInit() {}
 
   @Override
   public void disabledPeriodic() {
     this.periodicDisabledTime = Timer.getFPGATimestamp();
-    SmartDashboard.putNumber("1310/Robot/PeriodicDisabledTime", periodicDisabledTime);
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
@@ -104,8 +97,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    initTeleopTime = Timer.getFPGATimestamp();
-    SmartDashboard.putNumber("1310/Robot/InitTeleopTime", initTeleopTime);
+    // The last obtained periodicDisable time is the best timing we have for when TeleOp was
+    // actually enabled.  The time on this call is (from limited testing) 20ms later.
+    RunnymedeUtils.setTeleopMatchStartTime(this.periodicDisabledTime);
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -119,18 +113,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-    this.periodicTeleopTime = Timer.getFPGATimestamp();
-    double matchTime = DriverStation.getMatchTime();
-
-    // Gimme some stats on this
-    SmartDashboard.putNumber("1310/Robot/MatchTime", matchTime);
-    SmartDashboard.putNumber("1310/Robot/PeriodicTeleopTime", periodicTeleopTime);
-    SmartDashboard.putNumber(
-        "1310/Robot/c-SinceLastDisable", periodicDisabledTime - periodicTeleopTime);
-    SmartDashboard.putNumber("1310/Robot/c-SinceTeleopInit", initTeleopTime - periodicTeleopTime);
-    SmartDashboard.putNumber("1310/Robot/c-MatchTimeCountUp", 135 - matchTime);
-  }
+  public void teleopPeriodic() {}
 
   @Override
   public void testInit() {

@@ -4,8 +4,8 @@ import ca.team1310.swerve.utils.SwerveUtils;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import java.util.Objects;
 
 public class RunnymedeUtils {
@@ -13,6 +13,7 @@ public class RunnymedeUtils {
   private static final long ALLIANCE_CACHE_TIME_MILLIS = 5000;
   private static DriverStation.Alliance alliance = null;
   private static long allianceLastUpdated = 0;
+  private static double teleOpMatchStartTime = 0;
 
   /**
    * Get the active Alliance. This will return Red if there is no data from the FMS/DriverStation.
@@ -34,6 +35,27 @@ public class RunnymedeUtils {
     }
 
     return Objects.requireNonNullElse(alliance, DriverStation.Alliance.Red);
+  }
+
+  /**
+   * Sets the timestamp Teleop started for match timing purposes
+   *
+   * @param seconds From Timer.getFPGATimestamp()
+   */
+  public static void setTeleopMatchStartTime(double seconds) {
+    teleOpMatchStartTime = seconds;
+  }
+
+  /**
+   * How much time is remaining in Teleop for a match.
+   *
+   * @return Seconds if there's time remaining, 0 if we're overtime.
+   */
+  public static double teleopMatchTimeRemaining() {
+    double remainingTime = Timer.getFPGATimestamp() - teleOpMatchStartTime;
+
+    // If match time is within 2m15s, return it.  Otherwise, return 0.
+    return (135 - remainingTime) >= 0 ? 135 - remainingTime : -1;
   }
 
   /**

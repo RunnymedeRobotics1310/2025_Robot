@@ -397,19 +397,13 @@ public class OperatorInput extends SubsystemBase {
     }
 
     double time = rumbleTimer.get();
-    double rumbleAmount = 0.0;
+    double rumbleAmount = 1.0;
 
     // stop after rumble duration seconds
     if (time > currentRumblePattern.seconds) {
       currentRumblePattern = RumblePattern.NONE;
       rumbleTimer.stop();
       rumbleAmount = 0.0;
-    } else {
-      rumbleAmount =
-          switch (currentRumblePattern) {
-            case SHORT, MEDIUM, RED_ALERT -> 1.0;
-            default -> 0.0;
-          };
     }
 
     if (currentRumblePattern.driverController) {
