@@ -1,6 +1,7 @@
 package frc.robot.commands.climb;
 
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.RunnymedeUtils;
 import frc.robot.commands.LoggingCommand;
 import frc.robot.subsystems.ClimbSubsystem;
 
@@ -37,7 +38,7 @@ public class AutoClimbCommand extends LoggingCommand {
       climbTimer.stop();
       climbTimer.reset();
 
-    } else if (climbTimer.hasElapsed(0.3)) {
+    } else if (climbTimer.hasElapsed(0.3) || RunnymedeUtils.teleopMatchTimeRemaining() < 0.1) {
 
       climbSubsystem.setClimbDeployed(true);
     }
