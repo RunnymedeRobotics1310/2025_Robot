@@ -15,7 +15,6 @@ public class Test {
   public Rotation2d angle = null;
 
   void post() {
-    SmartDashboard.putBoolean(Telemetry.PREFIX + "Test Mode/Enabled", enabled);
     if (enabled) {
       SmartDashboard.putString(
           Telemetry.PREFIX + "Test Mode/Motor",

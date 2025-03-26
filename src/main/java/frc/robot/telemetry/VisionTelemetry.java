@@ -20,43 +20,43 @@ public class VisionTelemetry {
 
   // Pose
   /** The x location of the robot with respect to the field in metres */
-  public double poseMetresX = Double.MIN_VALUE;
+  public double poseMetresX = -1;
 
   /** The y location of the robot with respect to the field in metres */
-  public double poseMetresY = Double.MIN_VALUE;
+  public double poseMetresY = -1;
 
   /** The heading of the robot with respect to the field in degrees */
-  public double poseHeadingDegrees = Double.MIN_VALUE;
+  public double poseHeadingDegrees = -1310;
 
   /**
    * The x location of the robot with respect to the field as measured by the vision system in
    * metres
    */
-  public double visionPoseX = Double.MIN_VALUE;
+  public double visionPoseX = -1;
 
   /**
    * The y location of the robot with respect to the field as measured by the vision system in
    * metres
    */
-  public double visionPoseY = Double.MIN_VALUE;
+  public double visionPoseY = -1;
 
   /**
    * The heading of the robot with respect to the field as measured by the vision system in degrees
    */
-  public double visionPoseHeading = Double.MIN_VALUE;
+  public double visionPoseHeading = -1310;
 
   /** The distance offset of vision pose to odometry */
-  public double poseDeltaMetres = Double.MIN_VALUE;
+  public double poseDeltaMetres = -1310;
 
   /** The heading offset of vision pose to odometry */
-  public double headingDeltaDegrees = Double.MIN_VALUE;
+  public double headingDeltaDegrees = -1310;
 
   /** The tag ambiguity of the currently in focus tag */
-  public double tagAmbiguity = Double.MIN_VALUE;
+  public double tagAmbiguity = -1;
 
-  public double navxYaw = Double.MIN_VALUE;
+  public double navxYaw = -1310;
 
-  public double navxYawDelta = Double.MIN_VALUE;
+  public double navxYawDelta = -1310;
 
   public TimeSeriesMetric poseXSeries = new TimeSeriesMetric();
   public TimeSeriesMetric poseYSeries = new TimeSeriesMetric();

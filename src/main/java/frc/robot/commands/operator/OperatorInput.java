@@ -42,14 +42,15 @@ public class OperatorInput extends SubsystemBase {
   private Command autonomousCommand = new InstantCommand();
 
   private boolean matchNearEndTimerStarted = false;
-  private final Timer matchNearEndTimer = new Timer();
 
   public enum RumblePattern {
     NONE(0, XboxController.RumbleType.kBothRumble, true, true),
     BLIP(0.25, XboxController.RumbleType.kBothRumble, true, true),
     SHORT(0.5, XboxController.RumbleType.kBothRumble, true, true),
     MEDIUM(1, XboxController.RumbleType.kBothRumble, true, true),
-    RED_ALERT(2, XboxController.RumbleType.kBothRumble, true, true);
+    RED_ALERT(2, XboxController.RumbleType.kBothRumble, true, true),
+    TAG_ALIGN_LEFT(0.5, XboxController.RumbleType.kLeftRumble, false, true),
+    TAG_ALIGN_RIGHT(0.5, XboxController.RumbleType.kRightRumble, false, true);
 
     public final double seconds;
     public final XboxController.RumbleType rumbleType;

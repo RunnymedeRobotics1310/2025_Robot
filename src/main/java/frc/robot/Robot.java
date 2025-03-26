@@ -5,8 +5,10 @@
 package frc.robot;
 
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.telemetry.Telemetry;
@@ -24,6 +26,11 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
   private double lastDashUpdate = 0;
+
+  private double periodicDisabledTime = 0;
+  private double periodicTeleopTime = 0;
+  private double initDisabledTime = 0;
+  private double initTeleopTime = 0;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -70,10 +77,16 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    this.initDisabledTime = Timer.getFPGATimestamp();
+    SmartDashboard.putNumber("1310/Robot/InitDisabledTime", initDisabledTime);
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    this.periodicDisabledTime = Timer.getFPGATimestamp();
+    SmartDashboard.putNumber("1310/Robot/PeriodicDisabledTime", periodicDisabledTime);
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
@@ -91,18 +104,33 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    initTeleopTime = Timer.getFPGATimestamp();
+    SmartDashboard.putNumber("1310/Robot/InitTeleopTime", initTeleopTime);
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
+      m_autonomousCommand = null;
     }
   }
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    this.periodicTeleopTime = Timer.getFPGATimestamp();
+    double matchTime = DriverStation.getMatchTime();
+
+    // Gimme some stats on this
+    SmartDashboard.putNumber("1310/Robot/MatchTime", matchTime);
+    SmartDashboard.putNumber("1310/Robot/PeriodicTeleopTime", periodicTeleopTime);
+    SmartDashboard.putNumber(
+        "1310/Robot/c-SinceLastDisable", periodicDisabledTime - periodicTeleopTime);
+    SmartDashboard.putNumber("1310/Robot/c-SinceTeleopInit", initTeleopTime - periodicTeleopTime);
+    SmartDashboard.putNumber("1310/Robot/c-MatchTimeCountUp", 135 - matchTime);
+  }
 
   @Override
   public void testInit() {
