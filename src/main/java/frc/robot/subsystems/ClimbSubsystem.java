@@ -57,7 +57,9 @@ public class ClimbSubsystem extends SubsystemBase {
     }
 
     if (isClimbDeployed()) {
-      // LightingSubsystem.startClimbLed();
+      LightingSubsystem.isClimbing = true;
+    } else {
+      LightingSubsystem.isClimbing = false;
     }
   }
 

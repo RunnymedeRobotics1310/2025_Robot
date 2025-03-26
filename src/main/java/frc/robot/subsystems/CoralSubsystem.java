@@ -461,6 +461,12 @@ public class CoralSubsystem extends SubsystemBase {
 
     checkSafety();
 
+    if (isCoralDetected()) {
+      LightingSubsystem.coralInIntake = true;
+    } else {
+      LightingSubsystem.coralInIntake = false;
+    }
+
     SmartDashboard.putNumber("Coral/Digital Elevator Position", getDigitalElevatorEncoder());
     SmartDashboard.putNumber("Coral/Elevator Position", getElevatorEncoder());
     SmartDashboard.putBoolean("Coral/Elevator Upper Limit", isElevatorAtUpperLimit());
