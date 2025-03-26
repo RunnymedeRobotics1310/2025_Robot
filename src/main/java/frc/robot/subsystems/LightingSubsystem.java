@@ -1,49 +1,67 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.BooleanTopic;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-
 public class LightingSubsystem extends SubsystemBase {
 
-  private final BooleanTopic climbStatusTopic;
+  public static boolean isClimbing = false;
+  public static boolean coralInIntake = false;
+  public static boolean isIntaking = false;
 
-  private final AddressableLED ledStrip;
-  private final AddressableLEDBuffer ledBuffer;
+  private static final AddressableLED ledStrip =
+      new AddressableLED(Constants.LightingConstants.LED_STRING_PWM_PORT);
+  private static final AddressableLEDBuffer ledBuffer =
+      new AddressableLEDBuffer(Constants.LightingConstants.LED_STRING_LENGTH);
+  private static final AddressableLEDBuffer ledClimbingBuffer =
+      new AddressableLEDBuffer(Constants.LightingConstants.LED_STRING_LENGTH);
+  private static final AddressableLEDBuffer ledIntakeBuffer =
+      new AddressableLEDBuffer(Constants.LightingConstants.LED_STRING_LENGTH);
 
-  private final LEDPattern rainbowLEDPattrn = LEDPattern.rainbow(255, 128);
-  private final LEDPattern yellowLEDColour = LEDPattern.solid(Color.kYellow);
-
-  private final AddressableLEDBufferView botPoseLEDView;
-  private final AddressableLEDBufferView leftLEDView;
-  private final AddressableLEDBufferView rightLEDView;
+  private static final LEDPattern rainbowLEDPattrn = LEDPattern.rainbow(255, 128);
+  private static final LEDPattern yellowLEDPatern = LEDPattern.solid(Color.kYellow);
+  private static final LEDPattern greenLedPattern = LEDPattern.solid(Color.kGreen);
+  private static final LEDPattern whiteLedPattern = LEDPattern.solid(Color.kWhite);
 
   public LightingSubsystem() {
-    ledStrip = new AddressableLED(Constants.LightingConstants.LED_STRING_PWM_PORT);
-    ledStrip.setLength(60);
-    ledBuffer = new AddressableLEDBuffer(Constants.LightingConstants.LED_STRING_LENGTH);
-
-    final NetworkTable lightingNetworkTable = NetworkTableInstance.getDefault().getTable("lightingNetworkTable");
-    climbStatusTopic = lightingNetworkTable.getBooleanTopic("climbStatusTopic");
-
-    // these values have not been checked
-    botPoseLEDView = ledBuffer.createView(20, 39);
-    leftLEDView = ledBuffer.createView(0, 19);
-    rightLEDView = ledBuffer.createView(40, 59);
+    ledStrip.setLength(Constants.LightingConstants.LED_STRING_LENGTH);
+    ledStrip.setData(ledBuffer);
+    ledStrip.start();
   }
 
   public void periodic() {
-    System.out.println();
+
+    greenLedPattern.applyTo(ledClimbingBuffer);
+
+    if (isClimbing) {
+      rainbowLEDPattrn.applyTo(ledClimbingBuffer);
+    } else if (DriverStation.getMatchTime() > 120 && DriverStation.getMatchTime() < 122) {
+
+    } else if (coralInIntake) {
+      whiteLedPattern.applyTo(ledIntakeBuffer);
+    } else if (isIntaking) {
+      yellowLEDPatern.applyTo(ledIntakeBuffer);
+    }
   }
 
+  //   public static void startClimbLed() {
+  //     rainbowLEDPattrn.applyTo(ledClimbingBuffer);
+  //   }
+
+  //   public static void setCoralInIntakeLed(boolean coralInBot) {
+  //     if (coralInBot) {
+  //       greenLedPattern.applyTo(ledIntakeBuffer);
+  //     }
+  //   }
+
+  //   public static void setIntakingLed(boolean isIntaking) {
+  //     if(isIntaking){
+  //         coralLedPattern.applyTo(ledIntakeBuffer);
+  //     }
+  // }
 }

@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.networktables.BooleanPublisher;
-import edu.wpi.first.networktables.BooleanTopic;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -11,8 +9,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.ClimbConstants;
 
 public class ClimbSubsystem extends SubsystemBase {
-
-  private BooleanPublisher climbStatusPublisher;
 
   private DoubleSolenoid climbPiston =
       new DoubleSolenoid(
@@ -24,7 +20,6 @@ public class ClimbSubsystem extends SubsystemBase {
 
   public ClimbSubsystem() {
     setClimbDeployed(false);
-    
   }
 
   /**
@@ -61,7 +56,9 @@ public class ClimbSubsystem extends SubsystemBase {
       SmartDashboard.putBoolean("Cage in position", isCageInPosition());
     }
 
-    
+    if (isClimbDeployed()) {
+      // LightingSubsystem.startClimbLed();
+    }
   }
 
   private void checkSafety() {

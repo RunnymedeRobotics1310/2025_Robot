@@ -14,7 +14,6 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -195,7 +194,7 @@ public class CoralSubsystem extends SubsystemBase {
      */
     sensorCache.elevatorEncoderSpeed = elevatorEncoder.getVelocity();
     sensorCache.elevatorEncoderPosition = elevatorEncoder.getPosition();
-    
+
     sensorCache.digitalElevatorEncoderPosition = digitalElevatorEncoder.getRaw();
 
     // The elevator encoder position can reset on SparkFlex brown out.  If the
@@ -348,7 +347,7 @@ public class CoralSubsystem extends SubsystemBase {
 
     // Reset the previous value in the sensor cache
     sensorCache.previousElevatorEncoderHeight = encoderValue;
-    setDigitalElevatorEncoder(encoderValue / (163.05/116532));
+    setDigitalElevatorEncoder(encoderValue / (163.05 / 116532));
   }
 
   public void setDigitalElevatorEncoder(double digitalEncoderValue) {
