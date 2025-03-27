@@ -11,10 +11,13 @@ import ca.team1310.swerve.vision.LimelightAwareSwerveDrive;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RunnymedeUtils;
 import frc.robot.telemetry.Telemetry;
@@ -301,6 +304,53 @@ public class SwerveSubsystem extends SubsystemBase {
     speed *= Math.signum(distance);
 
     return speed;
+  }
+
+  public Translation2d computeTranslateVelocity2024(Translation2d translationToTravel, double maxSpeed, double tolerance) {
+
+    double distanceMetres = translationToTravel.getNorm();
+    double verySlowSpeed = 0.15;
+
+    // don't worry about tiny translations
+    if (distanceMetres < tolerance) {
+      return new Translation2d();
+    }
+
+    // safety code
+    if (maxSpeed > Constants.Swerve.TRANSLATION_CONFIG.maxSpeedMPS()) {
+      maxSpeed = Constants.Swerve.TRANSLATION_CONFIG.maxSpeedMPS();
+    }
+
+    // ensure that we have enough room to decelerate
+    double decelDistance  = 1.2;
+    double decelDistRatio = distanceMetres / decelDistance;
+    if (decelDistRatio < 1) {
+      maxSpeed *= decelDistRatio;
+    }
+
+
+    double speed;
+    if (distanceMetres >= decelDistance) {
+      // cruising
+      speed = maxSpeed;
+    }
+    else {
+      // decelerating
+      double pctToGo = distanceMetres / decelDistance;
+      speed = maxSpeed * pctToGo * 1.2;
+    }
+
+    // Confirm speed is not too slow to move
+    if (speed < verySlowSpeed) {
+      speed = verySlowSpeed;
+    }
+
+
+    Rotation2d angle = translationToTravel.getAngle();
+
+    double     xSign = Math.signum(translationToTravel.getX());
+    double     ySign = Math.signum(translationToTravel.getY());
+    return new Translation2d(xSign * speed * Math.abs(angle.getCos()), ySign * speed * Math.abs(angle.getSin()));
   }
 
   public double getClosestReefAngle(double currentX, double currentY) {
