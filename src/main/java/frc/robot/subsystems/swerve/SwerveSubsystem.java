@@ -307,7 +307,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   public Translation2d computeTranslateVelocity2024(
-      Translation2d translationToTravel, double maxSpeed, double tolerance, boolean driveThrough) {
+      Translation2d translationToTravel, double maxSpeed, double tolerance, double decelDistance) {
 
     double distanceMetres = translationToTravel.getNorm();
     double verySlowSpeed = 0.15;
@@ -323,17 +323,14 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     // ensure that we have enough room to decelerate
-    double decelDistance = 1.2;
     double decelDistRatio = distanceMetres / decelDistance;
 
-    if (!driveThrough) {
-      if (decelDistRatio < 1) {
-        maxSpeed *= decelDistRatio;
-      }
+    if (decelDistRatio < 1) {
+      maxSpeed *= decelDistRatio;
     }
 
     double speed;
-    if (distanceMetres >= decelDistance || driveThrough) {
+    if (distanceMetres >= decelDistance) {
       // cruising
       speed = maxSpeed;
     } else {

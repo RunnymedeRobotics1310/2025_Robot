@@ -16,12 +16,21 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
   private final Pose2d allianceLocation;
   private final double maxSpeed;
   private final double targetHeadingDeg;
-  private final boolean driveThrough;
+  private final double decelZoneM;
+  private final double toleranceM;
+  private final double toleranceDeg;
 
   public DriveThroughFieldLocationCommand(
-      SwerveSubsystem swerve, FieldLocation location, double maxSpeed, boolean driveThrough) {
+      SwerveSubsystem swerve,
+      FieldLocation location,
+      double maxSpeed,
+      double decelZoneM,
+      double toleranceM,
+      double toleranceDeg) {
     this.swerve = swerve;
-    this.driveThrough = driveThrough;
+    this.decelZoneM = decelZoneM;
+    this.toleranceM = toleranceM;
+    this.toleranceDeg = toleranceDeg;
 
     if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
       allianceLocation = RunnymedeUtils.getRedAlliancePose(location.pose);
@@ -47,14 +56,9 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
     double xDif = allianceLocation.getX() - currentPose.getX();
     double yDif = allianceLocation.getY() - currentPose.getY();
 
-    //    double hypot = Math.hypot(xDif, yDif);
-    //    double speed = swerve.computeTranslateVelocity(hypot, 1, 0.02);
-    //    double xSpeed = Math.cos(speed / maxSpeed);
-    //    double ySpeed = Math.sin(speed / maxSpeed);
-
     Translation2d totalDif = new Translation2d(xDif, yDif);
     Translation2d totalSpeed =
-        swerve.computeTranslateVelocity2024(totalDif, maxSpeed, 0.02, driveThrough);
+        swerve.computeTranslateVelocity2024(totalDif, maxSpeed, toleranceM, decelZoneM);
     double xSpeed = totalSpeed.getX();
     double ySpeed = totalSpeed.getY();
 
@@ -63,8 +67,9 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
 
   @Override
   public boolean isFinished() {
-    return (SwerveUtils.isCloseEnough(
-        swerve.getPose().getTranslation(), allianceLocation.getTranslation(), 0.20));
+    return SwerveUtils.isCloseEnough(
+            swerve.getPose().getTranslation(), allianceLocation.getTranslation(), 0.20)
+        && Math.abs(swerve.getYaw() - targetHeadingDeg) >= toleranceDeg;
   }
 
   @Override
