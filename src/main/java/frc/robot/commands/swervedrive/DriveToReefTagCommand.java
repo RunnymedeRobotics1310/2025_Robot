@@ -85,9 +85,10 @@ public class DriveToReefTagCommand extends LoggingCommand {
       return true;
     }
 
-    double distanceToReef = swerve.getUltrasonicDistanceM();
+    double distanceToReef = vision.distanceTagToFrontBumper(tagId, isLeftBranch);
+    double txAngle = Math.abs(vision.angleToTarget(tagId, isLeftBranch));
 
-    if (distanceToReef < 0.03) {
+    if (distanceToReef < 0.04 && txAngle < 5 && distanceToReef > -1) {
       log("Finishing - " + distanceToReef + " from reef");
       return true;
     }

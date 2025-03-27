@@ -38,8 +38,12 @@ public class BaseAutoCommand extends SequentialCommandGroup {
     return new DriveToFieldLocationCommand(swerve, location);
   }
 
+  protected Command driveThroughToLocation(FieldLocation location, double speed) {
+    return new DriveThroughFieldLocationCommand(swerve, location, speed, false);
+  }
+
   protected Command driveThroughLocation(FieldLocation location, double speed) {
-    return new DriveThroughFieldLocationCommand(swerve, location, speed);
+    return new DriveThroughFieldLocationCommand(swerve, location, speed, true);
   }
 
   protected Command setCoralPose(CoralPose pose) {
@@ -64,9 +68,14 @@ public class BaseAutoCommand extends SequentialCommandGroup {
         .andThen(setCoralPose(COMPACT));
   }
 
+  public Command scoreL4CoralStop2(FieldLocation location, double speed) {
+    return (driveThroughLocation(location, speed).deadlineFor(setCoralPose(SCORE_L3)))
+        .andThen(approachReef(location))
+        .andThen(plant());
+  }
+
   public Command scoreL4CoralStop(FieldLocation location, double speed) {
-    return driveThroughLocation(location, speed)
-        .raceWith(setCoralPose(SCORE_L3))
+    return (driveThroughToLocation(location, speed).deadlineFor(setCoralPose(SCORE_L3)))
         .andThen(approachReef(location))
         .andThen(plant());
   }
@@ -79,7 +88,22 @@ public class BaseAutoCommand extends SequentialCommandGroup {
         .alongWith(new IntakeCoralCommand(coral, false));
   }
 
-  public Command scoreL4CoralAndIntake(FieldLocation reefLocation, FieldLocation intakeLocation, double speed) {
+  public Command scoreL4CoralAndIntake2(
+      FieldLocation reefLocation, FieldLocation intakeLocation, double speed) {
+    double reefHeading = reefLocation.pose.getRotation().getDegrees() + allianceOffset;
+    double intakeHeading = intakeLocation.pose.getRotation().getDegrees() + allianceOffset;
+
+    return scoreL4CoralStop2(reefLocation, speed)
+        .andThen(new DriveRobotOrientedCommand(swerve, -0.5, 0, reefHeading).withTimeout(0.2))
+        .andThen(
+            new IntakeCoralCommand(coral, false)
+                .deadlineFor(
+                    driveThroughLocation(intakeLocation, speed)
+                        .andThen(new DriveIntoWallCommand(swerve, 0.25, 0, intakeHeading))));
+  }
+
+  public Command scoreL4CoralAndIntake(
+      FieldLocation reefLocation, FieldLocation intakeLocation, double speed) {
     double reefHeading = reefLocation.pose.getRotation().getDegrees() + allianceOffset;
     double intakeHeading = intakeLocation.pose.getRotation().getDegrees() + allianceOffset;
 
@@ -88,11 +112,7 @@ public class BaseAutoCommand extends SequentialCommandGroup {
         .andThen(
             new IntakeCoralCommand(coral, false)
                 .deadlineFor(
-//                    driveThroughLocation(FieldLocation.funfun, 1.5)
-//                        .andThen(
-                                driveThroughLocation(intakeLocation, speed)
-//                        .andThen(new NullDriveCommand(swerve))
-                            .andThen(new DriveIntoWallCommand(swerve, 0.25, 0, intakeHeading))
-                        ));
+                    driveThroughToLocation(intakeLocation, speed)
+                        .andThen(new DriveIntoWallCommand(swerve, 0.25, 0, intakeHeading))));
   }
 }

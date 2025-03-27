@@ -16,10 +16,12 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
   private final Pose2d allianceLocation;
   private final double maxSpeed;
   private final double targetHeadingDeg;
+  private final boolean driveThrough;
 
   public DriveThroughFieldLocationCommand(
-      SwerveSubsystem swerve, FieldLocation location, double maxSpeed) {
+      SwerveSubsystem swerve, FieldLocation location, double maxSpeed, boolean driveThrough) {
     this.swerve = swerve;
+    this.driveThrough = driveThrough;
 
     if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
       allianceLocation = RunnymedeUtils.getRedAlliancePose(location.pose);
@@ -45,13 +47,14 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
     double xDif = allianceLocation.getX() - currentPose.getX();
     double yDif = allianceLocation.getY() - currentPose.getY();
 
-//    double hypot = Math.hypot(xDif, yDif);
-//    double speed = swerve.computeTranslateVelocity(hypot, 1, 0.02);
-//    double xSpeed = Math.cos(speed / maxSpeed);
-//    double ySpeed = Math.sin(speed / maxSpeed);
+    //    double hypot = Math.hypot(xDif, yDif);
+    //    double speed = swerve.computeTranslateVelocity(hypot, 1, 0.02);
+    //    double xSpeed = Math.cos(speed / maxSpeed);
+    //    double ySpeed = Math.sin(speed / maxSpeed);
 
     Translation2d totalDif = new Translation2d(xDif, yDif);
-    Translation2d totalSpeed = swerve.computeTranslateVelocity2024(totalDif, maxSpeed, 0.02);
+    Translation2d totalSpeed =
+        swerve.computeTranslateVelocity2024(totalDif, maxSpeed, 0.02, driveThrough);
     double xSpeed = totalSpeed.getX();
     double ySpeed = totalSpeed.getY();
 

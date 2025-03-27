@@ -306,7 +306,8 @@ public class SwerveSubsystem extends SubsystemBase {
     return speed;
   }
 
-  public Translation2d computeTranslateVelocity2024(Translation2d translationToTravel, double maxSpeed, double tolerance) {
+  public Translation2d computeTranslateVelocity2024(
+      Translation2d translationToTravel, double maxSpeed, double tolerance, boolean driveThrough) {
 
     double distanceMetres = translationToTravel.getNorm();
     double verySlowSpeed = 0.15;
@@ -322,19 +323,20 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     // ensure that we have enough room to decelerate
-    double decelDistance  = 1.2;
+    double decelDistance = 1.2;
     double decelDistRatio = distanceMetres / decelDistance;
-    if (decelDistRatio < 1) {
-      maxSpeed *= decelDistRatio;
-    }
 
+    if (!driveThrough) {
+      if (decelDistRatio < 1) {
+        maxSpeed *= decelDistRatio;
+      }
+    }
 
     double speed;
-    if (distanceMetres >= decelDistance) {
+    if (distanceMetres >= decelDistance || driveThrough) {
       // cruising
       speed = maxSpeed;
-    }
-    else {
+    } else {
       // decelerating
       double pctToGo = distanceMetres / decelDistance;
       speed = maxSpeed * pctToGo * 1.2;
@@ -345,12 +347,12 @@ public class SwerveSubsystem extends SubsystemBase {
       speed = verySlowSpeed;
     }
 
-
     Rotation2d angle = translationToTravel.getAngle();
 
-    double     xSign = Math.signum(translationToTravel.getX());
-    double     ySign = Math.signum(translationToTravel.getY());
-    return new Translation2d(xSign * speed * Math.abs(angle.getCos()), ySign * speed * Math.abs(angle.getSin()));
+    double xSign = Math.signum(translationToTravel.getX());
+    double ySign = Math.signum(translationToTravel.getY());
+    return new Translation2d(
+        xSign * speed * Math.abs(angle.getCos()), ySign * speed * Math.abs(angle.getSin()));
   }
 
   public double getClosestReefAngle(double currentX, double currentY) {

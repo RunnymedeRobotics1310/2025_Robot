@@ -54,6 +54,8 @@ public final class Constants {
 
     public static final String VISION_PRIMARY_LIMELIGHT_NAME = "nikola";
     public static final String VISION_SECONDARY_LIMELIGHT_NAME = "thomas";
+
+    public static final double LIMELIGHT_OFFSET_FROM_FRONT_BUMPER = 0.23;
   }
 
   public static final class OiConstants {
@@ -367,8 +369,8 @@ public final class Constants {
     public enum FieldLocation {
       // Generalized Multi Alliance Locations
       PRE_SCORE_LEFT_1(new Pose2d(2.8126, 4.1909, Rotation2d.fromDegrees(0)), 18, 7, true),
-      PRE_SCORE_LEFT_2(new Pose2d(4, 4.8, Rotation2d.fromDegrees(300)), 19, 6, false),
-      PRE_SCORE_LEFT_3(new Pose2d(3.7943, 5.5598, Rotation2d.fromDegrees(300)), 19, 6, true),
+      PRE_SCORE_LEFT_2(new Pose2d(3.33, 5.7, Rotation2d.fromDegrees(300)), 19, 6, false),
+      PRE_SCORE_LEFT_3(new Pose2d(3.62, 5.85, Rotation2d.fromDegrees(300)), 19, 6, true),
       PRE_SCORE_LEFT_4(new Pose2d(5.3843, 5.5598, Rotation2d.fromDegrees(240)), 20, 11, false),
       PRE_SCORE_LEFT_5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240)), 20, 11, true),
       PRE_SCORE_LEFT_6(new Pose2d(6.1660, 4.16, Rotation2d.fromDegrees(180)), 21, 10, false),
