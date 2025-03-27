@@ -29,6 +29,8 @@ public class LightingSubsystem extends SubsystemBase {
 
   private static final LEDPattern rainbowLEDPattrn = LEDPattern.rainbow(255, 128);
   // private static final Distance kLedSpacing = Meters.of(1 / 120.0);
+  // private final LEDPattern m_scrollingRainbow =
+  // m_rainbow.scrollAtAbsoluteSpeed(MetersPerSecond.of(1), kLedSpacing);
   private static final LEDPattern yellowLEDPatern = LEDPattern.solid(Color.kYellow);
   private static final LEDPattern greenLedPattern = LEDPattern.solid(Color.kGreen);
   private static final LEDPattern whiteLedPattern = LEDPattern.solid(Color.kWhite);
