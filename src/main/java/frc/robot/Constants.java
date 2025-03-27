@@ -367,7 +367,7 @@ public final class Constants {
     public enum FieldLocation {
       // Generalized Multi Alliance Locations
       PRE_SCORE_LEFT_1(new Pose2d(2.8126, 4.1909, Rotation2d.fromDegrees(0)), 18, 7, true),
-      PRE_SCORE_LEFT_2(new Pose2d(3.6585, 5.1278, Rotation2d.fromDegrees(300)), 19, 6, false),
+      PRE_SCORE_LEFT_2(new Pose2d(4, 4.8, Rotation2d.fromDegrees(300)), 19, 6, false),
       PRE_SCORE_LEFT_3(new Pose2d(3.7943, 5.5598, Rotation2d.fromDegrees(300)), 19, 6, true),
       PRE_SCORE_LEFT_4(new Pose2d(5.3843, 5.5598, Rotation2d.fromDegrees(240)), 20, 11, false),
       PRE_SCORE_LEFT_5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240)), 20, 11, true),
@@ -383,7 +383,9 @@ public final class Constants {
 
       // Legacy Alliance Specific Locations
       blueRightOuterStation(new Pose2d(1.15, 1.02, Rotation2d.fromDegrees(234)), 12, 2),
-      blueLeftOuterStation(new Pose2d(1.45, 6.73, Rotation2d.fromDegrees(-234)), 13, 1),
+
+      blueLeftOuterStationFromFar(new Pose2d(1.45, 6.73, Rotation2d.fromDegrees(-234)), 13, 1),
+      blueLeftOuterStation(new Pose2d(1.25, 7, Rotation2d.fromDegrees(-234)), 13, 1),
 
       funfun(new Pose2d(3, 6, Rotation2d.fromDegrees(-234)), 12, 2),
 

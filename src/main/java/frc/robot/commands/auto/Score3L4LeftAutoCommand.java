@@ -19,7 +19,7 @@ public class Score3L4LeftAutoCommand extends BaseAutoCommand {
       addCommands(new WaitCommand(delay));
     }
 
-    addCommands(scoreL4CoralAndIntake(PRE_SCORE_LEFT_4, blueLeftOuterStation, 3));
+    addCommands(scoreL4CoralAndIntake(PRE_SCORE_LEFT_4, blueLeftOuterStationFromFar, 3));
 
     addCommands(scoreL4CoralAndIntake(PRE_SCORE_LEFT_2, blueLeftOuterStation, 1.5));
 
