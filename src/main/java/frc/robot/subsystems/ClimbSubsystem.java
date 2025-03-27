@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ClimbConstants;
+import frc.robot.commands.operator.OperatorInput;
 import frc.robot.telemetry.Telemetry;
 
 public class ClimbSubsystem extends SubsystemBase {
@@ -52,6 +53,10 @@ public class ClimbSubsystem extends SubsystemBase {
     checkSafety();
 
     Telemetry.climb.cageDetected = isCageInPosition();
+
+    if (Telemetry.climb.cageDetected) {
+      OperatorInput.setRumblePattern(OperatorInput.RumblePattern.BLIP);
+    }
 
     if (Telemetry.climb.enabled) {
       Telemetry.climb.climbDeployed = isClimbDeployed();
