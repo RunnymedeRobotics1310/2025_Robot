@@ -253,7 +253,7 @@
         "containers": [
           {
             "title": "AutoStart-Left",
-            "x": 384.0,
+            "x": 256.0,
             "y": 0.0,
             "width": 256.0,
             "height": 128.0,
@@ -266,7 +266,7 @@
           },
           {
             "title": "AutoStart-Right",
-            "x": 768.0,
+            "x": 512.0,
             "y": 0.0,
             "width": 256.0,
             "height": 128.0,
@@ -279,7 +279,7 @@
           },
           {
             "title": "ReefTagCommand-L1",
-            "x": 384.0,
+            "x": 256.0,
             "y": 128.0,
             "width": 256.0,
             "height": 128.0,
@@ -292,7 +292,7 @@
           },
           {
             "title": "ReefTagCommand-L2",
-            "x": 384.0,
+            "x": 256.0,
             "y": 256.0,
             "width": 256.0,
             "height": 128.0,
@@ -305,7 +305,7 @@
           },
           {
             "title": "ReefTagCommand-L3",
-            "x": 384.0,
+            "x": 256.0,
             "y": 384.0,
             "width": 256.0,
             "height": 128.0,
@@ -340,6 +340,169 @@
               "topic": "/SmartDashboard/1310/Commands/Intake",
               "period": 0.06,
               "show_type": false
+            }
+          },
+          {
+            "title": "Coral-L2",
+            "x": 0.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/1310/Commands/Coral-L2",
+              "period": 0.06,
+              "show_type": false
+            }
+          },
+          {
+            "title": "Coral-L3",
+            "x": 0.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/1310/Commands/Coral-L3",
+              "period": 0.06,
+              "show_type": false
+            }
+          },
+          {
+            "title": "Coral-L4",
+            "x": 0.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/1310/Commands/Coral-L4",
+              "period": 0.06,
+              "show_type": false
+            }
+          },
+          {
+            "title": "ReefTagCommand-L4",
+            "x": 256.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/1310/Commands/ReefTagCommand-L4",
+              "period": 0.06,
+              "show_type": false
+            }
+          },
+          {
+            "title": "ReefTagCommand-R1",
+            "x": 512.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/1310/Commands/ReefTagCommand-R1",
+              "period": 0.06,
+              "show_type": false
+            }
+          },
+          {
+            "title": "ReefTagCommand-R2",
+            "x": 512.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/1310/Commands/ReefTagCommand-R2",
+              "period": 0.06,
+              "show_type": false
+            }
+          },
+          {
+            "title": "ReefTagCommand-R3",
+            "x": 512.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/1310/Commands/ReefTagCommand-R3",
+              "period": 0.06,
+              "show_type": false
+            }
+          },
+          {
+            "title": "ReefTagCommand-R4",
+            "x": 512.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/1310/Commands/ReefTagCommand-R4",
+              "period": 0.06,
+              "show_type": false
+            }
+          },
+          {
+            "title": "limelight-nikola",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 512.0,
+            "height": 384.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/limelight-nikola",
+              "period": 0.06,
+              "rotation_turns": 0
+            }
+          },
+          {
+            "title": "limelight-thomas",
+            "x": 1024.0,
+            "y": 384.0,
+            "width": 512.0,
+            "height": 384.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/limelight-thomas",
+              "period": 0.06,
+              "rotation_turns": 0
+            }
+          },
+          {
+            "title": "Field",
+            "x": 768.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 640.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/SmartDashboard/Field",
+              "period": 0.06,
+              "field_game": "Reefscape",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": -90.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295
+            }
+          },
+          {
+            "title": "Gyro",
+            "x": 768.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Gyro",
+            "properties": {
+              "topic": "/SmartDashboard/1310/Gyro",
+              "period": 0.06,
+              "counter_clockwise_positive": false
             }
           }
         ]
