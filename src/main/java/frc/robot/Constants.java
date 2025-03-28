@@ -383,6 +383,9 @@ public final class Constants {
       PRE_INTAKE_CENTRE_LEFT_STATION(new Pose2d(1.139, 7.000, Rotation2d.fromDegrees(126)), 13, 1),
       PRE_INTAKE_CENTRE_RIGHT_STATION(new Pose2d(1.139, 1.052, Rotation2d.fromDegrees(234)), 12, 2),
 
+      AUTO_START_LEFT(new Pose2d(7, 5.81, Rotation2d.fromDegrees(180))),
+      AUTO_START_RIGHT(new Pose2d(7, 2.242, Rotation2d.fromDegrees(180))),
+
       // Legacy Alliance Specific Locations
       blueRightOuterStation(new Pose2d(1.15, 1.02, Rotation2d.fromDegrees(234)), 12, 2),
 
