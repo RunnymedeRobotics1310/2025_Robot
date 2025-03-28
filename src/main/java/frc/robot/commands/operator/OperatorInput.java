@@ -455,9 +455,7 @@ public class OperatorInput extends SubsystemBase {
       matchNearEndTimerStarted = true;
     }
 
-    if (DriverStation.isTeleop()) {
-      rumbleUpdate();
-    }
+    rumbleUpdate();
   }
 
   public enum Stick {
@@ -486,7 +484,9 @@ public class OperatorInput extends SubsystemBase {
     double rumbleAmount = 1.0;
 
     // stop after rumble duration seconds
-    if (time > currentRumblePattern.seconds || DriverStation.isDisabled()) {
+    if (time > currentRumblePattern.seconds
+        || DriverStation.isDisabled()
+        || !DriverStation.isTeleop()) {
       currentRumblePattern = RumblePattern.NONE;
       rumbleTimer.stop();
       rumbleAmount = 0.0;
