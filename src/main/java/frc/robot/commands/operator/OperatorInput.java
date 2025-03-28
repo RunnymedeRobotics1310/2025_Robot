@@ -265,14 +265,22 @@ public class OperatorInput extends SubsystemBase {
         new MoveToCoralPoseCommand(CoralPose.COMPACT, coral)
             .alongWith(
                 new DriveThroughFieldLocationCommand(
-                        swerve, Constants.AutoConstants.FieldLocation.AUTO_START_LEFT, 1.5, false)
+                        swerve,
+                        Constants.AutoConstants.FieldLocation.AUTO_START_LEFT,
+                        1,
+                        false,
+                        0.01)
                     .andThen(new NullDriveCommand(swerve))));
     SmartDashboard.putData(
         "1310/Commands/AutoStart-Right",
         new MoveToCoralPoseCommand(CoralPose.COMPACT, coral)
             .alongWith(
                 new DriveThroughFieldLocationCommand(
-                        swerve, Constants.AutoConstants.FieldLocation.AUTO_START_RIGHT, 1.5, false)
+                        swerve,
+                        Constants.AutoConstants.FieldLocation.AUTO_START_RIGHT,
+                        1,
+                        false,
+                        0.01)
                     .andThen(new NullDriveCommand(swerve))));
 
     // Coral Commands
