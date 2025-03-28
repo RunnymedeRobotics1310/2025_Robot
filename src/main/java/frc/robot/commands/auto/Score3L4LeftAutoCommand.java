@@ -15,13 +15,14 @@ public class Score3L4LeftAutoCommand extends BaseAutoCommand {
     super(swerve, vision, coral);
 
     addCommands(new SetAllianceGyroCommand(swerve, 180));
-    addCommands(new WaitCommand(delay));
+    if (delay > 0) {
+      addCommands(new WaitCommand(delay));
+    }
 
-    addCommands(scoreL4CoralAndIntake(PRE_SCORE_LEFT_4, blueLeftOuterStation));
+    addCommands(scoreL4CoralAndIntake(PRE_SCORE_LEFT_4, blueLeftOuterStationFromFar, 3));
 
-    addCommands(scoreL4CoralAndIntake(PRE_SCORE_LEFT_2, blueLeftOuterStation));
+    addCommands(scoreL4CoralAndIntake2(PRE_SCORE_LEFT_2, blueLeftOuterStation, 1.5));
 
-    addCommands(scoreL4CoralAndIntake(PRE_SCORE_LEFT_3, blueLeftOuterStation));
-
+    addCommands(scoreL4CoralStop2(PRE_SCORE_LEFT_3, 1.5));
   }
 }

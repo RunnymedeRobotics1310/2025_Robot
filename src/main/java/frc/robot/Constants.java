@@ -54,6 +54,8 @@ public final class Constants {
 
     public static final String VISION_PRIMARY_LIMELIGHT_NAME = "nikola";
     public static final String VISION_SECONDARY_LIMELIGHT_NAME = "thomas";
+
+    public static final double LIMELIGHT_OFFSET_FROM_FRONT_BUMPER = 0.23;
   }
 
   public static final class OiConstants {
@@ -367,9 +369,9 @@ public final class Constants {
     public enum FieldLocation {
       // Generalized Multi Alliance Locations
       PRE_SCORE_LEFT_1(new Pose2d(2.8126, 4.1909, Rotation2d.fromDegrees(0)), 18, 7, true),
-      PRE_SCORE_LEFT_2(new Pose2d(3.2585, 5.8278, Rotation2d.fromDegrees(300)), 19, 6, false),
-      PRE_SCORE_LEFT_3(new Pose2d(3.7943, 5.5598, Rotation2d.fromDegrees(300)), 19, 6, true),
-      PRE_SCORE_LEFT_4(new Pose2d(5.1843, 5.5598, Rotation2d.fromDegrees(240)), 20, 11, false),
+      PRE_SCORE_LEFT_2(new Pose2d(3.33, 5.7, Rotation2d.fromDegrees(300)), 19, 6, false),
+      PRE_SCORE_LEFT_3(new Pose2d(3.62, 5.85, Rotation2d.fromDegrees(300)), 19, 6, true),
+      PRE_SCORE_LEFT_4(new Pose2d(5.3843, 5.5598, Rotation2d.fromDegrees(240)), 20, 11, false),
       PRE_SCORE_LEFT_5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240)), 20, 11, true),
       PRE_SCORE_LEFT_6(new Pose2d(6.1660, 4.16, Rotation2d.fromDegrees(180)), 21, 10, false),
       PRE_SCORE_RIGHT_1(new Pose2d(2.8126, 3.8609, Rotation2d.fromDegrees(0)), 18, 7, false),
@@ -381,9 +383,14 @@ public final class Constants {
       PRE_INTAKE_CENTRE_LEFT_STATION(new Pose2d(1.139, 7.000, Rotation2d.fromDegrees(126)), 13, 1),
       PRE_INTAKE_CENTRE_RIGHT_STATION(new Pose2d(1.139, 1.052, Rotation2d.fromDegrees(234)), 12, 2),
 
+      AUTO_START_LEFT(new Pose2d(7, 5.81, Rotation2d.fromDegrees(180))),
+      AUTO_START_RIGHT(new Pose2d(7, 2.242, Rotation2d.fromDegrees(180))),
+
       // Legacy Alliance Specific Locations
       blueRightOuterStation(new Pose2d(1.15, 1.02, Rotation2d.fromDegrees(234)), 12, 2),
-      blueLeftOuterStation(new Pose2d(1.15, 7.03, Rotation2d.fromDegrees(-234)), 13, 1),
+
+      blueLeftOuterStationFromFar(new Pose2d(1.45, 6.73, Rotation2d.fromDegrees(-234)), 13, 1),
+      blueLeftOuterStation(new Pose2d(1.02, 6.93, Rotation2d.fromDegrees(-234)), 13, 1),
 
       // Reef Score Locations (Lettered as seen in manual - counter-clockwise starting from
       // close-left)
@@ -521,11 +528,12 @@ public final class Constants {
     public static final double CORAL_OUTAKE_SLOW_SPEED = -0.25;
     public static final double CORAL_EJECT_SPEED = 0.7;
     public static final double PLANT_ROTATIONS = 30;
+    public static final double POST_SHOT_WAIT_TIME = 0.1;
 
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
       COMPACT(0),
-      CLOSE_INTAKE(28.5),
+      CLOSE_INTAKE(30),
       FAR_INTAKE(19.4),
       LEVEL_1(0),
       LEVEL_2(0),

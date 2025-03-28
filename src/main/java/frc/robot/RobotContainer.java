@@ -54,6 +54,8 @@ public class RobotContainer {
     // Configure the button bindings - pass in all subsystems
     operatorInput.configureButtonBindings(
         swerveDriveSubsystem, coralSubsystem, pneumaticsSubsystem, climbSubsystem, visionSubsystem);
+    operatorInput.configureDashboardBindings(
+        swerveDriveSubsystem, coralSubsystem, pneumaticsSubsystem, climbSubsystem, visionSubsystem);
 
     operatorInput.initAutoSelectors();
   }

@@ -20,8 +20,7 @@ import frc.robot.commands.climb.ClimbCommand;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.pneumatics.ToggleCompressorCommand;
-import frc.robot.commands.swervedrive.DriveToVisibleTagCommand;
-import frc.robot.commands.swervedrive.SetAllianceGyroCommand;
+import frc.robot.commands.swervedrive.*;
 import frc.robot.commands.test.SystemTestCommand;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
@@ -143,9 +142,8 @@ public class OperatorInput extends SubsystemBase {
         .onTrue(new SetAllianceGyroCommand(driveSubsystem, 0));
 
     // Set Yaw
-    // TODO: Remove!  Practice Field Only!
     new Trigger(() -> operatorController.getBackButton())
-        .onTrue(new SetAllianceGyroCommand(driveSubsystem, -60));
+        .onTrue(new SetAllianceGyroCommand(driveSubsystem, 180));
 
     // Compact (X button)
     new Trigger(() -> driverController.getXButton() || operatorController.getXButton())
@@ -216,6 +214,86 @@ public class OperatorInput extends SubsystemBase {
     // coral)));
   }
 
+  public void configureDashboardBindings(
+      SwerveSubsystem driveSubsystem,
+      CoralSubsystem coralSubsystem,
+      PneumaticsSubsystem pneumaticsSubsystem,
+      ClimbSubsystem climbSubsystem,
+      LimelightVisionSubsystem visionSubsystem) {
+
+    // Drive To Reef Buttons
+    SmartDashboard.putData(
+        "1310/Commands/ReefTagCommand-L1",
+        new DriveToReefTagCommand(
+            swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_1));
+    SmartDashboard.putData(
+        "1310/Commands/ReefTagCommand-L2",
+        new DriveToReefTagCommand(
+            swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_2));
+    SmartDashboard.putData(
+        "1310/Commands/ReefTagCommand-L3",
+        new DriveToReefTagCommand(
+            swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_3));
+    SmartDashboard.putData(
+        "1310/Commands/ReefTagCommand-L4",
+        new DriveToReefTagCommand(
+            swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_4));
+    SmartDashboard.putData(
+        "1310/Commands/ReefTagCommand-R1",
+        new DriveToReefTagCommand(
+            swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_1));
+    SmartDashboard.putData(
+        "1310/Commands/ReefTagCommand-R2",
+        new DriveToReefTagCommand(
+            swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_2));
+    SmartDashboard.putData(
+        "1310/Commands/ReefTagCommand-R3",
+        new DriveToReefTagCommand(
+            swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_3));
+    SmartDashboard.putData(
+        "1310/Commands/ReefTagCommand-R4",
+        new DriveToReefTagCommand(
+            swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_4));
+
+    // Auto Start poses
+    SmartDashboard.putData(
+        "1310/Commands/AutoStart-Left",
+        new MoveToCoralPoseCommand(CoralPose.COMPACT, coral)
+            .alongWith(
+                new DriveThroughFieldLocationCommand(
+                        swerve,
+                        Constants.AutoConstants.FieldLocation.AUTO_START_LEFT,
+                        1,
+                        false,
+                        0.02,
+                        0.6)
+                    .andThen(new NullDriveCommand(swerve).withTimeout(0.1))));
+    SmartDashboard.putData(
+        "1310/Commands/AutoStart-Right",
+        new MoveToCoralPoseCommand(CoralPose.COMPACT, coral)
+            .alongWith(
+                new DriveThroughFieldLocationCommand(
+                        swerve,
+                        Constants.AutoConstants.FieldLocation.AUTO_START_RIGHT,
+                        1,
+                        false,
+                        0.02,
+                        0.6)
+                    .andThen(new NullDriveCommand(swerve).withTimeout(0.1))));
+
+    // Coral Commands
+    SmartDashboard.putData(
+        "1310/Commands/Coral-Intake", new IntakeCoralCommand(coralSubsystem, false));
+    SmartDashboard.putData(
+        "1310/Commands/Coral-Compact", new MoveToCoralPoseCommand(CoralPose.COMPACT, coral));
+    SmartDashboard.putData(
+        "1310/Commands/Coral-L2", new MoveToCoralPoseCommand(CoralPose.SCORE_L2, coral));
+    SmartDashboard.putData(
+        "1310/Commands/Coral-L3", new MoveToCoralPoseCommand(CoralPose.SCORE_L3, coral));
+    SmartDashboard.putData(
+        "1310/Commands/Coral-L4", new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coral));
+  }
+
   /*
    * Cancel Command support
    * Do not end the command while the button is pressed
@@ -227,6 +305,10 @@ public class OperatorInput extends SubsystemBase {
 
   public boolean isZeroGyro() {
     return driverController.getBackButton();
+  }
+
+  public boolean is180Gyro() {
+    return operatorController.getBackButton();
   }
 
   /*
@@ -400,7 +482,9 @@ public class OperatorInput extends SubsystemBase {
     double rumbleAmount = 1.0;
 
     // stop after rumble duration seconds
-    if (time > currentRumblePattern.seconds) {
+    if (time > currentRumblePattern.seconds
+        || DriverStation.isDisabled()
+        || !DriverStation.isTeleop()) {
       currentRumblePattern = RumblePattern.NONE;
       rumbleTimer.stop();
       rumbleAmount = 0.0;

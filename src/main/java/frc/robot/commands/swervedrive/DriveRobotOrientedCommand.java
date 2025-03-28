@@ -21,6 +21,14 @@ public class DriveRobotOrientedCommand extends LoggingCommand {
     addRequirements(swerve);
   }
 
+  public DriveRobotOrientedCommand(SwerveSubsystem swerve, double x, double y) {
+    this.swerve = swerve;
+    this.x = x;
+    this.y = y;
+    this.heading = swerve.getYaw();
+    addRequirements(swerve);
+  }
+
   @Override
   public void initialize() {
     logCommandStart();
