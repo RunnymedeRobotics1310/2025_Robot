@@ -269,8 +269,8 @@ public class OperatorInput extends SubsystemBase {
                         Constants.AutoConstants.FieldLocation.AUTO_START_LEFT,
                         1,
                         false,
-                        0.01)
-                    .andThen(new NullDriveCommand(swerve))));
+                        0.02)
+                    .andThen(new NullDriveCommand(swerve).withTimeout(0.1))));
     SmartDashboard.putData(
         "1310/Commands/AutoStart-Right",
         new MoveToCoralPoseCommand(CoralPose.COMPACT, coral)
@@ -280,8 +280,8 @@ public class OperatorInput extends SubsystemBase {
                         Constants.AutoConstants.FieldLocation.AUTO_START_RIGHT,
                         1,
                         false,
-                        0.01)
-                    .andThen(new NullDriveCommand(swerve))));
+                        0.02)
+                    .andThen(new NullDriveCommand(swerve).withTimeout(0.1))));
 
     // Coral Commands
     SmartDashboard.putData(
@@ -455,7 +455,9 @@ public class OperatorInput extends SubsystemBase {
       matchNearEndTimerStarted = true;
     }
 
-    rumbleUpdate();
+    if (DriverStation.isTeleop()) {
+      rumbleUpdate();
+    }
   }
 
   public enum Stick {
