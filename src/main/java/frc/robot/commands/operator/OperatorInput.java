@@ -225,7 +225,7 @@ public class OperatorInput extends SubsystemBase {
       ClimbSubsystem climbSubsystem,
       LimelightVisionSubsystem visionSubsystem) {
 
-    // Add some buttons to the dashboard
+    // Drive To Reef Buttons
     SmartDashboard.putData(
         "1310/Commands/ReefTagCommand-L1",
         new DriveToReefTagCommand(
@@ -238,6 +238,28 @@ public class OperatorInput extends SubsystemBase {
         "1310/Commands/ReefTagCommand-L3",
         new DriveToReefTagCommand(
             swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_3));
+    SmartDashboard.putData(
+        "1310/Commands/ReefTagCommand-L4",
+        new DriveToReefTagCommand(
+            swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_4));
+    SmartDashboard.putData(
+        "1310/Commands/ReefTagCommand-R1",
+        new DriveToReefTagCommand(
+            swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_1));
+    SmartDashboard.putData(
+        "1310/Commands/ReefTagCommand-R2",
+        new DriveToReefTagCommand(
+            swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_2));
+    SmartDashboard.putData(
+        "1310/Commands/ReefTagCommand-R3",
+        new DriveToReefTagCommand(
+            swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_3));
+    SmartDashboard.putData(
+        "1310/Commands/ReefTagCommand-R4",
+        new DriveToReefTagCommand(
+            swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_4));
+
+    // Auto Start poses
     SmartDashboard.putData(
         "1310/Commands/AutoStart-Left",
         new MoveToCoralPoseCommand(CoralPose.COMPACT, coral)
@@ -252,9 +274,18 @@ public class OperatorInput extends SubsystemBase {
                 new DriveThroughFieldLocationCommand(
                         swerve, Constants.AutoConstants.FieldLocation.AUTO_START_RIGHT, 1.5, false)
                     .andThen(new NullDriveCommand(swerve))));
-    SmartDashboard.putData("1310/Commands/Intake", new IntakeCoralCommand(coralSubsystem, false));
+
+    // Coral Commands
     SmartDashboard.putData(
-        "1310/Commands/Compact", new MoveToCoralPoseCommand(CoralPose.COMPACT, coral));
+        "1310/Commands/Coral-Intake", new IntakeCoralCommand(coralSubsystem, false));
+    SmartDashboard.putData(
+        "1310/Commands/Coral-Compact", new MoveToCoralPoseCommand(CoralPose.COMPACT, coral));
+    SmartDashboard.putData(
+        "1310/Commands/Coral-L2", new MoveToCoralPoseCommand(CoralPose.SCORE_L2, coral));
+    SmartDashboard.putData(
+        "1310/Commands/Coral-L3", new MoveToCoralPoseCommand(CoralPose.SCORE_L3, coral));
+    SmartDashboard.putData(
+        "1310/Commands/Coral-L4", new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coral));
   }
 
   /*
