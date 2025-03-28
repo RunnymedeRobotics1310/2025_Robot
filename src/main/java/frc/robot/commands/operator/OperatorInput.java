@@ -486,7 +486,7 @@ public class OperatorInput extends SubsystemBase {
     double rumbleAmount = 1.0;
 
     // stop after rumble duration seconds
-    if (time > currentRumblePattern.seconds) {
+    if (time > currentRumblePattern.seconds || DriverStation.isDisabled()) {
       currentRumblePattern = RumblePattern.NONE;
       rumbleTimer.stop();
       rumbleAmount = 0.0;
