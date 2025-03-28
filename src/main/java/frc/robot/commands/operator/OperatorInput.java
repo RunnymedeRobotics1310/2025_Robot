@@ -181,7 +181,7 @@ public class OperatorInput extends SubsystemBase {
      * Coral Intake Buttons
      */
     new Trigger(() -> isAlignLeftStation() || isAlignRightStation())
-        .onTrue(new IntakeCoralCommand(coralSubsystem, false));
+        .onTrue(new IntakeCoralCommand(coralSubsystem, false, true, swerve, vision, this));
 
     new Trigger(() -> driverController.getYButton())
         .onTrue(new IntakeCoralCommand(coralSubsystem, true));
