@@ -98,7 +98,7 @@ public class BaseAutoCommand extends SequentialCommandGroup {
         .andThen(
             new IntakeCoralCommand(coral, false)
                 .deadlineFor(
-                    driveThroughLocation(intakeLocation, speed)
+                    driveThroughToLocation(intakeLocation, speed)
                         .andThen(new DriveIntoWallCommand(swerve, 0.25, 0, intakeHeading))));
   }
 

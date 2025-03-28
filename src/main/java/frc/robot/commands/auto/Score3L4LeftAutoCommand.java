@@ -23,6 +23,6 @@ public class Score3L4LeftAutoCommand extends BaseAutoCommand {
 
     addCommands(scoreL4CoralAndIntake2(PRE_SCORE_LEFT_2, blueLeftOuterStation, 1.5));
 
-    addCommands(scoreL4CoralAndIntake2(PRE_SCORE_LEFT_3, blueLeftOuterStation, 1.5));
+    addCommands(scoreL4CoralStop2(PRE_SCORE_LEFT_3, 1.5));
   }
 }
