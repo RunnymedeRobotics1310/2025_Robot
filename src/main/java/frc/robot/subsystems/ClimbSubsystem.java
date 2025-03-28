@@ -56,11 +56,8 @@ public class ClimbSubsystem extends SubsystemBase {
       SmartDashboard.putBoolean("Cage in position", isCageInPosition());
     }
 
-    if (isClimbDeployed()) {
-      LightingSubsystem.isClimbing = true;
-    } else {
-      LightingSubsystem.isClimbing = false;
-    }
+    LightingSubsystem.isClimbDeployed = isClimbDeployed();
+    LightingSubsystem.isCageInPosition = isCageInPosition();
   }
 
   private void checkSafety() {
