@@ -20,8 +20,7 @@ import frc.robot.commands.climb.ClimbCommand;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.pneumatics.ToggleCompressorCommand;
-import frc.robot.commands.swervedrive.DriveToVisibleTagCommand;
-import frc.robot.commands.swervedrive.SetAllianceGyroCommand;
+import frc.robot.commands.swervedrive.*;
 import frc.robot.commands.test.SystemTestCommand;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
@@ -143,9 +142,8 @@ public class OperatorInput extends SubsystemBase {
         .onTrue(new SetAllianceGyroCommand(driveSubsystem, 0));
 
     // Set Yaw
-    // TODO: Remove!  Practice Field Only!
     new Trigger(() -> operatorController.getBackButton())
-        .onTrue(new SetAllianceGyroCommand(driveSubsystem, -60));
+        .onTrue(new SetAllianceGyroCommand(driveSubsystem, 180));
 
     // Compact (X button)
     new Trigger(() -> driverController.getXButton() || operatorController.getXButton())
@@ -206,14 +204,64 @@ public class OperatorInput extends SubsystemBase {
 
     new Trigger(this::isToggleCompressor).onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
 
-    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 270))
-        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, true));
+//    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 270))
+//        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, true));
     //                .alongWith(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coral)));
+    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 270))
+            .onTrue(new AlignShootLeaveCommand(swerve, vision, coral, CoralPose.SCORE_L4, true));
 
-    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 90))
-        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, false));
+//    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 90))
+//        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, false));
     //                            .alongWith(new MoveToCoralPoseCommand(CoralPose.SCORE_L4,
     // coral)));
+    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 90))
+            .onTrue(new AlignShootLeaveCommand(swerve, vision, coral, CoralPose.SCORE_L4, false));
+  }
+
+  public void configureDashboardBindings(
+      SwerveSubsystem driveSubsystem,
+      CoralSubsystem coralSubsystem,
+      PneumaticsSubsystem pneumaticsSubsystem,
+      ClimbSubsystem climbSubsystem,
+      LimelightVisionSubsystem visionSubsystem) {
+
+    // Add some buttons to the dashboard
+    SmartDashboard.putData(
+        "1310/SemiAuto/ReefTagCommand-L1",
+        new DriveToReefTagCommand(
+            swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_1));
+    SmartDashboard.putData(
+        "1310/SemiAuto/ReefTagCommand-L2",
+        new DriveToReefTagCommand(
+            swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_2));
+    SmartDashboard.putData(
+        "1310/SemiAuto/ReefTagCommand-L3",
+        new DriveToReefTagCommand(
+            swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_3));
+    SmartDashboard.putData(
+        "1310/SemiAuto/AutoStart-Left",
+        new MoveToCoralPoseCommand(CoralPose.COMPACT, coral)
+            .alongWith(
+                new DriveThroughFieldLocationCommand(
+                        swerve,
+                        Constants.AutoConstants.FieldLocation.AUTO_START_LEFT,
+                        1.5,
+                        1.2,
+                        0.02,
+                        1)
+                    .andThen(new NullDriveCommand(swerve))));
+    SmartDashboard.putData(
+        "1310/SemiAuto/AutoStart-Right",
+        new MoveToCoralPoseCommand(CoralPose.COMPACT, coral)
+            .alongWith(
+                new DriveThroughFieldLocationCommand(
+                        swerve,
+                        Constants.AutoConstants.FieldLocation.AUTO_START_RIGHT,
+                        1.5,
+                        1.2,
+                        0.02,
+                        1)
+                    .andThen(new NullDriveCommand(swerve))));
   }
 
   /*
@@ -227,6 +275,10 @@ public class OperatorInput extends SubsystemBase {
 
   public boolean isZeroGyro() {
     return driverController.getBackButton();
+  }
+
+  public boolean is180Gyro() {
+    return operatorController.getBackButton();
   }
 
   /*

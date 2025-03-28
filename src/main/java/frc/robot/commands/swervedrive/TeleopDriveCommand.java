@@ -67,7 +67,7 @@ public class TeleopDriveCommand extends LoggingCommand {
   // @Override
   @Override
   public void execute() {
-    final boolean isZeroGyro = oi.isZeroGyro();
+    final boolean isZeroGyro = oi.isZeroGyro() || oi.is180Gyro();
 
     // With the driver standing behind the driver station glass, "forward" on the left stick is
     // its y value, but that should convert into positive x movement on the field. The

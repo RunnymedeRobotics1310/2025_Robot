@@ -64,11 +64,13 @@ public class VisionTelemetry {
 
   public double[] nikVisibleTags = new double[0];
   public double nikTx = -1;
+  public double nikTa = -1;
   public double nikDistanceToRobot = -1;
   public double nikDistanceToCam = -1;
 
   public double[] tomVisibleTags = new double[0];
   public double tomTx = -1;
+  public double tomTa = -1;
   public double tomDistanceToRobot = -1;
   public double tomDistanceToCam = -1;
 
@@ -112,11 +114,13 @@ public class VisionTelemetry {
 
       SmartDashboard.putNumberArray(PREFIX + "Vision/nik_visible_tags", nikVisibleTags);
       SmartDashboard.putNumber(PREFIX + "Vision/nik_tx", nikTx);
+      SmartDashboard.putNumber(PREFIX + "Vision/nik_ta", nikTa);
       SmartDashboard.putNumber(PREFIX + "Vision/nik_distanceToRobot", nikDistanceToRobot);
       SmartDashboard.putNumber(PREFIX + "Vision/nik_distanceToCam", nikDistanceToCam);
 
       SmartDashboard.putNumberArray(PREFIX + "Vision/tom_visible_tags", tomVisibleTags);
       SmartDashboard.putNumber(PREFIX + "Vision/tom_tx", tomTx);
+      SmartDashboard.putNumber(PREFIX + "Vision/tom_ta", tomTa);
       SmartDashboard.putNumber(PREFIX + "Vision/tom_distanceToRobot", tomDistanceToRobot);
       SmartDashboard.putNumber(PREFIX + "Vision/tom_distanceToCam", tomDistanceToCam);
     }

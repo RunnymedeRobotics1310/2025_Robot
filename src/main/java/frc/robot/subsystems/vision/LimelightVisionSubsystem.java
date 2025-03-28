@@ -25,14 +25,16 @@ public class LimelightVisionSubsystem extends SubsystemBase {
   public LimelightVisionSubsystem(VisionConfig visionConfig, SwerveSubsystem swerve) {
     this.swerve = swerve;
 
+    Telemetry.vision.telemetryLevel = visionConfig.telemetryLevel();
+
     final NetworkTable nikola =
         NetworkTableInstance.getDefault().getTable("limelight-" + VISION_PRIMARY_LIMELIGHT_NAME);
     final NetworkTable thomas =
         NetworkTableInstance.getDefault().getTable("limelight-" + VISION_SECONDARY_LIMELIGHT_NAME);
 
     // Initialize the NT subscribers for whichever of MT1/2 is used
-    nikolaMegaTag = nikola.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
-    thomasMegaTag = thomas.getDoubleArrayTopic("botpose_orb_wpiblue").subscribe(new double[0]);
+    nikolaMegaTag = nikola.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
+    thomasMegaTag = thomas.getDoubleArrayTopic("botpose_wpiblue").subscribe(new double[0]);
 
     // inputs/configs
     nikola.getEntry("pipeline").setNumber(visionConfig.pipelineAprilTagDetect());
@@ -44,8 +46,8 @@ public class LimelightVisionSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // Pull data from the limelights and update our cache
-    nikolaBotPoseCache.update(nikolaMegaTag.getAtomic());
-    thomasBotPoseCache.update(thomasMegaTag.getAtomic());
+    nikolaBotPoseCache.update(nikolaMegaTag.get());
+    thomasBotPoseCache.update(thomasMegaTag.get());
 
     // Update telemetry
     updateTelemetry();
@@ -89,6 +91,28 @@ public class LimelightVisionSubsystem extends SubsystemBase {
    */
   public int getNumTagsVisible() {
     return (int) nikolaBotPoseCache.getTagCount();
+  }
+
+  /**
+   * Obtain the distance to the front bumper to the tag either nearest to, or targeted if one has
+   * been set by setTargetTag(), to the default limelight (nikola)
+   *
+   * @return the distance to robot centre to the nearest or targeted tag
+   */
+  public double distanceTagToFrontBumper() {
+    return distanceTagToFrontBumper(0, true);
+  }
+
+  /**
+   * Obtain the distance to the front bumper to the tag either nearest to, or targeted if one has
+   * been set by setTargetTag(), to the limelight handling left or right branch.
+   *
+   * @param tagId Tag to use, or 0 if looking for nearest tag
+   * @param leftBranch Left or Right branch?
+   * @return the distance to robot centre to the nearest or targeted tag
+   */
+  public double distanceTagToFrontBumper(int tagId, boolean leftBranch) {
+    return distanceTagToCamera(tagId, leftBranch) - LIMELIGHT_OFFSET_FROM_FRONT_BUMPER;
   }
 
   /**
@@ -238,11 +262,13 @@ public class LimelightVisionSubsystem extends SubsystemBase {
 
       Telemetry.vision.nikVisibleTags = nikolaBotPoseCache.getVisibleTags();
       Telemetry.vision.nikTx = nikolaBotPoseCache.getTagTxnc(0);
+      Telemetry.vision.nikTa = nikolaBotPoseCache.getTagTa(0);
       Telemetry.vision.nikDistanceToRobot = nikolaBotPoseCache.getTagDistToRobot(0);
       Telemetry.vision.nikDistanceToCam = nikolaBotPoseCache.getTagDistToCamera(0);
 
       Telemetry.vision.tomVisibleTags = thomasBotPoseCache.getVisibleTags();
       Telemetry.vision.tomTx = thomasBotPoseCache.getTagTxnc(0);
+      Telemetry.vision.tomTa = thomasBotPoseCache.getTagTa(0);
       Telemetry.vision.tomDistanceToRobot = thomasBotPoseCache.getTagDistToRobot(0);
       Telemetry.vision.tomDistanceToCam = thomasBotPoseCache.getTagDistToCamera(0);
     }

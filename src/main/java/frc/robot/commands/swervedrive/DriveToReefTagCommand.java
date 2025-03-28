@@ -3,6 +3,7 @@ package frc.robot.commands.swervedrive;
 import static frc.robot.Constants.AutoConstants.*;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.FieldConstants.TAGS;
 import frc.robot.RunnymedeUtils;
 import frc.robot.commands.LoggingCommand;
@@ -20,6 +21,8 @@ public class DriveToReefTagCommand extends LoggingCommand {
   private int tagId = -1;
   private int noDataCount = 0;
   private boolean isLeftBranch = true;
+  private double lastDistance = 5000;
+  private double lastDistanceChangeTime = Timer.getFPGATimestamp();
 
   public DriveToReefTagCommand(
       SwerveSubsystem swerve, LimelightVisionSubsystem vision, FieldLocation location) {
@@ -35,6 +38,9 @@ public class DriveToReefTagCommand extends LoggingCommand {
 
     noDataCount = 0;
     isLeftBranch = location.isLeftSide;
+    lastDistance = 5000;
+    lastDistanceChangeTime = Timer.getFPGATimestamp();
+
     if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
       tagId = location.redTagId;
     } else {
@@ -85,12 +91,28 @@ public class DriveToReefTagCommand extends LoggingCommand {
       return true;
     }
 
-    double distanceToReef = swerve.getUltrasonicDistanceM();
+    double distanceToTag = vision.distanceTagToFrontBumper(tagId, isLeftBranch);
+    double currentTime = Timer.getFPGATimestamp();
 
-    if (distanceToReef < 0.03) {
-      log("Finishing - " + distanceToReef + " from reef");
+    if (Math.round((distanceToTag - lastDistance) * 100d) / 100d == 0) {
+      lastDistanceChangeTime = currentTime;
+    }
+
+    double elaspedTimeSinceUpdate = currentTime - lastDistanceChangeTime;
+
+    // Not checking tx because if we're this close, we can't move left/right anyways.  Check > -1 as
+    // it will return that if there's no tag data.  Also have a 2 second timeout if we aren't moving
+    // closer to the tag
+    if (distanceToTag < 0.04 && distanceToTag > -1 || elaspedTimeSinceUpdate > 2) {
+      log(
+          "Finishing: DistanceToTag[ "
+              + distanceToTag
+              + "], TimeSinceLastDistanceChange: ["
+              + elaspedTimeSinceUpdate
+              + "]");
       return true;
     }
+
     return false;
   }
 

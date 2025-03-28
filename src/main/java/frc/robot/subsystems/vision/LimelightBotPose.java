@@ -58,6 +58,17 @@ public class LimelightBotPose {
     this.timestampMicros = botPoseData.timestamp;
   }
 
+  /**
+   * Update the LimelightBotPose with new data
+   *
+   * @param botPoseData new data from the Limelight; never null
+   */
+  public void update(double[] botPoseData) {
+    Objects.requireNonNull(botPoseData, "botPoseData must not be null");
+    this.botPose = botPoseData;
+    this.timestampMicros = 0;
+  }
+
   public Translation2d getTranslation() {
     return new Translation2d(getPoseX(), getPoseY());
   }
@@ -191,7 +202,7 @@ public class LimelightBotPose {
   }
 
   private double getElement(int index) {
-    return getElement(index, Double.MIN_VALUE);
+    return getElement(index, -1310);
   }
 
   private double getElement(int index, double defaultValue) {
@@ -204,7 +215,7 @@ public class LimelightBotPose {
   private double getTagElement(int index, int offset) {
     int indexCalc = OFFSET_TAG_BASE + (index * ELEMENTS_PER_TAG) + offset;
     if (index < 0 || index >= getTagCount() || indexCalc >= botPose.length) {
-      return Double.MIN_VALUE;
+      return -1310;
     }
     return botPose[indexCalc];
   }
