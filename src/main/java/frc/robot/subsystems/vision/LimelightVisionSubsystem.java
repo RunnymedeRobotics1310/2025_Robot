@@ -7,6 +7,7 @@ import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.operator.OperatorInput;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.telemetry.Telemetry;
 
@@ -51,6 +52,9 @@ public class LimelightVisionSubsystem extends SubsystemBase {
 
     // Update telemetry
     updateTelemetry();
+
+    // 1 = Aligned with the left reef, 2 = Aligned with right reef, 0 = Not aligned
+    rumbleOnAlign();
   }
 
   /**
@@ -227,6 +231,17 @@ public class LimelightVisionSubsystem extends SubsystemBase {
   public boolean isTagInView(int tagId, boolean leftBranch) {
     LimelightBotPose botPose = getBotPose(leftBranch);
     return botPose.getTagIndex(tagId) != -1;
+  }
+
+
+  // 1 = Aligned with the left reef, 2 = Aligned with right reef, 0 = Not aligned
+  public void rumbleOnAlign(){
+    if (Math.abs(angleToTarget(0, true)) < 7 && Math.abs(distanceTagToFrontBumper(0, true)) < 0.07){
+      OperatorInput.setRumblePattern(OperatorInput.RumblePattern.TAG_ALIGN_LEFT);
+    }
+    if (Math.abs(angleToTarget(0, false)) < 7 && Math.abs(distanceTagToFrontBumper(0, false)) < 0.07){
+      OperatorInput.setRumblePattern(OperatorInput.RumblePattern.TAG_ALIGN_RIGHT);
+    }
   }
 
   /** Update telemetry with vision data */
