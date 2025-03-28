@@ -204,18 +204,18 @@ public class OperatorInput extends SubsystemBase {
 
     new Trigger(this::isToggleCompressor).onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
 
-//    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 270))
-//        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, true));
+    //    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 270))
+    //        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, true));
     //                .alongWith(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coral)));
     new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 270))
-            .onTrue(new AlignShootLeaveCommand(swerve, vision, coral, CoralPose.SCORE_L4, true));
+        .onTrue(new AlignShootLeaveCommand(swerve, vision, coral, CoralPose.SCORE_L4, true));
 
-//    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 90))
-//        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, false));
+    //    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 90))
+    //        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, false));
     //                            .alongWith(new MoveToCoralPoseCommand(CoralPose.SCORE_L4,
     // coral)));
     new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 90))
-            .onTrue(new AlignShootLeaveCommand(swerve, vision, coral, CoralPose.SCORE_L4, false));
+        .onTrue(new AlignShootLeaveCommand(swerve, vision, coral, CoralPose.SCORE_L4, false));
   }
 
   public void configureDashboardBindings(
@@ -227,41 +227,34 @@ public class OperatorInput extends SubsystemBase {
 
     // Add some buttons to the dashboard
     SmartDashboard.putData(
-        "1310/SemiAuto/ReefTagCommand-L1",
+        "1310/Commands/ReefTagCommand-L1",
         new DriveToReefTagCommand(
             swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_1));
     SmartDashboard.putData(
-        "1310/SemiAuto/ReefTagCommand-L2",
+        "1310/Commands/ReefTagCommand-L2",
         new DriveToReefTagCommand(
             swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_2));
     SmartDashboard.putData(
-        "1310/SemiAuto/ReefTagCommand-L3",
+        "1310/Commands/ReefTagCommand-L3",
         new DriveToReefTagCommand(
             swerve, vision, Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_3));
     SmartDashboard.putData(
-        "1310/SemiAuto/AutoStart-Left",
+        "1310/Commands/AutoStart-Left",
         new MoveToCoralPoseCommand(CoralPose.COMPACT, coral)
             .alongWith(
                 new DriveThroughFieldLocationCommand(
-                        swerve,
-                        Constants.AutoConstants.FieldLocation.AUTO_START_LEFT,
-                        1.5,
-                        1.2,
-                        0.02,
-                        1)
+                        swerve, Constants.AutoConstants.FieldLocation.AUTO_START_LEFT, 1.5, false)
                     .andThen(new NullDriveCommand(swerve))));
     SmartDashboard.putData(
-        "1310/SemiAuto/AutoStart-Right",
+        "1310/Commands/AutoStart-Right",
         new MoveToCoralPoseCommand(CoralPose.COMPACT, coral)
             .alongWith(
                 new DriveThroughFieldLocationCommand(
-                        swerve,
-                        Constants.AutoConstants.FieldLocation.AUTO_START_RIGHT,
-                        1.5,
-                        1.2,
-                        0.02,
-                        1)
+                        swerve, Constants.AutoConstants.FieldLocation.AUTO_START_RIGHT, 1.5, false)
                     .andThen(new NullDriveCommand(swerve))));
+    SmartDashboard.putData("1310/Commands/Intake", new IntakeCoralCommand(coralSubsystem, false));
+    SmartDashboard.putData(
+        "1310/Commands/Compact", new MoveToCoralPoseCommand(CoralPose.COMPACT, coral));
   }
 
   /*

@@ -94,11 +94,13 @@ public class DriveToReefTagCommand extends LoggingCommand {
     double distanceToTag = vision.distanceTagToFrontBumper(tagId, isLeftBranch);
     double currentTime = Timer.getFPGATimestamp();
 
-    if (Math.round((distanceToTag - lastDistance) * 100d) / 100d == 0) {
+    if (Math.abs(Math.round((distanceToTag - lastDistance) * 100d) / 100d) > 0) {
       lastDistanceChangeTime = currentTime;
     }
-
     double elaspedTimeSinceUpdate = currentTime - lastDistanceChangeTime;
+
+    // Update last distance
+    lastDistance = distanceToTag;
 
     // Not checking tx because if we're this close, we can't move left/right anyways.  Check > -1 as
     // it will return that if there's no tag data.  Also have a 2 second timeout if we aren't moving
