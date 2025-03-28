@@ -461,11 +461,9 @@ public class CoralSubsystem extends SubsystemBase {
 
     checkSafety();
 
-    if (isCoralDetected()) {
-      LightingSubsystem.coralInIntake = true;
-    } else {
-      LightingSubsystem.coralInIntake = false;
-    }
+    LightingSubsystem.coralInIntake = isCoralDetected();
+    LightingSubsystem.isIntaking =
+        intakeEncoder.getVelocity() > 0.1 || intakeEncoder.getVelocity() < -0.1;
 
     SmartDashboard.putNumber("Coral/Digital Elevator Position", getDigitalElevatorEncoder());
     SmartDashboard.putNumber("Coral/Elevator Position", getElevatorEncoder());
