@@ -530,6 +530,7 @@ public final class Constants {
     public static final double CORAL_OUTAKE_SLOW_SPEED = -0.25;
     public static final double CORAL_EJECT_SPEED = 0.7;
     public static final double PLANT_ROTATIONS = 30;
+    public static final double POST_SHOT_WAIT_TIME = 0.1;
 
     // Elevator Heights in encoder counts
     public enum ElevatorHeight {
