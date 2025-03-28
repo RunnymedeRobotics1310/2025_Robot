@@ -62,6 +62,7 @@ public class CoralSubsystem extends SubsystemBase {
   private double elevatorSetpoint = 0;
   private double elevatorSpeed = 0;
   private double armSetpoint = 0;
+  private double armSpeed = 0;
   private double intakeSetpoint = 0;
   private double lastKnownElevatorHeight = -1;
 
@@ -608,7 +609,7 @@ public class CoralSubsystem extends SubsystemBase {
     if (armLowerLimit) {
 
       if (armSetpoint < 0) {
-        armSetpoint = 0;
+        armSpeed = 0;
         // Directly set the motor speed, do not call the setter method (recursive loop)
         armMotor.set(0);
       }
@@ -617,7 +618,7 @@ public class CoralSubsystem extends SubsystemBase {
     if (armUpperLimit) {
 
       if (armSetpoint > 0) {
-        armSetpoint = 0;
+        armSpeed = 0;
         // Directly set the motor speed, do not call the setter method (recursive loop)
         armMotor.set(0);
       }
@@ -626,32 +627,42 @@ public class CoralSubsystem extends SubsystemBase {
     // If not at either limit, then limit the arm speed
     if (!(armLowerLimit && armGoingDown) && !(armUpperLimit && armGoingUp)) {
 
+      double previousArmMotorSpeed = armSpeed;
+      this.armSpeed = this.armSetpoint;
+
       // If near the lower limit, then limit the speed
       if (getArmAngle()
           < CoralConstants.ARM_LOWER_LIMIT_POSITION + CoralConstants.ARM_SLOW_ZONE_ANGLE) {
 
-        if (armSetpoint < -CoralConstants.ARM_SLOW_ZONE_SPEED) {
+        if (armSpeed < -CoralConstants.ARM_SLOW_ZONE_SPEED) {
 
-          armSetpoint = -CoralConstants.ARM_SLOW_ZONE_SPEED;
+          armSpeed = -CoralConstants.ARM_SLOW_ZONE_SPEED;
         }
       }
       // If near the upper limit, limit the speed
       else if (getArmAngle()
           > CoralConstants.ARM_UPPER_LIMIT_POSITION - CoralConstants.ARM_SLOW_ZONE_ANGLE) {
 
-        if (armSetpoint > CoralConstants.ARM_SLOW_ZONE_SPEED) {
+        if (armSpeed > CoralConstants.ARM_SLOW_ZONE_SPEED) {
 
-          armSetpoint = CoralConstants.ARM_SLOW_ZONE_SPEED;
+          armSpeed = CoralConstants.ARM_SLOW_ZONE_SPEED;
         }
       } else {
 
         // Limit the elevator speed
-        if (Math.abs(armSetpoint) > CoralConstants.ARM_MAX_SPEED) {
-          armSetpoint = CoralConstants.ARM_MAX_SPEED * Math.signum(armSetpoint);
+        if (Math.abs(armSpeed) > CoralConstants.ARM_MAX_SPEED) {
+          armSpeed = CoralConstants.ARM_MAX_SPEED * Math.signum(armSpeed);
           // Directly set the motor speed, do not call the setter method (recursive loop)
         }
       }
-      armMotor.set(armSetpoint);
+
+      // Rate limit to ELEVATOR_MAX_SLEW speed change per cycle
+      double armDelta = (armSpeed - previousArmMotorSpeed);
+      if (Math.abs(armDelta) > ARM_MAX_SLEW) {
+        armSpeed = previousArmMotorSpeed + Math.signum(armDelta) * ARM_MAX_SLEW;
+      }
+
+      armMotor.set(armSpeed);
     }
 
     /*
