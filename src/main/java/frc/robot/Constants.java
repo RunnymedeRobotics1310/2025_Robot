@@ -390,9 +390,7 @@ public final class Constants {
       blueRightOuterStation(new Pose2d(1.15, 1.02, Rotation2d.fromDegrees(234)), 12, 2),
 
       blueLeftOuterStationFromFar(new Pose2d(1.45, 6.73, Rotation2d.fromDegrees(-234)), 13, 1),
-      blueLeftOuterStation(new Pose2d(1.05, 6.8, Rotation2d.fromDegrees(-234)), 13, 1),
-
-      funfun(new Pose2d(3, 6, Rotation2d.fromDegrees(-234)), 12, 2),
+      blueLeftOuterStation(new Pose2d(1.02, 6.93, Rotation2d.fromDegrees(-234)), 13, 1),
 
       // Reef Score Locations (Lettered as seen in manual - counter-clockwise starting from
       // close-left)

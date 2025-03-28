@@ -17,11 +17,12 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
   private final double maxSpeed;
   private final double targetHeadingDeg;
   private final boolean driveThrough;
-  private double toleranceM;
+  private final double toleranceM;
+  private final double decelDistance;
 
   public DriveThroughFieldLocationCommand(
       SwerveSubsystem swerve, FieldLocation location, double maxSpeed, boolean driveThrough) {
-    this(swerve, location, maxSpeed, driveThrough, 0.20);
+    this(swerve, location, maxSpeed, driveThrough, 0.20, 1.2);
   }
 
   public DriveThroughFieldLocationCommand(
@@ -29,10 +30,12 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
       FieldLocation location,
       double maxSpeed,
       boolean driveThrough,
-      double toleranceM) {
+      double toleranceM,
+      double decelDistance) {
     this.swerve = swerve;
     this.driveThrough = driveThrough;
     this.toleranceM = toleranceM;
+    this.decelDistance = decelDistance;
 
     if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
       allianceLocation = RunnymedeUtils.getRedAlliancePose(location.pose);
@@ -65,7 +68,7 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
 
     Translation2d totalDif = new Translation2d(xDif, yDif);
     Translation2d totalSpeed =
-        swerve.computeTranslateVelocity2024(totalDif, maxSpeed, 0.02, driveThrough);
+        swerve.computeTranslateVelocity2024(totalDif, maxSpeed, 0.02, driveThrough, decelDistance);
     double xSpeed = totalSpeed.getX();
     double ySpeed = totalSpeed.getY();
 

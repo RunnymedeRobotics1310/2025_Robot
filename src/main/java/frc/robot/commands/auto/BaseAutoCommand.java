@@ -38,6 +38,12 @@ public class BaseAutoCommand extends SequentialCommandGroup {
     return new DriveToFieldLocationCommand(swerve, location);
   }
 
+  protected Command driveThroughToLocation(
+      FieldLocation location, double speed, double toleranceM, double decelDistance) {
+    return new DriveThroughFieldLocationCommand(
+        swerve, location, speed, false, toleranceM, decelDistance);
+  }
+
   protected Command driveThroughToLocation(FieldLocation location, double speed) {
     return new DriveThroughFieldLocationCommand(swerve, location, speed, false);
   }
@@ -98,7 +104,7 @@ public class BaseAutoCommand extends SequentialCommandGroup {
         .andThen(
             new IntakeCoralCommand(coral, false)
                 .deadlineFor(
-                    driveThroughToLocation(intakeLocation, speed)
+                    driveThroughToLocation(intakeLocation, speed, 0.2, 0.6)
                         .andThen(new DriveIntoWallCommand(swerve, 0.25, 0, intakeHeading))));
   }
 

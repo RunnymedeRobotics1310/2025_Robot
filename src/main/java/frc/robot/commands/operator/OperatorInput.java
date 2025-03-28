@@ -204,12 +204,12 @@ public class OperatorInput extends SubsystemBase {
 
     new Trigger(this::isToggleCompressor).onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
 
-        new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 270))
-            .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, true));
+    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 270))
+        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, true));
     //                .alongWith(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coral)));
 
-        new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 90))
-            .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, false));
+    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 90))
+        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, false));
     //                            .alongWith(new MoveToCoralPoseCommand(CoralPose.SCORE_L4,
     // coral)));
   }
@@ -265,7 +265,8 @@ public class OperatorInput extends SubsystemBase {
                         Constants.AutoConstants.FieldLocation.AUTO_START_LEFT,
                         1,
                         false,
-                        0.02)
+                        0.02,
+                        0.6)
                     .andThen(new NullDriveCommand(swerve).withTimeout(0.1))));
     SmartDashboard.putData(
         "1310/Commands/AutoStart-Right",
@@ -276,7 +277,8 @@ public class OperatorInput extends SubsystemBase {
                         Constants.AutoConstants.FieldLocation.AUTO_START_RIGHT,
                         1,
                         false,
-                        0.02)
+                        0.02,
+                        0.6)
                     .andThen(new NullDriveCommand(swerve).withTimeout(0.1))));
 
     // Coral Commands

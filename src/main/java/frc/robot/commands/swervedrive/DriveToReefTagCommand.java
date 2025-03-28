@@ -72,9 +72,9 @@ public class DriveToReefTagCommand extends LoggingCommand {
     if (Math.abs(tX) > 20) {
       vX = 0;
     } else {
-      vX = 0.301;
+      vX = 0.501;
     }
-    vY = 0.02 * tX;
+    vY = 0.03 * tX;
 
     double theta = TAGS.getTagById(tagId).pose.getRotation().getDegrees();
     double omega = swerve.computeOmega(theta);
