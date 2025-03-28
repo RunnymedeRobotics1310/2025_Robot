@@ -204,18 +204,14 @@ public class OperatorInput extends SubsystemBase {
 
     new Trigger(this::isToggleCompressor).onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
 
-    //    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 270))
-    //        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, true));
+        new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 270))
+            .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, true));
     //                .alongWith(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coral)));
-    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 270))
-        .onTrue(new AlignShootLeaveCommand(swerve, vision, coral, CoralPose.SCORE_L4, true));
 
-    //    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 90))
-    //        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, false));
+        new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 90))
+            .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, false));
     //                            .alongWith(new MoveToCoralPoseCommand(CoralPose.SCORE_L4,
     // coral)));
-    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 90))
-        .onTrue(new AlignShootLeaveCommand(swerve, vision, coral, CoralPose.SCORE_L4, false));
   }
 
   public void configureDashboardBindings(
