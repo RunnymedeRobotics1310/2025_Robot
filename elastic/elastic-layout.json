@@ -448,7 +448,7 @@
           },
           {
             "title": "limelight-nikola",
-            "x": 1024.0,
+            "x": 1152.0,
             "y": 0.0,
             "width": 512.0,
             "height": 384.0,
@@ -461,7 +461,7 @@
           },
           {
             "title": "limelight-thomas",
-            "x": 1024.0,
+            "x": 1152.0,
             "y": 384.0,
             "width": 512.0,
             "height": 384.0,
@@ -476,8 +476,8 @@
             "title": "Field",
             "x": 768.0,
             "y": 0.0,
-            "width": 256.0,
-            "height": 640.0,
+            "width": 384.0,
+            "height": 768.0,
             "type": "Field",
             "properties": {
               "topic": "/SmartDashboard/Field",
@@ -494,7 +494,7 @@
           },
           {
             "title": "Gyro",
-            "x": 768.0,
+            "x": 512.0,
             "y": 640.0,
             "width": 256.0,
             "height": 256.0,
@@ -503,6 +503,20 @@
               "topic": "/SmartDashboard/1310/Gyro",
               "period": 0.06,
               "counter_clockwise_positive": false
+            }
+          },
+          {
+            "title": "pose_odo",
+            "x": 256.0,
+            "y": 640.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/1310/Swerve/pose_odo",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
             }
           }
         ]
