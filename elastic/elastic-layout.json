@@ -324,7 +324,7 @@
             "height": 128.0,
             "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/1310/Commands/Compact",
+              "topic": "/SmartDashboard/1310/Commands/Coral-Compact",
               "period": 0.06,
               "show_type": false
             }
@@ -337,7 +337,7 @@
             "height": 128.0,
             "type": "Command",
             "properties": {
-              "topic": "/SmartDashboard/1310/Commands/Intake",
+              "topic": "/SmartDashboard/1310/Commands/Coral-Intake",
               "period": 0.06,
               "show_type": false
             }
