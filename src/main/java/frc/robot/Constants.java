@@ -504,7 +504,7 @@ public final class Constants {
     /*
      * Arm Constants
      */
-    public static final double ARM_MAX_SPEED = 0.6;
+    public static final double ARM_MAX_SPEED = 1;
     public static final double ARM_LOWER_LIMIT_POSITION = 0;
     public static final double ARM_UPPER_LIMIT_POSITION = 126;
     public static final double ARM_CAMERA_THRESHOLD_POSITION = 100;
@@ -517,9 +517,10 @@ public final class Constants {
     public static final double ARM_TUNE_MAX_SPEED = 0.2;
     // Pseudo PID and safe zone constants
     public static final double ARM_ANGLE_TOLERANCE = 1.5;
-    public static final double ARM_FAST_SPEED = 0.5;
-    public static final double ARM_SLOW_ZONE_SPEED = 0.15;
-    public static final double ARM_SLOW_ZONE_ANGLE = 10;
+    public static final double ARM_MAX_SLEW = 0.2;
+    public static final double ARM_FAST_SPEED = 1;
+    public static final double ARM_SLOW_ZONE_SPEED = 0.2;
+    public static final double ARM_SLOW_ZONE_ANGLE = 25;
     /*
      * Intake Constants
      */
@@ -551,7 +552,7 @@ public final class Constants {
 
     // Arm Angles in degrees
     public enum ArmAngle {
-      COMPACT(1.5),
+      COMPACT(2),
       CLOSE_INTAKE(40.0),
       FAR_INTAKE(35),
       LEVEL_1(33),
