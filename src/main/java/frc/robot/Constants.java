@@ -511,9 +511,9 @@ public final class Constants {
     // Pseudo PID and safe zone constants
     public static final double ARM_ANGLE_TOLERANCE = 1.5;
     public static final double ARM_MAX_SLEW = 0.2;
-    public static final double ARM_FAST_SPEED = 0.8;
+    public static final double ARM_FAST_SPEED = 1;
     public static final double ARM_SLOW_ZONE_SPEED = 0.2;
-    public static final double ARM_SLOW_ZONE_ANGLE = 20;
+    public static final double ARM_SLOW_ZONE_ANGLE = 25;
     /*
      * Intake Constants
      */
