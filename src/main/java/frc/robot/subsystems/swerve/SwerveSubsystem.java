@@ -14,6 +14,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -34,6 +35,9 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private double ultrasonicVoltage;
   private double ultrasonicDistanceM;
+
+  private final Alert ultrasonicDisconnected =
+      new Alert("Ultrasonic Sensor Disconnected!", Alert.AlertType.kError);
 
   public SwerveSubsystem(SwerveDriveSubsystemConfig config) {
     this.drive =
@@ -59,6 +63,8 @@ public class SwerveSubsystem extends SubsystemBase {
   public void periodic() {
     ultrasonicVoltage = ultrasonicDistanceSensor.getVoltage();
     ultrasonicDistanceM = 1.29338 * ultrasonicVoltage - 0.51803;
+
+    ultrasonicDisconnected.set(ultrasonicVoltage <= 0);
 
     Telemetry.drive.ultrasonicDistanceM = Math.round(ultrasonicDistanceM * 1000d) / 1000d;
     Telemetry.drive.ultrasonicVoltage = ultrasonicVoltage;

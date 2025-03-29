@@ -14,6 +14,7 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -56,6 +57,13 @@ public class CoralSubsystem extends SubsystemBase {
       new SparkFlex(CoralConstants.ARM_MOTOR_CAN_ID, MotorType.kBrushless);
   private final SparkMax intakeMotor =
       new SparkMax(CoralConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
+
+  private final Alert elevatorMotorFault =
+      new Alert("Elevator Motor Fault Detected!", Alert.AlertType.kError);
+  private final Alert armMotorFault =
+      new Alert("Arm Motor Fault Detected!", Alert.AlertType.kError);
+  private final Alert intakeMotorFault =
+      new Alert("Intake Motor Fault Detected!", Alert.AlertType.kError);
 
   private final Encoder digitalElevatorEncoder = new Encoder(0, 1);
 
@@ -491,6 +499,10 @@ public class CoralSubsystem extends SubsystemBase {
 
       Telemetry.coral.intakeSpeed = intakeSetpoint;
     }
+
+    elevatorMotorFault.set(elevatorMotor.hasActiveFault());
+    armMotorFault.set(armMotor.hasActiveFault());
+    intakeMotorFault.set(intakeMotor.hasActiveFault());
   }
 
   private void simulate() {

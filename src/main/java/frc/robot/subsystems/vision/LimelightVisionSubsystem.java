@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.networktables.DoubleArraySubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.operator.OperatorInput;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -20,6 +22,11 @@ public class LimelightVisionSubsystem extends SubsystemBase {
   // These hold the data from the limelights, updated every periodic()
   private final LimelightBotPose nikolaBotPoseCache = new LimelightBotPose();
   private final LimelightBotPose thomasBotPoseCache = new LimelightBotPose();
+
+  private final Alert nikolaDisconnected =
+      new Alert("Limelight [Nikola] Disconnected!", Alert.AlertType.kError);
+  private final Alert thomasDisconnected =
+      new Alert("Limelight [Thomas] Disconnected!", Alert.AlertType.kError);
 
   private final SwerveSubsystem swerve;
 
@@ -47,8 +54,13 @@ public class LimelightVisionSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // Pull data from the limelights and update our cache
-    nikolaBotPoseCache.update(nikolaMegaTag.get());
-    thomasBotPoseCache.update(thomasMegaTag.get());
+    nikolaBotPoseCache.update(nikolaMegaTag.getAtomic());
+    thomasBotPoseCache.update(thomasMegaTag.getAtomic());
+
+    // If limelights are disconnected for more the 0.2s, alert.
+    double currentTime = Timer.getFPGATimestamp();
+    nikolaDisconnected.set(currentTime - nikolaBotPoseCache.getTimestampSeconds() > 0.2);
+    thomasDisconnected.set(currentTime - thomasBotPoseCache.getTimestampSeconds() > 0.2);
 
     // Update telemetry
     updateTelemetry();
@@ -233,13 +245,14 @@ public class LimelightVisionSubsystem extends SubsystemBase {
     return botPose.getTagIndex(tagId) != -1;
   }
 
-
   // 1 = Aligned with the left reef, 2 = Aligned with right reef, 0 = Not aligned
-  public void rumbleOnAlign(){
-    if (Math.abs(angleToTarget(0, true)) < 7 && Math.abs(distanceTagToFrontBumper(0, true)) < 0.07){
+  public void rumbleOnAlign() {
+    if (Math.abs(angleToTarget(0, true)) < 7
+        && Math.abs(distanceTagToFrontBumper(0, true)) < 0.07) {
       OperatorInput.setRumblePattern(OperatorInput.RumblePattern.TAG_ALIGN_LEFT);
     }
-    if (Math.abs(angleToTarget(0, false)) < 7 && Math.abs(distanceTagToFrontBumper(0, false)) < 0.07){
+    if (Math.abs(angleToTarget(0, false)) < 7
+        && Math.abs(distanceTagToFrontBumper(0, false)) < 0.07) {
       OperatorInput.setRumblePattern(OperatorInput.RumblePattern.TAG_ALIGN_RIGHT);
     }
   }
