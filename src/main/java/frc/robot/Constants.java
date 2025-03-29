@@ -512,7 +512,7 @@ public final class Constants {
     // Set the encoder offset so that the encoder reads 0.1 rotations against the hard stop
     // This is so that the angle can go negative instead of back to 360 deg when slightly
     // less than zero. This constant was read off the REV Hardware Client Absolute Encoder page
-    public static final double ARM_ANGLE_ENCODER_OFFSET = 0.3506509;
+    public static final double ARM_ANGLE_ENCODER_OFFSET = 0.5126424;
     // Maximum manual tuning speed
     public static final double ARM_TUNE_MAX_SPEED = 0.2;
     // Pseudo PID and safe zone constants
