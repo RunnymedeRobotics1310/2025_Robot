@@ -31,9 +31,9 @@ public class AlignShootLeaveCommand extends SequentialCommandGroup {
             .withTimeout(0.2)
             .andThen(
                 new WaitCommand(0.2)
-                    //                        .andThen(new
-                    // MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.CLOSE_INTAKE,
-                    // coral))
-                    .andThen(new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.FAR_INTAKE, coral))));
+                    .andThen(
+                        new MoveToCoralPoseCommand(
+                                Constants.CoralConstants.CoralPose.FAR_INTAKE, coral)
+                            .raceWith(new NullDriveCommand(swerve)))));
   }
 }
