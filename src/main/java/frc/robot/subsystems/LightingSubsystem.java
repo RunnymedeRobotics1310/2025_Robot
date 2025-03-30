@@ -28,6 +28,8 @@ public class LightingSubsystem extends SubsystemBase {
       new AddressableLED(Constants.LightingConstants.LED_STRING_PWM_PORT);
   private static final AddressableLEDBuffer ledBuffer =
       new AddressableLEDBuffer(Constants.LightingConstants.LED_STRING_LENGTH);
+
+      //Match buffers
   private static final AddressableLEDBuffer ledClimbingBuffer =
       new AddressableLEDBuffer(Constants.LightingConstants.LED_STRING_LENGTH);
   private static final AddressableLEDBuffer ledIntakeBuffer =
@@ -35,6 +37,12 @@ public class LightingSubsystem extends SubsystemBase {
   private static final AddressableLEDBuffer ledEndgameBuffer =
       new AddressableLEDBuffer(Constants.LightingConstants.LED_STRING_LENGTH);
 
+  //Debuging buffers
+  private static final AddressableLEDBuffer ledUltrasonicBuffer = new AddressableLEDBuffer(
+      Constants.LightingConstants.LED_STRING_LENGTH);
+
+
+  //LED patterns
   private static final LEDPattern rainbowLedPattern = LEDPattern.rainbow(255, 128);
   private static final Distance kLedSpacing = Units.Meters.of(1 / 120.0);
   private final LEDPattern scrollingRainbowLedPattern =
@@ -58,33 +66,36 @@ public class LightingSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    if (isCageInPosition) {
-      rainbowLedPattern.applyTo(ledClimbingBuffer);
-      ledStrip.setData(ledClimbingBuffer);
-    } else if (isClimbDeployed) {
-      scrollingRainbowLedPattern.applyTo(ledClimbingBuffer);
-      ledStrip.setData(ledClimbingBuffer);
-    } else if (DriverStation.getMatchTime() < 20 && DriverStation.getMatchTime() > 17) {
-      flashEndgameLed();
-    } else if (coralInIntake) {
-      whiteLedPattern.applyTo(ledIntakeBuffer);
-      ledStrip.setData(ledIntakeBuffer);
-    } else if (isIntaking) {
-      yellowLEDPatern.applyTo(ledIntakeBuffer);
-      ledStrip.setData(ledIntakeBuffer);
-    } else {
-      if (RunnymedeUtils.getRunnymedeAlliance() == Alliance.Red) {
-        redLedPattern.applyTo(ledBuffer);
-        ledStrip.setData(ledBuffer);
+    if (DriverStation.isEnabled()) {
+      if (isCageInPosition) {
+        rainbowLedPattern.applyTo(ledClimbingBuffer);
+        ledStrip.setData(ledClimbingBuffer);
+      } else if (isClimbDeployed) {
+        scrollingRainbowLedPattern.applyTo(ledClimbingBuffer);
+        ledStrip.setData(ledClimbingBuffer);
+      } else if (DriverStation.getMatchTime() < 20 && DriverStation.getMatchTime() > 17) {
+        flashEndgameLed();
+      } else if (coralInIntake) {
+        whiteLedPattern.applyTo(ledIntakeBuffer);
+        ledStrip.setData(ledIntakeBuffer);
+      } else if (isIntaking) {
+        yellowLEDPatern.applyTo(ledIntakeBuffer);
+        ledStrip.setData(ledIntakeBuffer);
       } else {
-        blueLedPattern.applyTo(ledBuffer);
-        ledStrip.setData(ledBuffer);
+        if (RunnymedeUtils.getRunnymedeAlliance() == Alliance.Red) {
+          redLedPattern.applyTo(ledBuffer);
+          ledStrip.setData(ledBuffer);
+        } else {
+          blueLedPattern.applyTo(ledBuffer);
+          ledStrip.setData(ledBuffer);
+        }
       }
+    } else {
+      
     }
   }
 
   private void flashEndgameLed() {
-
     if (ledTimerOn.get() >= .25) {
       ledTimerOn.reset();
       ledTimerOn.stop();
