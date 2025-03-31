@@ -555,7 +555,7 @@ public final class Constants {
       COMPACT(2),
       CLOSE_INTAKE(40.0),
       FAR_INTAKE(35),
-      LEVEL_1(33),
+      LEVEL_1(40),
       LEVEL_2(120),
       LEVEL_3(126),
       LEVEL_4(112),
