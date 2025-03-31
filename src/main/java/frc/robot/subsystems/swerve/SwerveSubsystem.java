@@ -1,13 +1,17 @@
 package frc.robot.subsystems.swerve;
 
 import static frc.robot.Constants.FieldConstants.*;
-import static frc.robot.Constants.Swerve.ULTRASONIC_SENSOR_PORT;
+import static frc.robot.Constants.Swerve.*;
 import static frc.robot.Constants.VisionConstants.VISION_PRIMARY_LIMELIGHT_NAME;
 
 import ca.team1310.swerve.RunnymedeSwerveDrive;
 import ca.team1310.swerve.core.SwerveMath;
 import ca.team1310.swerve.utils.SwerveUtils;
 import ca.team1310.swerve.vision.LimelightAwareSwerveDrive;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,7 +22,6 @@ import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.RunnymedeUtils;
 import frc.robot.telemetry.Telemetry;
@@ -58,13 +61,55 @@ public class SwerveSubsystem extends SubsystemBase {
     headingPIDController.enableContinuousInput(-180, 180);
     headingPIDController.setTolerance(2);
     Telemetry.drive.enabled = config.telemetryEnabled();
+
+    // Load the RobotConfig from the GUI settings. You should probably
+    // store this in your Constants file
+    RobotConfig pathPlannerConfig = null;
+    try {
+      pathPlannerConfig = RobotConfig.fromGUISettings();
+    } catch (Exception e) {
+      // Handle exception as needed
+      e.printStackTrace();
+    }
+
+    // Configure AutoBuilder last
+    AutoBuilder.configure(
+        this::getPose, // Robot pose supplier
+        this::resetOdometry, // Method to reset odometry (will be called if your auto has a starting
+        // pose)
+        this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
+        (speeds, feedforwards) ->
+            driveRobotRelative(
+                speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds.
+        // Also optionally outputs individual module feedforwards
+        new PPHolonomicDriveController( // PPHolonomicController is the built in path following
+            // controller for holonomic drive trains
+            new PIDConstants(
+                TRANSLATION_CONFIG.velocityP(),
+                TRANSLATION_CONFIG.velocityI(),
+                TRANSLATION_CONFIG.velocityD()), // Translation PID constants
+            new PIDConstants(
+                ROTATION_CONFIG.headingP(),
+                ROTATION_CONFIG.headingI(),
+                ROTATION_CONFIG.headingD()) // Rotation PID constants
+            ),
+        pathPlannerConfig, // The robot configuration
+        () -> {
+          // Boolean supplier that controls when the path will be mirrored for the red alliance
+          // This will flip the path being followed to the red side of the field.
+          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+          return RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red;
+        },
+        this // Reference to this subsystem to set requirements
+        );
   }
 
   public void periodic() {
     ultrasonicVoltage = ultrasonicDistanceSensor.getVoltage();
     ultrasonicDistanceM = 1.29338 * ultrasonicVoltage - 0.51803;
 
-    ultrasonicDisconnected.set(ultrasonicVoltage <= 0);
+    ultrasonicDisconnected.set(ultrasonicVoltage <= 0.3);
 
     Telemetry.drive.ultrasonicDistanceM = Math.round(ultrasonicDistanceM * 1000d) / 1000d;
     Telemetry.drive.ultrasonicVoltage = ultrasonicVoltage;
@@ -116,6 +161,32 @@ public class SwerveSubsystem extends SubsystemBase {
     Telemetry.drive.fieldOrientedDeltaToPoseHeading = 0;
 
     driveSafely(x, y, omega);
+  }
+
+  /**
+   * Translate ChassisSpeed into raw vX, vY, vR for PathPlanner
+   *
+   * @param speeds ChassisSpeed object
+   */
+  private void driveRobotRelative(ChassisSpeeds speeds) {
+    driveRobotOriented(
+        speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
+  }
+
+  /**
+   * Translate double[] speeds into ChassisSpeed for PathPlanner
+   *
+   * @return ChassisSpeeds containing the robot's relative speeds
+   */
+  private ChassisSpeeds getRobotRelativeSpeeds() {
+    double[] speeds = drive.getMeasuredRobotVelocity();
+
+    ChassisSpeeds chassisSpeeds = new ChassisSpeeds();
+    chassisSpeeds.vxMetersPerSecond = speeds[0];
+    chassisSpeeds.vyMetersPerSecond = speeds[1];
+    chassisSpeeds.omegaRadiansPerSecond = speeds[2];
+
+    return chassisSpeeds;
   }
 
   /** Stop all motors as fast as possible */
@@ -328,8 +399,8 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     // safety code
-    if (maxSpeed > Constants.Swerve.TRANSLATION_CONFIG.maxSpeedMPS()) {
-      maxSpeed = Constants.Swerve.TRANSLATION_CONFIG.maxSpeedMPS();
+    if (maxSpeed > TRANSLATION_CONFIG.maxSpeedMPS()) {
+      maxSpeed = TRANSLATION_CONFIG.maxSpeedMPS();
     }
 
     // ensure that we have enough room to decelerate

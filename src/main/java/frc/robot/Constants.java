@@ -195,7 +195,7 @@ public final class Constants {
             /* motor hardware type */ MotorType.NEO_SPARK_FLEX,
             /* inverted? */ false,
             /* current limit (A) */ 40,
-            /* current limit (A) */ 12,
+            /* nominal voltage (V) */ 12,
             /* ramp rate 0 to full power (s) */ 0.25,
             /* drive motor gear ratio */ 6.75 /* SDS MK4i L2 --> 6.75:1 */,
             /* drive motor PID p */ 0.11,
@@ -290,6 +290,7 @@ public final class Constants {
       SCORE_3_LEFT,
       SCORE_3_RIGHT,
       SCORE_1_CENTER,
+      PP_SCORE_3_LEFT
     }
 
     public enum Delay {
