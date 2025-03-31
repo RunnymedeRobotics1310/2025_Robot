@@ -38,7 +38,8 @@ public class AutoClimbCommand extends LoggingCommand {
       climbTimer.stop();
       climbTimer.reset();
 
-    } else if (climbTimer.hasElapsed(0.3) || RunnymedeUtils.teleopMatchTimeRemaining() < 0.1) {
+    } else if (climbTimer.hasElapsed(0.3)
+        || (climbSubsystem.isCageInPosition() && RunnymedeUtils.teleopMatchTimeRemaining() < 0.1)) {
 
       climbSubsystem.setClimbDeployed(true);
     }

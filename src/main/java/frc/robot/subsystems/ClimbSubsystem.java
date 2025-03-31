@@ -52,9 +52,11 @@ public class ClimbSubsystem extends SubsystemBase {
 
     checkSafety();
 
+    boolean prevCageDetected = Telemetry.climb.cageDetected;
     Telemetry.climb.cageDetected = isCageInPosition();
 
-    if (Telemetry.climb.cageDetected) {
+    // Only trigger on newly set
+    if (Telemetry.climb.cageDetected && !prevCageDetected) {
       OperatorInput.setRumblePattern(OperatorInput.RumblePattern.BLIP);
     }
 
