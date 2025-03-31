@@ -163,14 +163,20 @@ public class OperatorInput extends SubsystemBase {
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L1, coralSubsystem));
 
     // Semi-auto score commands
-    new Trigger(() -> (isAutoAlignEitherBranch() && operatorController.getPOV() == 0))
-            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L4, isAutoAlignLeftBranch()));
+    new Trigger(() -> (isAutoAlignLeftBranch() && operatorController.getPOV() == 0))
+            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L4, true));
+    new Trigger(() -> (isAutoAlignRightBranch() && operatorController.getPOV() == 0))
+            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L4, false));
 
-    new Trigger(() -> (isAutoAlignEitherBranch() && operatorController.getPOV() == 270))
-            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L3, isAutoAlignLeftBranch()));
+    new Trigger(() -> (isAutoAlignLeftBranch() && operatorController.getPOV() == 270))
+            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L3, true));
+    new Trigger(() -> (isAutoAlignRightBranch() && operatorController.getPOV() == 270))
+            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L3, false));
 
-    new Trigger(() -> (isAutoAlignEitherBranch() && operatorController.getPOV() == 180))
-            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L2, isAutoAlignLeftBranch()));
+    new Trigger(() -> (isAutoAlignLeftBranch() && operatorController.getPOV() == 180))
+            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L2, true));
+    new Trigger(() -> (isAutoAlignRightBranch() && operatorController.getPOV() == 180))
+            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L2, false));
 
     /*
      * Set remove algae poses
@@ -410,7 +416,7 @@ public class OperatorInput extends SubsystemBase {
   }
 
   public boolean isAutoAlignEitherBranch() {
-    return isAutoAlignLeftBranch() && isAutoAlignRightBranch();
+    return isAutoAlignLeftBranch() || isAutoAlignRightBranch();
   }
 
   public boolean isAutoAlignLeftBranch() {

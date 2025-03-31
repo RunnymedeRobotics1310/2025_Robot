@@ -19,8 +19,6 @@ public class AlignShootLeaveCommand extends SequentialCommandGroup {
 
     public AlignShootLeaveCommand(SwerveSubsystem swerve, LimelightVisionSubsystem vision, CoralSubsystem coral, Constants.CoralConstants.CoralPose coralPose, boolean isLeftBranch) {
 
-        Pose2d startPose = swerve.getPose();
-
         addCommands(
             new DriveToVisibleTagCommand(swerve, vision, isLeftBranch)
                 .alongWith(new MoveToCoralPoseCommand(coralPose, coral)));
