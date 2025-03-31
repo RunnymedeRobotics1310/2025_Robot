@@ -64,7 +64,7 @@ public class SwerveSubsystem extends SubsystemBase {
     ultrasonicVoltage = ultrasonicDistanceSensor.getVoltage();
     ultrasonicDistanceM = 1.29338 * ultrasonicVoltage - 0.51803;
 
-    ultrasonicDisconnected.set(ultrasonicVoltage <= 0);
+    ultrasonicDisconnected.set(ultrasonicVoltage <= 0.3);
 
     Telemetry.drive.ultrasonicDistanceM = Math.round(ultrasonicDistanceM * 1000d) / 1000d;
     Telemetry.drive.ultrasonicVoltage = ultrasonicVoltage;
