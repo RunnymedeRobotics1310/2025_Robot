@@ -14,6 +14,7 @@ import com.revrobotics.spark.config.LimitSwitchConfig.Type;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -57,11 +58,19 @@ public class CoralSubsystem extends SubsystemBase {
   private final SparkMax intakeMotor =
       new SparkMax(CoralConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
 
+  private final Alert elevatorMotorFault =
+      new Alert("Elevator Motor Fault Detected!", Alert.AlertType.kError);
+  private final Alert armMotorFault =
+      new Alert("Arm Motor Fault Detected!", Alert.AlertType.kError);
+  private final Alert intakeMotorFault =
+      new Alert("Intake Motor Fault Detected!", Alert.AlertType.kError);
+
   private final Encoder digitalElevatorEncoder = new Encoder(0, 1);
 
   private double elevatorSetpoint = 0;
   private double elevatorSpeed = 0;
   private double armSetpoint = 0;
+  private double armSpeed = 0;
   private double intakeSetpoint = 0;
   private double lastKnownElevatorHeight = -1;
 
@@ -490,6 +499,10 @@ public class CoralSubsystem extends SubsystemBase {
 
       Telemetry.coral.intakeSpeed = intakeSetpoint;
     }
+
+    elevatorMotorFault.set(elevatorMotor.hasActiveFault());
+    armMotorFault.set(armMotor.hasActiveFault());
+    intakeMotorFault.set(intakeMotor.hasActiveFault());
   }
 
   private void simulate() {
@@ -608,7 +621,7 @@ public class CoralSubsystem extends SubsystemBase {
     if (armLowerLimit) {
 
       if (armSetpoint < 0) {
-        armSetpoint = 0;
+        armSpeed = 0;
         // Directly set the motor speed, do not call the setter method (recursive loop)
         armMotor.set(0);
       }
@@ -617,7 +630,7 @@ public class CoralSubsystem extends SubsystemBase {
     if (armUpperLimit) {
 
       if (armSetpoint > 0) {
-        armSetpoint = 0;
+        armSpeed = 0;
         // Directly set the motor speed, do not call the setter method (recursive loop)
         armMotor.set(0);
       }
@@ -626,32 +639,42 @@ public class CoralSubsystem extends SubsystemBase {
     // If not at either limit, then limit the arm speed
     if (!(armLowerLimit && armGoingDown) && !(armUpperLimit && armGoingUp)) {
 
+      double previousArmMotorSpeed = armSpeed;
+      this.armSpeed = this.armSetpoint;
+
       // If near the lower limit, then limit the speed
       if (getArmAngle()
           < CoralConstants.ARM_LOWER_LIMIT_POSITION + CoralConstants.ARM_SLOW_ZONE_ANGLE) {
 
-        if (armSetpoint < -CoralConstants.ARM_SLOW_ZONE_SPEED) {
+        if (armSpeed < -CoralConstants.ARM_SLOW_ZONE_SPEED) {
 
-          armSetpoint = -CoralConstants.ARM_SLOW_ZONE_SPEED;
+          armSpeed = -CoralConstants.ARM_SLOW_ZONE_SPEED;
         }
       }
       // If near the upper limit, limit the speed
       else if (getArmAngle()
           > CoralConstants.ARM_UPPER_LIMIT_POSITION - CoralConstants.ARM_SLOW_ZONE_ANGLE) {
 
-        if (armSetpoint > CoralConstants.ARM_SLOW_ZONE_SPEED) {
+        if (armSpeed > CoralConstants.ARM_SLOW_ZONE_SPEED) {
 
-          armSetpoint = CoralConstants.ARM_SLOW_ZONE_SPEED;
+          armSpeed = CoralConstants.ARM_SLOW_ZONE_SPEED;
         }
       } else {
 
         // Limit the elevator speed
-        if (Math.abs(armSetpoint) > CoralConstants.ARM_MAX_SPEED) {
-          armSetpoint = CoralConstants.ARM_MAX_SPEED * Math.signum(armSetpoint);
+        if (Math.abs(armSpeed) > CoralConstants.ARM_MAX_SPEED) {
+          armSpeed = CoralConstants.ARM_MAX_SPEED * Math.signum(armSpeed);
           // Directly set the motor speed, do not call the setter method (recursive loop)
         }
       }
-      armMotor.set(armSetpoint);
+
+      // Rate limit to ELEVATOR_MAX_SLEW speed change per cycle
+      double armDelta = (armSpeed - previousArmMotorSpeed);
+      if (Math.abs(armDelta) > ARM_MAX_SLEW) {
+        armSpeed = previousArmMotorSpeed + Math.signum(armDelta) * ARM_MAX_SLEW;
+      }
+
+      armMotor.set(armSpeed);
     }
 
     /*

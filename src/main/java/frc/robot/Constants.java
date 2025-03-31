@@ -374,12 +374,12 @@ public final class Constants {
       PRE_SCORE_LEFT_4(new Pose2d(5.3843, 5.5598, Rotation2d.fromDegrees(240)), 20, 11, false),
       PRE_SCORE_LEFT_5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240)), 20, 11, true),
       PRE_SCORE_LEFT_6(new Pose2d(6.1660, 4.16, Rotation2d.fromDegrees(180)), 21, 10, false),
-      PRE_SCORE_RIGHT_1(new Pose2d(2.8126, 3.8609, Rotation2d.fromDegrees(0)), 18, 7, false),
-      PRE_SCORE_RIGHT_2(new Pose2d(3.25, 2.23, Rotation2d.fromDegrees(60)), 17, 8, true),
-      PRE_SCORE_RIGHT_3(new Pose2d(3.7943, 2.64, Rotation2d.fromDegrees(60)), 17, 8, false),
-      PRE_SCORE_RIGHT_4(new Pose2d(5.1843, 2.5, Rotation2d.fromDegrees(120)), 22, 9, true),
-      PRE_SCORE_RIGHT_5(new Pose2d(5.4701, 2.6570, Rotation2d.fromDegrees(120)), 22, 9, false),
-      PRE_SCORE_RIGHT_6(new Pose2d(6.1660, 3.8609, Rotation2d.fromDegrees(180)), 21, 10, true),
+      PRE_SCORE_RIGHT_1(new Pose2d(2.8126, 3.8611, Rotation2d.fromDegrees(0)), 18, 7, false),
+      PRE_SCORE_RIGHT_2(new Pose2d(3.25, 2.352, Rotation2d.fromDegrees(60)), 17, 8, true),
+      PRE_SCORE_RIGHT_3(new Pose2d(3.7943, 2.202, Rotation2d.fromDegrees(60)), 17, 8, false),
+      PRE_SCORE_RIGHT_4(new Pose2d(5.1843, 2.4922, Rotation2d.fromDegrees(120)), 22, 9, true),
+      PRE_SCORE_RIGHT_5(new Pose2d(5.4701, 2.6572, Rotation2d.fromDegrees(120)), 22, 9, false),
+      PRE_SCORE_RIGHT_6(new Pose2d(6.1660, 3.8902, Rotation2d.fromDegrees(180)), 21, 10, true),
       PRE_INTAKE_CENTRE_LEFT_STATION(new Pose2d(1.139, 7.000, Rotation2d.fromDegrees(126)), 13, 1),
       PRE_INTAKE_CENTRE_RIGHT_STATION(new Pose2d(1.139, 1.052, Rotation2d.fromDegrees(234)), 12, 2),
 
@@ -504,7 +504,7 @@ public final class Constants {
     /*
      * Arm Constants
      */
-    public static final double ARM_MAX_SPEED = 0.6;
+    public static final double ARM_MAX_SPEED = 1;
     public static final double ARM_LOWER_LIMIT_POSITION = 0;
     public static final double ARM_UPPER_LIMIT_POSITION = 126;
     public static final double ARM_CAMERA_THRESHOLD_POSITION = 100;
@@ -512,14 +512,15 @@ public final class Constants {
     // Set the encoder offset so that the encoder reads 0.1 rotations against the hard stop
     // This is so that the angle can go negative instead of back to 360 deg when slightly
     // less than zero. This constant was read off the REV Hardware Client Absolute Encoder page
-    public static final double ARM_ANGLE_ENCODER_OFFSET = 0.3506509;
+    public static final double ARM_ANGLE_ENCODER_OFFSET = 0.5126424;
     // Maximum manual tuning speed
     public static final double ARM_TUNE_MAX_SPEED = 0.2;
     // Pseudo PID and safe zone constants
     public static final double ARM_ANGLE_TOLERANCE = 1.5;
-    public static final double ARM_FAST_SPEED = 0.5;
-    public static final double ARM_SLOW_ZONE_SPEED = 0.15;
-    public static final double ARM_SLOW_ZONE_ANGLE = 10;
+    public static final double ARM_MAX_SLEW = 0.2;
+    public static final double ARM_FAST_SPEED = 1;
+    public static final double ARM_SLOW_ZONE_SPEED = 0.2;
+    public static final double ARM_SLOW_ZONE_ANGLE = 25;
     /*
      * Intake Constants
      */
@@ -551,7 +552,7 @@ public final class Constants {
 
     // Arm Angles in degrees
     public enum ArmAngle {
-      COMPACT(1.5),
+      COMPACT(2),
       CLOSE_INTAKE(40.0),
       FAR_INTAKE(35),
       LEVEL_1(33),

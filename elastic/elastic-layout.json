@@ -135,20 +135,6 @@
             }
           },
           {
-            "title": "Ultrasonic Distance M",
-            "x": 1152.0,
-            "y": 256.0,
-            "width": 256.0,
-            "height": 128.0,
-            "type": "Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/1310/Drive/Ultrasonic Distance M",
-              "period": 0.06,
-              "data_type": "double",
-              "show_submit_button": false
-            }
-          },
-          {
             "title": "Auto Selector",
             "x": 896.0,
             "y": 512.0,
@@ -240,6 +226,37 @@
               "topic": "/SmartDashboard/1310/Swerve/pose_odo",
               "period": 0.06,
               "data_type": "string",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "RobotHealth",
+            "x": 0.0,
+            "y": 768.0,
+            "width": 1920.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/1310/RobotHealth",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4280098077,
+              "false_color": 4294935808,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Ultrasonic Distance M",
+            "x": 1152.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/1310/Drive/Ultrasonic Distance M",
+              "period": 0.06,
+              "data_type": "double",
               "show_submit_button": false
             }
           }
@@ -517,6 +534,43 @@
               "period": 0.06,
               "data_type": "string",
               "show_submit_button": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Alerts",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Alerts",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 512.0,
+            "height": 512.0,
+            "type": "Alerts",
+            "properties": {
+              "topic": "/SmartDashboard/Alerts",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "RobotHealth",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/1310/RobotHealth",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
             }
           }
         ]
