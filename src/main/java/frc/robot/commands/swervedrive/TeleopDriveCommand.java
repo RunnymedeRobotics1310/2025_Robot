@@ -207,7 +207,6 @@ public class TeleopDriveCommand extends LoggingCommand {
         swerve.driveRobotOriented(velocity.getX(), velocity.getY(), omegaRadiansPerSecond);
       }
     }
-    System.out.println("Operator is Driving: " + operatorIsDriving);
   }
 
   // Called once the command ends or is interrupted.
