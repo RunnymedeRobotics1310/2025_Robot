@@ -1,5 +1,6 @@
 package frc.robot.commands.operator;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.RobotState;
@@ -510,6 +511,8 @@ public class OperatorInput extends SubsystemBase {
         "1 Coral Center", Constants.AutoConstants.AutoPattern.SCORE_1_CENTER);
     autoPatternChooser.addOption(
         "3 Coral Right", Constants.AutoConstants.AutoPattern.SCORE_3_RIGHT);
+    autoPatternChooser.addOption(
+        "PP 3 Coral Left", Constants.AutoConstants.AutoPattern.PP_SCORE_3_LEFT);
 
     autoPatternChooser.onChange(
         new Consumer<Constants.AutoConstants.AutoPattern>() {
@@ -564,6 +567,7 @@ public class OperatorInput extends SubsystemBase {
       case SCORE_3_LEFT -> new Score3L4LeftAutoCommand(swerve, coral, vision, delay);
       case SCORE_3_RIGHT -> new Score3L4RightAutoCommand(swerve, coral, vision, delay);
       case SCORE_1_CENTER -> new Score1CoralCenterAutoCommand(swerve, coral, vision, delay);
+      case PP_SCORE_3_LEFT -> new PathPlannerAuto("PPScore3CoralLEFT");
 
       default -> new InstantCommand();
     };
