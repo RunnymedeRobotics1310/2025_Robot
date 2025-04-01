@@ -102,14 +102,14 @@ public class LightingSubsystem extends SubsystemBase {
   }
 
   private void flashLed(AddressableLEDBuffer buffer, LEDPattern pattern) {
-    if (ledTimerOn.get() >= .25) {
+    if (ledTimerOn.get() >= .1) {
       ledTimerOn.reset();
       ledTimerOn.stop();
       ledTimerOff.start();
 
       pattern.applyTo(buffer);
       ledStrip.setData(buffer);
-    } else if (ledTimerOff.get() >= .25) {
+    } else if (ledTimerOff.get() >= .1) {
       ledTimerOff.reset();
       ledTimerOff.stop();
       ledTimerOn.start();
