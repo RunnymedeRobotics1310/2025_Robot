@@ -64,6 +64,9 @@ public class ClimbSubsystem extends SubsystemBase {
       Telemetry.climb.climbDeployed = isClimbDeployed();
       Telemetry.climb.canDeploy = true;
     }
+
+    LightingSubsystem.isClimbDeployed = isClimbDeployed();
+    LightingSubsystem.isCageInPosition = isCageInPosition();
   }
 
   private void checkSafety() {
