@@ -4,14 +4,21 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.OiConstants;
 import frc.robot.Constants.Swerve;
 import frc.robot.commands.coral.DefaultCoralCommand;
+import frc.robot.commands.coral.MoveToCoralPoseCommand;
+import frc.robot.commands.coral.intake.IntakeCoralCommand;
+import frc.robot.commands.coral.intake.PlantCoralCommand;
 import frc.robot.commands.operator.OperatorInput;
+import frc.robot.commands.swervedrive.DriveToReefTagCommand;
+import frc.robot.commands.swervedrive.NullDriveCommand;
 import frc.robot.commands.swervedrive.TeleopDriveCommand;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
+import frc.robot.subsystems.LightingSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
@@ -30,6 +37,7 @@ public class RobotContainer {
       new LimelightVisionSubsystem(Constants.VisionConstants.VISION_CONFIG, swerveDriveSubsystem);
   private final CoralSubsystem coralSubsystem = new CoralSubsystem();
   private final PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
+  private final LightingSubsystem lightingSubsystem = new LightingSubsystem();
   private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
   // Driver and operator controllers
@@ -58,6 +66,103 @@ public class RobotContainer {
         swerveDriveSubsystem, coralSubsystem, pneumaticsSubsystem, climbSubsystem, visionSubsystem);
 
     operatorInput.initAutoSelectors();
+
+    initNamedCommands();
+  }
+
+  private void initNamedCommands() {
+    NamedCommands.registerCommand("intake-close", new IntakeCoralCommand(coralSubsystem, false));
+    NamedCommands.registerCommand("intake-far", new IntakeCoralCommand(coralSubsystem, false));
+    NamedCommands.registerCommand(
+        "coral-compact",
+        new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.COMPACT, coralSubsystem));
+    NamedCommands.registerCommand(
+        "coral-l1",
+        new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L1, coralSubsystem));
+    NamedCommands.registerCommand(
+        "coral-l2",
+        new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L2, coralSubsystem));
+    NamedCommands.registerCommand(
+        "coral-l3",
+        new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L3, coralSubsystem));
+    NamedCommands.registerCommand(
+        "coral-l4",
+        new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L4, coralSubsystem));
+    NamedCommands.registerCommand("plant", new PlantCoralCommand(coralSubsystem));
+    NamedCommands.registerCommand(
+        "drivetotag-l1",
+        new DriveToReefTagCommand(
+            swerveDriveSubsystem,
+            visionSubsystem,
+            Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_1));
+    NamedCommands.registerCommand(
+        "drivetotag-l2",
+        new DriveToReefTagCommand(
+            swerveDriveSubsystem,
+            visionSubsystem,
+            Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_2));
+    NamedCommands.registerCommand(
+        "drivetotag-l3",
+        new DriveToReefTagCommand(
+            swerveDriveSubsystem,
+            visionSubsystem,
+            Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_3));
+    NamedCommands.registerCommand(
+        "drivetotag-l4",
+        new DriveToReefTagCommand(
+            swerveDriveSubsystem,
+            visionSubsystem,
+            Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_4));
+    NamedCommands.registerCommand(
+        "drivetotag-l5",
+        new DriveToReefTagCommand(
+            swerveDriveSubsystem,
+            visionSubsystem,
+            Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_5));
+    NamedCommands.registerCommand(
+        "drivetotag-l6",
+        new DriveToReefTagCommand(
+            swerveDriveSubsystem,
+            visionSubsystem,
+            Constants.AutoConstants.FieldLocation.PRE_SCORE_LEFT_6));
+    NamedCommands.registerCommand(
+        "drivetotag-r1",
+        new DriveToReefTagCommand(
+            swerveDriveSubsystem,
+            visionSubsystem,
+            Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_1));
+    NamedCommands.registerCommand(
+        "drivetotag-r2",
+        new DriveToReefTagCommand(
+            swerveDriveSubsystem,
+            visionSubsystem,
+            Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_2));
+    NamedCommands.registerCommand(
+        "drivetotag-r3",
+        new DriveToReefTagCommand(
+            swerveDriveSubsystem,
+            visionSubsystem,
+            Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_3));
+    NamedCommands.registerCommand(
+        "drivetotag-r4",
+        new DriveToReefTagCommand(
+            swerveDriveSubsystem,
+            visionSubsystem,
+            Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_4));
+    NamedCommands.registerCommand(
+        "drivetotag-r5",
+        new DriveToReefTagCommand(
+            swerveDriveSubsystem,
+            visionSubsystem,
+            Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_5));
+    NamedCommands.registerCommand(
+        "drivetotag-r6",
+        new DriveToReefTagCommand(
+            swerveDriveSubsystem,
+            visionSubsystem,
+            Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_6));
+    NamedCommands.registerCommand(
+        "stop", new NullDriveCommand(swerveDriveSubsystem).withTimeout(0.1));
   }
 
   /**

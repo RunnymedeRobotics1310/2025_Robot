@@ -52,11 +52,11 @@ public class ClimbSubsystem extends SubsystemBase {
 
     checkSafety();
 
-    boolean prevClimbDetected = Telemetry.climb.cageDetected;
+    boolean prevCageDetected = Telemetry.climb.cageDetected;
     Telemetry.climb.cageDetected = isCageInPosition();
 
-    // Only buzz when it changes
-    if (Telemetry.climb.cageDetected && !prevClimbDetected) {
+    // Only trigger on newly set
+    if (Telemetry.climb.cageDetected && !prevCageDetected) {
       OperatorInput.setRumblePattern(OperatorInput.RumblePattern.BLIP);
     }
 
@@ -64,6 +64,9 @@ public class ClimbSubsystem extends SubsystemBase {
       Telemetry.climb.climbDeployed = isClimbDeployed();
       Telemetry.climb.canDeploy = true;
     }
+
+    LightingSubsystem.isClimbDeployed = isClimbDeployed();
+    LightingSubsystem.isCageInPosition = isCageInPosition();
   }
 
   private void checkSafety() {

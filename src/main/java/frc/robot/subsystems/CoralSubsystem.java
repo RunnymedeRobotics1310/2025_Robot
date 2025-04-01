@@ -480,6 +480,9 @@ public class CoralSubsystem extends SubsystemBase {
 
     checkSafety();
 
+    LightingSubsystem.coralInIntake = isCoralDetected();
+    LightingSubsystem.isIntaking = intakeEncoder.getVelocity() > 0.1 || intakeEncoder.getVelocity() < -0.1;
+
     Telemetry.coral.digitalElevatorPosition = getDigitalElevatorEncoder();
     Telemetry.coral.rawDigitalElevatorEncoder = digitalElevatorEncoder.getRaw();
     Telemetry.coral.digitalElevatorEncoderOffset = digitalElevatorEncoderOffset;

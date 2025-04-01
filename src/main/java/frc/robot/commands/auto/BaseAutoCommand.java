@@ -7,6 +7,7 @@ import static frc.robot.Constants.CoralConstants.CoralPose.*;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RunnymedeUtils;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
@@ -81,7 +82,7 @@ public class BaseAutoCommand extends SequentialCommandGroup {
   }
 
   public Command scoreL4CoralStop(FieldLocation location, double speed) {
-    return (driveThroughToLocation(location, speed).deadlineFor(setCoralPose(SCORE_L3)))
+    return (driveThroughToLocation(location, speed).deadlineFor(setCoralPose(SCORE_L4)))
         .andThen(approachReef(location))
         .andThen(plant());
   }
@@ -100,9 +101,8 @@ public class BaseAutoCommand extends SequentialCommandGroup {
     double intakeHeading = intakeLocation.pose.getRotation().getDegrees() + allianceOffset;
 
     return scoreL4CoralStop2(reefLocation, speed)
-        .andThen(new DriveRobotOrientedCommand(swerve, -0.5, 0, reefHeading).withTimeout(0.2))
         .andThen(
-            new IntakeCoralCommand(coral, false)
+            (new WaitCommand(0.4).andThen(new IntakeCoralCommand(coral, false)))
                 .deadlineFor(
                     driveThroughToLocation(intakeLocation, speed, 0.2, 0.6)
                         .andThen(new DriveIntoWallCommand(swerve, 0.25, 0, intakeHeading))));
@@ -114,9 +114,8 @@ public class BaseAutoCommand extends SequentialCommandGroup {
     double intakeHeading = intakeLocation.pose.getRotation().getDegrees() + allianceOffset;
 
     return scoreL4CoralStop(reefLocation, speed)
-        .andThen(new DriveRobotOrientedCommand(swerve, -0.5, 0, reefHeading).withTimeout(0.2))
         .andThen(
-            new IntakeCoralCommand(coral, false)
+            (new WaitCommand(0.4).andThen(new IntakeCoralCommand(coral, false)))
                 .deadlineFor(
                     driveThroughToLocation(intakeLocation, speed)
                         .andThen(new DriveIntoWallCommand(swerve, 0.25, 0, intakeHeading))));

@@ -195,7 +195,7 @@ public final class Constants {
             /* motor hardware type */ MotorType.NEO_SPARK_FLEX,
             /* inverted? */ false,
             /* current limit (A) */ 40,
-            /* current limit (A) */ 12,
+            /* nominal voltage (V) */ 12,
             /* ramp rate 0 to full power (s) */ 0.25,
             /* drive motor gear ratio */ 6.75 /* SDS MK4i L2 --> 6.75:1 */,
             /* drive motor PID p */ 0.11,
@@ -290,6 +290,7 @@ public final class Constants {
       SCORE_3_LEFT,
       SCORE_3_RIGHT,
       SCORE_1_CENTER,
+      PP_SCORE_3_LEFT
     }
 
     public enum Delay {
@@ -383,8 +384,8 @@ public final class Constants {
       PRE_INTAKE_CENTRE_LEFT_STATION(new Pose2d(1.139, 7.000, Rotation2d.fromDegrees(126)), 13, 1),
       PRE_INTAKE_CENTRE_RIGHT_STATION(new Pose2d(1.139, 1.052, Rotation2d.fromDegrees(234)), 12, 2),
 
-      AUTO_START_LEFT(new Pose2d(7, 5.81, Rotation2d.fromDegrees(180))),
-      AUTO_START_RIGHT(new Pose2d(7, 2.242, Rotation2d.fromDegrees(180))),
+      AUTO_START_LEFT(new Pose2d(7.1, 5.8, Rotation2d.fromDegrees(180))),
+      AUTO_START_RIGHT(new Pose2d(7.1, 2.242, Rotation2d.fromDegrees(180))),
 
       // Legacy Alliance Specific Locations
       blueRightOuterStation(new Pose2d(1.15, 1.02, Rotation2d.fromDegrees(234)), 12, 2),
@@ -555,7 +556,7 @@ public final class Constants {
       COMPACT(2),
       CLOSE_INTAKE(40.0),
       FAR_INTAKE(35),
-      LEVEL_1(33),
+      LEVEL_1(40),
       LEVEL_2(120),
       LEVEL_3(126),
       LEVEL_4(112),
@@ -595,9 +596,9 @@ public final class Constants {
     public static final int CLIMB_SENSOR_DIO_PORT = 9;
   }
 
-  public static final class LightsConstants {
+  public static final class LightingConstants {
 
     public static final int LED_STRING_PWM_PORT = 7;
-    public static final int LED_STRING_LENGTH = 60;
+    public static final int LED_STRING_LENGTH = 29;
   }
 }
