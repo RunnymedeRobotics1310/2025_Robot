@@ -41,6 +41,31 @@
               }
             ]
           }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LEFT_4 - Left Coral Station"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "intake-close"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stop"
+          }
         }
       ]
     }

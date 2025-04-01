@@ -14,6 +14,7 @@ import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.coral.intake.PlantCoralCommand;
 import frc.robot.commands.operator.OperatorInput;
 import frc.robot.commands.swervedrive.DriveToReefTagCommand;
+import frc.robot.commands.swervedrive.NullDriveCommand;
 import frc.robot.commands.swervedrive.TeleopDriveCommand;
 import frc.robot.subsystems.ClimbSubsystem;
 import frc.robot.subsystems.CoralSubsystem;
@@ -160,6 +161,8 @@ public class RobotContainer {
             swerveDriveSubsystem,
             visionSubsystem,
             Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_6));
+    NamedCommands.registerCommand(
+        "stop", new NullDriveCommand(swerveDriveSubsystem).withTimeout(0.1));
   }
 
   /**
