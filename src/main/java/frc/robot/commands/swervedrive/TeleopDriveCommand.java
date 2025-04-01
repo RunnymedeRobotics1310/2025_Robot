@@ -51,6 +51,7 @@ public class TeleopDriveCommand extends LoggingCommand {
     rotationSettleTimer.start();
     rotationSettleTimer.reset();
     headingSetpointDeg = null;
+    operatorIsDriving = false;
 
     // The FRC field-oriented coordinate system
     // https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
@@ -180,17 +181,12 @@ public class TeleopDriveCommand extends LoggingCommand {
       }
 
       // Set omega
-      if (headingSetpointDeg == null) {
+      if (headingSetpointDeg == null || operatorIsDriving) {
         omegaRadiansPerSecond = 0;
       } else {
         headingSetpointDeg = normalizeDegrees(headingSetpointDeg);
-
-        if (Math.abs(headingSetpointDeg - swerve.getYaw()) <= 1 || operatorIsDriving) {
-          omegaRadiansPerSecond = 0;
-        } else {
-            omegaRadiansPerSecond =
-                swerve.computeOmega(headingSetpointDeg, ROTATION_CONFIG.maxRotVelocityRadPS());
-        }
+        omegaRadiansPerSecond =
+            swerve.computeOmega(headingSetpointDeg, ROTATION_CONFIG.maxRotVelocityRadPS());
       }
     }
 
@@ -220,6 +216,7 @@ public class TeleopDriveCommand extends LoggingCommand {
     logCommandEnd(interrupted);
     headingSetpointDeg = null;
     rotationSettleTimer.reset();
+    operatorIsDriving = false;
   }
 
   // Returns true when the command should end.
