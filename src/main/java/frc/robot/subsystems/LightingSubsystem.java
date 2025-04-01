@@ -50,7 +50,7 @@ public class LightingSubsystem extends SubsystemBase {
   private static final LEDPattern yellowLEDPatern = LEDPattern.solid(Color.kYellow);
   private static final LEDPattern greenLedPattern = LEDPattern.solid(Color.kGreen);
   private static final LEDPattern whiteLedPattern = LEDPattern.solid(Color.kWhite);
-  private static final LEDPattern purpleLedPattern = LEDPattern.solid(Color.kPurple);
+  private static final LEDPattern purpleLedPattern = LEDPattern.solid(Color.kDarkViolet);
   private static final LEDPattern redLedPattern = LEDPattern.solid(Color.kRed);
   private static final LEDPattern blueLedPattern = LEDPattern.solid(Color.kBlue);
   private static final LEDPattern orangeLedPattern = LEDPattern.solid(Color.kOrange);
