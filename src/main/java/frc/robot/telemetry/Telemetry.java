@@ -1,7 +1,5 @@
 package frc.robot.telemetry;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StringArraySubscriber;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Telemetry {
@@ -14,12 +12,7 @@ public class Telemetry {
   public static CoralTelemetry coral = new CoralTelemetry();
   public static ClimbTelemetry climb = new ClimbTelemetry();
 
-  private static final StringArraySubscriber alertsErrors =
-      NetworkTableInstance.getDefault()
-          .getTable("SmartDashboard")
-          .getSubTable("Alerts")
-          .getStringArrayTopic("errors")
-          .subscribe(new String[0]);
+  public static boolean healthyRobot = false;
 
   private Telemetry() {}
 
@@ -30,6 +23,6 @@ public class Telemetry {
     coral.post();
     climb.post();
 
-    SmartDashboard.putBoolean(PREFIX + "RobotHealth", alertsErrors.get().length == 0);
+    SmartDashboard.putBoolean(PREFIX + "RobotHealth", healthyRobot);
   }
 }

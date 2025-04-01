@@ -5,6 +5,8 @@
 package frc.robot;
 
 import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StringArraySubscriber;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -28,6 +30,13 @@ public class Robot extends TimedRobot {
   private double lastDashUpdate = 0;
 
   private double periodicDisabledTime = 0;
+
+  private static final StringArraySubscriber alertsErrors =
+      NetworkTableInstance.getDefault()
+          .getTable("SmartDashboard")
+          .getSubTable("Alerts")
+          .getStringArrayTopic("errors")
+          .subscribe(new String[0]);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -58,6 +67,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    Telemetry.healthyRobot = (alertsErrors.get().length == 0);
+
     // Runs the Scheduler. This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods. This must be called from the robot's periodic
