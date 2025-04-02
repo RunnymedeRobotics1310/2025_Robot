@@ -6,12 +6,14 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RunnymedeUtils;
+import frc.robot.telemetry.Telemetry;
 
 public class LightingSubsystem extends SubsystemBase {
 
@@ -29,7 +31,7 @@ public class LightingSubsystem extends SubsystemBase {
   private static final AddressableLEDBuffer ledBuffer =
       new AddressableLEDBuffer(Constants.LightingConstants.LED_STRING_LENGTH);
 
-      //Match buffers
+  // Match buffers
   private static final AddressableLEDBuffer ledClimbingBuffer =
       new AddressableLEDBuffer(Constants.LightingConstants.LED_STRING_LENGTH);
   private static final AddressableLEDBuffer ledIntakeBuffer =
@@ -37,12 +39,13 @@ public class LightingSubsystem extends SubsystemBase {
   private static final AddressableLEDBuffer ledEndgameBuffer =
       new AddressableLEDBuffer(Constants.LightingConstants.LED_STRING_LENGTH);
 
-  //Debuging buffers
-  private static final AddressableLEDBuffer ledUltrasonicBuffer = new AddressableLEDBuffer(
+  // Debuging buffers
+  private static final AddressableLEDBuffer ledRobotHealthBuffer =
+      new AddressableLEDBuffer(Constants.LightingConstants.LED_STRING_LENGTH);
+  private static final AddressableLEDBuffer ledVisPoseBuffer = new AddressableLEDBuffer(
       Constants.LightingConstants.LED_STRING_LENGTH);
 
-
-  //LED patterns
+  // LED patterns
   private static final LEDPattern rainbowLedPattern = LEDPattern.rainbow(255, 128);
   private static final Distance kLedSpacing = Units.Meters.of(1 / 120.0);
   private final LEDPattern scrollingRainbowLedPattern =
@@ -50,9 +53,10 @@ public class LightingSubsystem extends SubsystemBase {
   private static final LEDPattern yellowLEDPatern = LEDPattern.solid(Color.kYellow);
   private static final LEDPattern greenLedPattern = LEDPattern.solid(Color.kGreen);
   private static final LEDPattern whiteLedPattern = LEDPattern.solid(Color.kWhite);
-  private static final LEDPattern purpleLedPattern = LEDPattern.solid(Color.kPurple);
+  private static final LEDPattern purpleLedPattern = LEDPattern.solid(Color.kDarkViolet);
   private static final LEDPattern redLedPattern = LEDPattern.solid(Color.kRed);
   private static final LEDPattern blueLedPattern = LEDPattern.solid(Color.kBlue);
+  private static final LEDPattern orangeLedPattern = LEDPattern.solid(Color.kOrange);
 
   public LightingSubsystem() {
     ledStrip.setLength(Constants.LightingConstants.LED_STRING_LENGTH);
@@ -67,11 +71,11 @@ public class LightingSubsystem extends SubsystemBase {
   public void periodic() {
 
     if (DriverStation.isEnabled()) {
-      if (isCageInPosition) {
-        rainbowLedPattern.applyTo(ledClimbingBuffer);
-        ledStrip.setData(ledClimbingBuffer);
-      } else if (isClimbDeployed) {
+      if (isClimbDeployed) {
         scrollingRainbowLedPattern.applyTo(ledClimbingBuffer);
+        ledStrip.setData(ledClimbingBuffer);
+      } else if (isCageInPosition) {
+        rainbowLedPattern.applyTo(ledClimbingBuffer);
         ledStrip.setData(ledClimbingBuffer);
       } else if (DriverStation.getMatchTime() < 20 && DriverStation.getMatchTime() > 17) {
         flashEndgameLed();
@@ -91,19 +95,48 @@ public class LightingSubsystem extends SubsystemBase {
         }
       }
     } else {
-      
+      if (!Telemetry.healthyRobot) {
+        redLedPattern.applyTo(ledRobotHealthBuffer);
+      } else {
+        LEDPattern.kOff.applyTo(ledRobotHealthBuffer);
+      }
+
+      if(SmartDashboard.getBoolean("swerve/hasVisPose", false)){
+        yellowLEDPatern.applyTo(ledVisPoseBuffer);
+      } else {
+        LEDPattern.kOff.applyTo(ledVisPoseBuffer);
+      }
+
+      flashDebugLed();
+
+    }
+  }
+
+  private void flashDebugLed() {
+    if (ledTimerOn.get() >= .1) {
+      ledTimerOn.reset();
+      ledTimerOn.stop();
+      ledTimerOff.start();
+
+      ledStrip.setData(ledRobotHealthBuffer);
+    } else if (ledTimerOff.get() >= .1) {
+      ledTimerOff.reset();
+      ledTimerOff.stop();
+      ledTimerOn.start();
+
+      ledStrip.setData(ledVisPoseBuffer);
     }
   }
 
   private void flashEndgameLed() {
-    if (ledTimerOn.get() >= .25) {
+    if (ledTimerOn.get() >= .1) {
       ledTimerOn.reset();
       ledTimerOn.stop();
       ledTimerOff.start();
 
       purpleLedPattern.applyTo(ledEndgameBuffer);
       ledStrip.setData(ledEndgameBuffer);
-    } else if (ledTimerOff.get() >= .25) {
+    } else if (ledTimerOff.get() >= .1) {
       ledTimerOff.reset();
       ledTimerOff.stop();
       ledTimerOn.start();
@@ -112,4 +145,5 @@ public class LightingSubsystem extends SubsystemBase {
       ledStrip.setData(ledEndgameBuffer);
     }
   }
+
 }
