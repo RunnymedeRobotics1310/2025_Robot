@@ -58,7 +58,7 @@ public class BaseAutoCommand extends SequentialCommandGroup {
   }
 
   protected Command plant() {
-    return new PlantCoralCommand(coral);
+    return new PlantCoralCommand(coral, false);
   }
 
   protected Command approachReef(FieldLocation location) {
@@ -101,8 +101,9 @@ public class BaseAutoCommand extends SequentialCommandGroup {
     double intakeHeading = intakeLocation.pose.getRotation().getDegrees() + allianceOffset;
 
     return scoreL4CoralStop2(reefLocation, speed)
+        .andThen(new DriveRobotOrientedCommand(swerve, -0.5, 0, reefHeading).withTimeout(0.2))
         .andThen(
-            (new WaitCommand(0.4).andThen(new IntakeCoralCommand(coral, false)))
+            (new WaitCommand(0.2).andThen(new IntakeCoralCommand(coral, false)))
                 .deadlineFor(
                     driveThroughToLocation(intakeLocation, speed, 0.2, 0.6)
                         .andThen(new DriveIntoWallCommand(swerve, 0.25, 0, intakeHeading))));
@@ -114,6 +115,7 @@ public class BaseAutoCommand extends SequentialCommandGroup {
     double intakeHeading = intakeLocation.pose.getRotation().getDegrees() + allianceOffset;
 
     return scoreL4CoralStop(reefLocation, speed)
+        .andThen(new DriveRobotOrientedCommand(swerve, -0.5, 0, reefHeading).withTimeout(0.2))
         .andThen(
             (new WaitCommand(0.4).andThen(new IntakeCoralCommand(coral, false)))
                 .deadlineFor(

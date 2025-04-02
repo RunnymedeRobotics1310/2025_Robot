@@ -376,9 +376,9 @@ public final class Constants {
       PRE_SCORE_LEFT_5(new Pose2d(5.4701, 5.3948, Rotation2d.fromDegrees(240)), 20, 11, true),
       PRE_SCORE_LEFT_6(new Pose2d(6.1660, 4.16, Rotation2d.fromDegrees(180)), 21, 10, false),
       PRE_SCORE_RIGHT_1(new Pose2d(2.8126, 3.8611, Rotation2d.fromDegrees(0)), 18, 7, false),
-      PRE_SCORE_RIGHT_2(new Pose2d(3.25, 2.352, Rotation2d.fromDegrees(60)), 17, 8, true),
-      PRE_SCORE_RIGHT_3(new Pose2d(3.7943, 2.202, Rotation2d.fromDegrees(60)), 17, 8, false),
-      PRE_SCORE_RIGHT_4(new Pose2d(5.1843, 2.4922, Rotation2d.fromDegrees(120)), 22, 9, true),
+      PRE_SCORE_RIGHT_2(new Pose2d(3.33, 2.352, Rotation2d.fromDegrees(60)), 17, 8, true),
+      PRE_SCORE_RIGHT_3(new Pose2d(3.62, 2.202, Rotation2d.fromDegrees(60)), 17, 8, false),
+      PRE_SCORE_RIGHT_4(new Pose2d(5.3843, 2.4922, Rotation2d.fromDegrees(120)), 22, 9, true),
       PRE_SCORE_RIGHT_5(new Pose2d(5.4701, 2.6572, Rotation2d.fromDegrees(120)), 22, 9, false),
       PRE_SCORE_RIGHT_6(new Pose2d(6.1660, 3.8902, Rotation2d.fromDegrees(180)), 21, 10, true),
       PRE_INTAKE_CENTRE_LEFT_STATION(new Pose2d(1.139, 7.000, Rotation2d.fromDegrees(126)), 13, 1),
@@ -388,6 +388,7 @@ public final class Constants {
       AUTO_START_RIGHT(new Pose2d(7.1, 2.242, Rotation2d.fromDegrees(180))),
 
       // Legacy Alliance Specific Locations
+      blueRightOuterStationFromFar(new Pose2d(1.45, 1.322, Rotation2d.fromDegrees(234)), 13, 1),
       blueRightOuterStation(new Pose2d(1.15, 1.02, Rotation2d.fromDegrees(234)), 12, 2),
 
       blueLeftOuterStationFromFar(new Pose2d(1.45, 6.73, Rotation2d.fromDegrees(-234)), 13, 1),
@@ -553,13 +554,13 @@ public final class Constants {
 
     // Arm Angles in degrees
     public enum ArmAngle {
-      COMPACT(2),
+      COMPACT(1.5),
       CLOSE_INTAKE(40.0),
       FAR_INTAKE(35),
       LEVEL_1(40),
       LEVEL_2(120),
       LEVEL_3(126),
-      LEVEL_4(112),
+      LEVEL_4(106),
       REMOVE_ALGAE(74);
 
       public final double angle;

@@ -17,12 +17,17 @@ import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 
 public class AlignShootLeaveCommand extends SequentialCommandGroup {
 
-    public AlignShootLeaveCommand(SwerveSubsystem swerve, LimelightVisionSubsystem vision, CoralSubsystem coral, Constants.CoralConstants.CoralPose coralPose, boolean isLeftBranch) {
+  public AlignShootLeaveCommand(
+      SwerveSubsystem swerve,
+      LimelightVisionSubsystem vision,
+      CoralSubsystem coral,
+      Constants.CoralConstants.CoralPose coralPose,
+      boolean isLeftBranch) {
 
-        addCommands(
-            new DriveToVisibleTagCommand(swerve, vision, isLeftBranch)
-                .alongWith(new MoveToCoralPoseCommand(coralPose, coral)));
-        addCommands(new PlantCoralCommand(coral));
+    addCommands(
+        new DriveToVisibleTagCommand(swerve, vision, isLeftBranch)
+            .alongWith(new MoveToCoralPoseCommand(coralPose, coral)));
+    addCommands(new PlantCoralCommand(coral, true));
 
     addCommands(
         new DriveRobotOrientedOmegaCommand(swerve, -0.5, 0, 0)

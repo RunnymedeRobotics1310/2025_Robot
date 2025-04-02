@@ -72,9 +72,9 @@ public class DriveToReefTagCommand extends LoggingCommand {
     if (Math.abs(tX) > 20) {
       vX = 0;
     } else {
-      vX = 0.501;
+      vX = 0.35;
     }
-    vY = 0.03 * tX;
+    vY = 0.02 * tX;
 
     double theta = TAGS.getTagById(tagId).pose.getRotation().getDegrees();
     double omega = swerve.computeOmega(theta);
@@ -105,7 +105,7 @@ public class DriveToReefTagCommand extends LoggingCommand {
     // Not checking tx because if we're this close, we can't move left/right anyways.  Check > -1 as
     // it will return that if there's no tag data.  Also have a 2 second timeout if we aren't moving
     // closer to the tag
-    if (distanceToTag < 0.04 && distanceToTag > -1 || elaspedTimeSinceUpdate > 2) {
+    if ((distanceToTag < 0.04 && distanceToTag > -1) || elaspedTimeSinceUpdate > 2) {
       log(
           "Finishing: DistanceToTag[ "
               + distanceToTag

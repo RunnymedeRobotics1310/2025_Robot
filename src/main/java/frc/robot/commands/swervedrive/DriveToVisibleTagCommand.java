@@ -9,6 +9,7 @@ import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 public class DriveToVisibleTagCommand extends LoggingCommand {
 
   private static final int MAX_NO_DATA_COUNT_CYCLES = 20;
+  private static final int MAX_NO_TAG_NO_DATA_COUNT_CYCLES = 5;
 
   private final SwerveSubsystem swerve;
   private final LimelightVisionSubsystem vision;
@@ -50,10 +51,11 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
           return;
         }
       }
-      if (tagId != -1) {
-        noDataCount = 0;
-        log("Captured tag " + tagId + " on the " + (isLeftBranch ? "left" : "right") + " branch");
-      }
+
+      // If we get here, tagId is found
+      LimelightVisionSubsystem.tagSeenDuringDriveToReef = Timer.getFPGATimestamp();
+      noDataCount = 0;
+      log("Captured tag " + tagId + " on the " + (isLeftBranch ? "left" : "right") + " branch");
     }
 
     // get offset
@@ -92,7 +94,10 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
   @Override
   public boolean isFinished() {
 
-    if (noDataCount > MAX_NO_DATA_COUNT_CYCLES) {
+    if (tagId == -1 && noDataCount > MAX_NO_TAG_NO_DATA_COUNT_CYCLES) {
+      log("Finishing - no tag ever found in " + noDataCount + " cycles");
+      return true;
+    } else if (noDataCount > MAX_NO_DATA_COUNT_CYCLES) {
       log("Finishing - no vision data for " + noDataCount + " cycles");
       return true;
     }
@@ -111,7 +116,7 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
     // Not checking tx because if we're this close, we can't move left/right anyways.  Check > -1 as
     // it will return that if there's no tag data.  Also have a 2 second timeout if we aren't moving
     // closer to the tag
-    if (distanceToTag < 0.04 && distanceToTag > -1 || elaspedTimeSinceUpdate > 2) {
+    if ((distanceToTag < 0.04 && distanceToTag > -1) || elaspedTimeSinceUpdate > 2) {
       log(
           "Finishing: DistanceToTag[ "
               + distanceToTag
