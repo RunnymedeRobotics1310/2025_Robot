@@ -154,33 +154,50 @@ public class OperatorInput extends SubsystemBase {
      * Set Score Height (POV)
      */
     // Y (delivery), A (intake) for arm position
-    new Trigger(() -> operatorController.getPOV() == 0)
+    new Trigger(() -> operatorController.getPOV() == 0 && !isAutoAlignEitherBranch() && !isOperatorShift())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coralSubsystem));
-    new Trigger(() -> operatorController.getPOV() == 270 && !isAutoAlignReef())
+    new Trigger(() -> operatorController.getPOV() == 270 && !isAutoAlignEitherBranch() && !isOperatorShift())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L3, coralSubsystem));
-    new Trigger(() -> operatorController.getPOV() == 180)
+    new Trigger(() -> operatorController.getPOV() == 180 && !isAutoAlignEitherBranch() && !isOperatorShift())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L2, coralSubsystem));
-    new Trigger(() -> operatorController.getPOV() == 90 && !isAutoAlignReef())
+    new Trigger(() -> operatorController.getPOV() == 90 && !isAutoAlignEitherBranch() && !isOperatorShift())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L1, coralSubsystem));
+
+    // Semi-auto score commands
+    new Trigger(() -> (isAutoAlignLeftBranch() && operatorController.getPOV() == 0))
+            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L4, true));
+    new Trigger(() -> (isAutoAlignRightBranch() && operatorController.getPOV() == 0))
+            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L4, false));
+
+    new Trigger(() -> (isAutoAlignLeftBranch() && operatorController.getPOV() == 270))
+            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L3, true));
+    new Trigger(() -> (isAutoAlignRightBranch() && operatorController.getPOV() == 270))
+            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L3, false));
+
+    new Trigger(() -> (isAutoAlignLeftBranch() && operatorController.getPOV() == 180))
+            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L2, true));
+    new Trigger(() -> (isAutoAlignRightBranch() && operatorController.getPOV() == 180))
+            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L2, false));
 
     /*
      * Set remove algae poses
      */
     new Trigger(
             () ->
-                operatorController.getPOV() == 270
-                    && operatorController.getRightBumperButton()
-                    && !isAutoAlignReef())
+                operatorController.getPOV() == 0
+                    && isOperatorShift()
+                    && !isAutoAlignEitherBranch())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.REMOVE_HIGH_ALGAE, coralSubsystem));
+
     new Trigger(
-            () -> operatorController.getPOV() == 180 && operatorController.getRightBumperButton())
+            () -> operatorController.getPOV() == 270 && isOperatorShift())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.REMOVE_LOW_ALGAE, coralSubsystem));
 
     /*
      * Coral Intake Buttons
      */
     new Trigger(() -> isAlignLeftStation() || isAlignRightStation())
-        .onTrue(new IntakeCoralCommand(coralSubsystem, false));
+        .onTrue(new IntakeCoralCommand(coralSubsystem, false, true, swerve, vision, this));
 
     new Trigger(() -> driverController.getYButton())
         .onTrue(new IntakeCoralCommand(coralSubsystem, true));
@@ -205,14 +222,6 @@ public class OperatorInput extends SubsystemBase {
 
     new Trigger(this::isToggleCompressor).onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
 
-    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 270))
-        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, true));
-    //                .alongWith(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coral)));
-
-    new Trigger(() -> (isAutoAlignReef() && operatorController.getPOV() == 90))
-        .onTrue(new DriveToVisibleTagCommand(driveSubsystem, visionSubsystem, false));
-    //                            .alongWith(new MoveToCoralPoseCommand(CoralPose.SCORE_L4,
-    // coral)));
   }
 
   public void configureDashboardBindings(
@@ -396,19 +405,31 @@ public class OperatorInput extends SubsystemBase {
   }
 
   public boolean getEjectButton() {
-    return operatorController.getLeftBumperButton();
-  }
-
-  public boolean getInjectButton() {
     return operatorController.getBButton();
   }
 
-  public boolean getPlant() {
-    return operatorController.getRightTriggerAxis() > 0.5;
+  public boolean getInjectButton() {
+    return operatorController.getLeftBumperButton();
   }
 
-  public boolean isAutoAlignReef() {
+  public boolean getPlant() {
+    return operatorController.getYButton();
+  }
+
+  public boolean isAutoAlignEitherBranch() {
+    return isAutoAlignLeftBranch() || isAutoAlignRightBranch();
+  }
+
+  public boolean isAutoAlignLeftBranch() {
     return operatorController.getLeftTriggerAxis() > 0.1;
+  }
+
+  public boolean isAutoAlignRightBranch() {
+    return operatorController.getRightTriggerAxis() > 0.1;
+  }
+
+  public boolean isOperatorShift() {
+    return operatorController.getRightBumperButton();
   }
 
   // ALIGN CORAL STATION ANGLE
@@ -424,7 +445,7 @@ public class OperatorInput extends SubsystemBase {
    * Compressor enable/disable
    */
   public boolean isToggleCompressor() {
-    return operatorController.getRightBumperButton() && operatorController.getAButton();
+    return isOperatorShift() && operatorController.getAButton();
   }
 
   /*

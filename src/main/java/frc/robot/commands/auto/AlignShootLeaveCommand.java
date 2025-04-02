@@ -17,23 +17,26 @@ import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 
 public class AlignShootLeaveCommand extends SequentialCommandGroup {
 
-    public AlignShootLeaveCommand(SwerveSubsystem swerve, LimelightVisionSubsystem vision, CoralSubsystem coral, Constants.CoralConstants.CoralPose coralPose, boolean isLeftBranch) {
+  public AlignShootLeaveCommand(
+      SwerveSubsystem swerve,
+      LimelightVisionSubsystem vision,
+      CoralSubsystem coral,
+      Constants.CoralConstants.CoralPose coralPose,
+      boolean isLeftBranch) {
 
-        Pose2d startPose = swerve.getPose();
-
-        addCommands(
-            new DriveToVisibleTagCommand(swerve, vision, isLeftBranch)
-                .alongWith(new MoveToCoralPoseCommand(coralPose, coral)));
-        addCommands(new PlantCoralCommand(coral));
+    addCommands(
+        new DriveToVisibleTagCommand(swerve, vision, isLeftBranch)
+            .alongWith(new MoveToCoralPoseCommand(coralPose, coral)));
+    addCommands(new PlantCoralCommand(coral, true));
 
     addCommands(
         new DriveRobotOrientedOmegaCommand(swerve, -0.5, 0, 0)
             .withTimeout(0.2)
             .andThen(
                 new WaitCommand(0.2)
-                    //                        .andThen(new
-                    // MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.CLOSE_INTAKE,
-                    // coral))
-                    .andThen(new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.FAR_INTAKE, coral))));
+                    .andThen(
+                        new MoveToCoralPoseCommand(
+                                Constants.CoralConstants.CoralPose.FAR_INTAKE, coral)
+                            .raceWith(new NullDriveCommand(swerve)))));
   }
 }

@@ -32,6 +32,7 @@ public class TeleopDriveCommand extends LoggingCommand {
   private boolean fieldOriented = true;
   private Timer rotationSettleTimer = new Timer();
   private boolean prevRotate180Val = false;
+  private boolean operatorIsDriving = false;
 
   /** Used to drive a swerve robot in full field-centric mode. */
   public TeleopDriveCommand(
@@ -50,6 +51,7 @@ public class TeleopDriveCommand extends LoggingCommand {
     rotationSettleTimer.start();
     rotationSettleTimer.reset();
     headingSetpointDeg = null;
+    operatorIsDriving = false;
 
     // The FRC field-oriented coordinate system
     // https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html
@@ -125,6 +127,7 @@ public class TeleopDriveCommand extends LoggingCommand {
       // headingSetpoint = Rotation2d.fromDegrees(swerve.getYaw());
       headingSetpointDeg = null;
       rotationSettleTimer.reset();
+      operatorIsDriving = false;
     } else {
       // Translating only. Just drive on robot yaw
       // TODO: tune timer duration
@@ -134,6 +137,7 @@ public class TeleopDriveCommand extends LoggingCommand {
 
       // rotate 180º button
       if (doFlip) {
+        operatorIsDriving = false;
         if (headingSetpointDeg == null) {
           headingSetpointDeg = swerve.getYaw() + 180;
           log("flipping from null");
@@ -145,11 +149,13 @@ public class TeleopDriveCommand extends LoggingCommand {
       }
 
       if (faceReef) {
+        operatorIsDriving = false;
         headingSetpointDeg =
             swerve.getClosestReefAngle(swerve.getPose().getX(), swerve.getPose().getY());
       }
 
       if (faceLeftStation) {
+        operatorIsDriving = false;
         if (invert) {
           headingSetpointDeg =
               Constants.FieldConstants.TAGS.RED_LEFT_SOURCE.pose.getRotation().getDegrees();
@@ -159,6 +165,7 @@ public class TeleopDriveCommand extends LoggingCommand {
         }
       }
       if (faceRightStation) {
+        operatorIsDriving = false;
         if (invert) {
           headingSetpointDeg =
               Constants.FieldConstants.TAGS.RED_RIGHT_SOURCE.pose.getRotation().getDegrees();
@@ -174,7 +181,7 @@ public class TeleopDriveCommand extends LoggingCommand {
       }
 
       // Set omega
-      if (headingSetpointDeg == null) {
+      if (headingSetpointDeg == null || operatorIsDriving) {
         omegaRadiansPerSecond = 0;
       } else {
         headingSetpointDeg = normalizeDegrees(headingSetpointDeg);
@@ -185,11 +192,11 @@ public class TeleopDriveCommand extends LoggingCommand {
 
     // if driver isn't driving, operator has control
     if ((vX == 0 && vY == 0 && ccwRotAngularVelPct == 0) && (oX != 0 || oY != 0)) {
+      operatorIsDriving = true;
       swerve.driveRobotOriented(
           oX * TRANSLATION_CONFIG.maxSpeedMPS(),
           oY * TRANSLATION_CONFIG.maxSpeedMPS(),
           omegaRadiansPerSecond);
-      rotationSettleTimer.reset();
       // driver gets priority otherwise
     } else {
       if (fieldOriented) {
@@ -208,6 +215,7 @@ public class TeleopDriveCommand extends LoggingCommand {
     logCommandEnd(interrupted);
     headingSetpointDeg = null;
     rotationSettleTimer.reset();
+    operatorIsDriving = false;
   }
 
   // Returns true when the command should end.
