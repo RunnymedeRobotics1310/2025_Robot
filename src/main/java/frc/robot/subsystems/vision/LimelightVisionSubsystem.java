@@ -30,8 +30,6 @@ public class LimelightVisionSubsystem extends SubsystemBase {
 
   private final SwerveSubsystem swerve;
 
-  public static double tagSeenDuringDriveToReef = 0;
-
   public LimelightVisionSubsystem(VisionConfig visionConfig, SwerveSubsystem swerve) {
     this.swerve = swerve;
 

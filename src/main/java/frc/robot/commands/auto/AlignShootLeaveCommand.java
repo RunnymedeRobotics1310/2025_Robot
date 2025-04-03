@@ -1,13 +1,12 @@
 package frc.robot.commands.auto;
 
-import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
-import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.coral.intake.PlantCoralCommand;
-import frc.robot.commands.swervedrive.DriveRobotOrientedCommand;
 import frc.robot.commands.swervedrive.DriveRobotOrientedOmegaCommand;
 import frc.robot.commands.swervedrive.DriveToVisibleTagCommand;
 import frc.robot.commands.swervedrive.NullDriveCommand;
@@ -24,19 +23,24 @@ public class AlignShootLeaveCommand extends SequentialCommandGroup {
       Constants.CoralConstants.CoralPose coralPose,
       boolean isLeftBranch) {
 
-    addCommands(
-        new DriveToVisibleTagCommand(swerve, vision, isLeftBranch)
-            .alongWith(new MoveToCoralPoseCommand(coralPose, coral)));
-    addCommands(new PlantCoralCommand(coral, true));
+    DriveToVisibleTagCommand driveToTagCommand =
+        new DriveToVisibleTagCommand(swerve, vision, isLeftBranch);
+
+    addCommands(driveToTagCommand.alongWith(new MoveToCoralPoseCommand(coralPose, coral)));
 
     addCommands(
-        new DriveRobotOrientedOmegaCommand(swerve, -0.5, 0, 0)
-            .withTimeout(0.2)
-            .andThen(
-                new WaitCommand(0.2)
-                    .andThen(
-                        new MoveToCoralPoseCommand(
-                                Constants.CoralConstants.CoralPose.FAR_INTAKE, coral)
-                            .raceWith(new NullDriveCommand(swerve)))));
+        new ConditionalCommand(
+            new PlantCoralCommand(coral, false)
+                .andThen(
+                    new DriveRobotOrientedOmegaCommand(swerve, -0.5, 0, 0)
+                        .withTimeout(0.2)
+                        .andThen(
+                            new WaitCommand(0.2)
+                                .andThen(
+                                    new MoveToCoralPoseCommand(
+                                            Constants.CoralConstants.CoralPose.CLOSE_INTAKE, coral)
+                                        .raceWith(new NullDriveCommand(swerve))))),
+            new InstantCommand(),
+            driveToTagCommand::isInPosition));
   }
 }

@@ -58,7 +58,7 @@ public class BaseAutoCommand extends SequentialCommandGroup {
   }
 
   protected Command plant() {
-    return new PlantCoralCommand(coral, false);
+    return new PlantCoralCommand(coral);
   }
 
   protected Command approachReef(FieldLocation location) {
