@@ -560,7 +560,7 @@ public final class Constants {
       LEVEL_1(40),
       LEVEL_2(120),
       LEVEL_3(126),
-      LEVEL_4(106),
+      LEVEL_4(104),
       REMOVE_ALGAE(74);
 
       public final double angle;
