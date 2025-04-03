@@ -40,7 +40,9 @@ public class PlantCoralCommand extends LoggingCommand {
   @Override
   public void execute() {
     coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_OUTAKE_SPEED);
-    coralSubsystem.setArmSpeed(ARM_SLOW_ZONE_SPEED);
+    if (!semiAuto) {
+      coralSubsystem.setArmSpeed(ARM_SLOW_ZONE_SPEED);
+    }
 
     if (!coralSubsystem.isCoralDetected() && !hasShot) {
       shotTime = Timer.getFPGATimestamp();
