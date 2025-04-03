@@ -13,12 +13,14 @@ import frc.robot.subsystems.swerve.SwerveSubsystem;
 public class DriveThroughFieldLocationCommand extends LoggingCommand {
 
   private final SwerveSubsystem swerve;
-  private final Pose2d allianceLocation;
+  private final FieldLocation fieldLocation;
   private final double maxSpeed;
-  private final double targetHeadingDeg;
   private final boolean driveThrough;
   private final double toleranceM;
   private final double decelDistance;
+
+  private Pose2d allianceLocation;
+  private double targetHeadingDeg;
 
   public DriveThroughFieldLocationCommand(
       SwerveSubsystem swerve, FieldLocation location, double maxSpeed, boolean driveThrough) {
@@ -33,18 +35,11 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
       double toleranceM,
       double decelDistance) {
     this.swerve = swerve;
+    this.fieldLocation = location;
     this.driveThrough = driveThrough;
     this.toleranceM = toleranceM;
     this.decelDistance = decelDistance;
-
-    if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
-      allianceLocation = RunnymedeUtils.getRedAlliancePose(location.pose);
-    } else {
-      allianceLocation = location.pose;
-    }
     this.maxSpeed = maxSpeed;
-    this.targetHeadingDeg =
-        SwerveUtils.normalizeDegrees(allianceLocation.getRotation().getDegrees());
 
     addRequirements(swerve);
   }
@@ -52,6 +47,14 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
   @Override
   public void initialize() {
     logCommandStart();
+
+    if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
+      allianceLocation = RunnymedeUtils.getRedAlliancePose(fieldLocation.pose);
+    } else {
+      allianceLocation = fieldLocation.pose;
+    }
+    this.targetHeadingDeg =
+        SwerveUtils.normalizeDegrees(allianceLocation.getRotation().getDegrees());
   }
 
   @Override

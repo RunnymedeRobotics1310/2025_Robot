@@ -35,6 +35,10 @@ public class BaseAutoCommand extends SequentialCommandGroup {
     }
   }
 
+  public Command logAutoStart() {
+    return new LogAutoCommand(swerve, coral);
+  }
+
   protected Command driveToLocation(FieldLocation location) {
     return new DriveToFieldLocationCommand(swerve, location);
   }

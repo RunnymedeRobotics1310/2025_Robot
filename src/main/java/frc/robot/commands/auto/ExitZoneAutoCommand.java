@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.RunnymedeUtils;
 import frc.robot.commands.swervedrive.DriveRobotOrientedCommand;
-import frc.robot.commands.swervedrive.DriveRobotOrientedOmegaCommand;
 import frc.robot.commands.swervedrive.SetAllianceGyroCommand;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 
@@ -21,7 +20,9 @@ public class ExitZoneAutoCommand extends SequentialCommandGroup {
 
     addCommands(new SetAllianceGyroCommand(swerve, 180));
 
-    addCommands(new DriveRobotOrientedCommand(swerve, 0.50, 0.00, 180 + allianceOffset)
-            .withTimeout(0.55));
+    addCommands(new LogAutoCommand(swerve));
+
+    addCommands(
+        new DriveRobotOrientedCommand(swerve, 0.50, 0.00, 180 + allianceOffset).withTimeout(0.55));
   }
 }

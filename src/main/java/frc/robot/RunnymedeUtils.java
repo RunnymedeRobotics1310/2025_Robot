@@ -10,9 +10,9 @@ import java.util.Objects;
 
 public class RunnymedeUtils {
 
-  private static final long ALLIANCE_CACHE_TIME_MILLIS = 5000;
+  private static final double ALLIANCE_CACHE_SECONDS = 0.5;
   private static DriverStation.Alliance alliance = null;
-  private static long allianceLastUpdated = 0;
+  private static double allianceLastUpdated = 0;
   private static double teleOpMatchStartTime = 0;
 
   /**
@@ -23,9 +23,11 @@ public class RunnymedeUtils {
    *
    * @return current alliance from FMS/DS, or Red if none set
    */
-  public static DriverStation.Alliance getRunnymedeAlliance() {
-    long currentTime = System.currentTimeMillis();
-    if (alliance == null || currentTime - allianceLastUpdated > ALLIANCE_CACHE_TIME_MILLIS) {
+  public static synchronized DriverStation.Alliance getRunnymedeAlliance() {
+    double currentTime = Timer.getFPGATimestamp();
+    if (alliance == null
+        || currentTime - allianceLastUpdated > ALLIANCE_CACHE_SECONDS
+        || DriverStation.isDisabled()) {
       DriverStation.getAlliance()
           .ifPresent(
               value -> {

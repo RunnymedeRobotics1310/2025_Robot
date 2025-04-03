@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -92,10 +93,14 @@ public class LightingSubsystem extends SubsystemBase {
         }
       }
     } else {
+      boolean hasVisPose = SmartDashboard.getBoolean("swerve/hasVisPose", false);
       if (Telemetry.healthyRobot == Telemetry.AlertLevel.ERROR) {
         flashLed(ledRobotHealthBuffer, purpleLedPattern);
       } else if (Telemetry.healthyRobot == Telemetry.AlertLevel.WARNING) {
         flashLed(ledRobotHealthBuffer, greenLedPattern);
+      } else if (hasVisPose) {
+        greenLedPattern.applyTo(ledBuffer);
+        ledStrip.setData(ledBuffer);
       } else {
         LEDPattern.kOff.applyTo(ledRobotHealthBuffer);
         ledStrip.setData(ledRobotHealthBuffer);
