@@ -134,7 +134,7 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
 
   public boolean isInPosition() {
     boolean didFindTag = tagId != -1;
-    boolean closeEnough = lastDistance < 0.6 && lastDistance > -1;
+    boolean closeEnough = lastDistance < 0.06 && lastDistance > -1;
 
     return didFindTag && closeEnough;
   }
