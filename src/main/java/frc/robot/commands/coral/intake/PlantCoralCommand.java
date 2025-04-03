@@ -14,6 +14,7 @@ public class PlantCoralCommand extends LoggingCommand {
   private double intakeStartPos = 0;
   private boolean hasShot = false;
   private double shotTime = 0;
+  private boolean raiseArmOnPlant = true;
 
   /**
    * Plant coral runs the intake motor for a set number of rotations. Use it for autos.
@@ -21,7 +22,17 @@ public class PlantCoralCommand extends LoggingCommand {
    * @param coralSubsystem
    */
   public PlantCoralCommand(CoralSubsystem coralSubsystem) {
+    this(coralSubsystem, true);
+  }
+
+  /**
+   * Plant coral runs the intake motor for a set number of rotations. Use it for autos.
+   *
+   * @param coralSubsystem
+   */
+  public PlantCoralCommand(CoralSubsystem coralSubsystem, boolean raiseArmOnPlant) {
     this.coralSubsystem = coralSubsystem;
+    this.raiseArmOnPlant = raiseArmOnPlant;
 
     addRequirements(coralSubsystem);
   }
@@ -37,7 +48,9 @@ public class PlantCoralCommand extends LoggingCommand {
   @Override
   public void execute() {
     coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_OUTAKE_SPEED);
-    coralSubsystem.setArmSpeed(ARM_SLOW_ZONE_SPEED);
+    if (raiseArmOnPlant) {
+      coralSubsystem.setArmSpeed(ARM_SLOW_ZONE_SPEED);
+    }
 
     if (!coralSubsystem.isCoralDetected() && !hasShot) {
       shotTime = Timer.getFPGATimestamp();

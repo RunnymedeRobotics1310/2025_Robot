@@ -30,7 +30,7 @@ public class AlignShootLeaveCommand extends SequentialCommandGroup {
 
     addCommands(
         new ConditionalCommand(
-            new PlantCoralCommand(coral)
+            new PlantCoralCommand(coral, false)
                 .andThen(
                     new DriveRobotOrientedOmegaCommand(swerve, -0.5, 0, 0)
                         .withTimeout(0.2)
