@@ -88,7 +88,7 @@ public class RobotContainer {
     NamedCommands.registerCommand(
         "coral-l4",
         new MoveToCoralPoseCommand(Constants.CoralConstants.CoralPose.SCORE_L4, coralSubsystem));
-    NamedCommands.registerCommand("plant", new PlantCoralCommand(coralSubsystem, false));
+    NamedCommands.registerCommand("plant", new PlantCoralCommand(coralSubsystem));
     NamedCommands.registerCommand(
         "drivetotag-l1",
         new DriveToReefTagCommand(

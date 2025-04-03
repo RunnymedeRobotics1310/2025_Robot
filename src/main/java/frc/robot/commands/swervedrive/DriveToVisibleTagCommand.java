@@ -105,13 +105,16 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
     double distanceToTag = vision.distanceTagToFrontBumper(tagId, isLeftBranch);
     double currentTime = Timer.getFPGATimestamp();
 
-    if (Math.abs(Math.round((distanceToTag - lastDistance) * 100d) / 100d) > 0) {
-      lastDistanceChangeTime = currentTime;
-    }
-    double elaspedTimeSinceUpdate = currentTime - lastDistanceChangeTime;
+    if (distanceToTag > -1310) {
+      if (Math.abs(Math.round((distanceToTag - lastDistance) * 100d) / 100d) > 0) {
+        lastDistanceChangeTime = currentTime;
+      }
 
-    // Update last distance
-    lastDistance = distanceToTag;
+      // Update last distance
+      lastDistance = distanceToTag;
+    }
+
+    double elaspedTimeSinceUpdate = currentTime - lastDistanceChangeTime;
 
     // Not checking tx because if we're this close, we can't move left/right anyways.  Check > -1 as
     // it will return that if there's no tag data.  Also have a 2 second timeout if we aren't moving
@@ -127,6 +130,13 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
     }
 
     return false;
+  }
+
+  public boolean isInPosition() {
+    boolean didFindTag = tagId != -1;
+    boolean closeEnough = lastDistance < 0.6 && lastDistance > -1;
+
+    return didFindTag && closeEnough;
   }
 
   @Override
