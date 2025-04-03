@@ -53,7 +53,6 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
       }
 
       // If we get here, tagId is found
-      LimelightVisionSubsystem.tagSeenDuringDriveToReef = Timer.getFPGATimestamp();
       noDataCount = 0;
       log("Captured tag " + tagId + " on the " + (isLeftBranch ? "left" : "right") + " branch");
     }
@@ -105,6 +104,7 @@ public class DriveToVisibleTagCommand extends LoggingCommand {
     double distanceToTag = vision.distanceTagToFrontBumper(tagId, isLeftBranch);
     double currentTime = Timer.getFPGATimestamp();
 
+    // Don't calculate distance if we don't have a tag
     if (distanceToTag > -1310) {
       if (Math.abs(Math.round((distanceToTag - lastDistance) * 100d) / 100d) > 0) {
         lastDistanceChangeTime = currentTime;
