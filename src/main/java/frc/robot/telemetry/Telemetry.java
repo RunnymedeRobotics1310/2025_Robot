@@ -4,6 +4,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Telemetry {
 
+  public enum AlertLevel {
+    NONE,
+    WARNING,
+    ERROR
+  }
+
   public static final String PREFIX = "1310/";
 
   public static Test test = new Test();
@@ -12,7 +18,7 @@ public class Telemetry {
   public static CoralTelemetry coral = new CoralTelemetry();
   public static ClimbTelemetry climb = new ClimbTelemetry();
 
-  public static boolean healthyRobot = false;
+  public static AlertLevel healthyRobot = AlertLevel.NONE;
 
   private Telemetry() {}
 
@@ -23,6 +29,6 @@ public class Telemetry {
     coral.post();
     climb.post();
 
-    SmartDashboard.putBoolean(PREFIX + "RobotHealth", healthyRobot);
+    SmartDashboard.putBoolean(PREFIX + "RobotHealth", healthyRobot == AlertLevel.NONE);
   }
 }

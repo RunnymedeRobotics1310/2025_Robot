@@ -24,9 +24,9 @@ public class LimelightVisionSubsystem extends SubsystemBase {
   private final LimelightBotPose thomasBotPoseCache = new LimelightBotPose();
 
   private final Alert nikolaDisconnected =
-      new Alert("Limelight [Nikola] Disconnected!", Alert.AlertType.kError);
+      new Alert("Limelight [Nikola] Disconnected!", Alert.AlertType.kWarning);
   private final Alert thomasDisconnected =
-      new Alert("Limelight [Thomas] Disconnected!", Alert.AlertType.kError);
+      new Alert("Limelight [Thomas] Disconnected!", Alert.AlertType.kWarning);
 
   private final SwerveSubsystem swerve;
 

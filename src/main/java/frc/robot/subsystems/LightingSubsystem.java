@@ -92,8 +92,10 @@ public class LightingSubsystem extends SubsystemBase {
         }
       }
     } else {
-      if (!Telemetry.healthyRobot) {
+      if (Telemetry.healthyRobot == Telemetry.AlertLevel.ERROR) {
         flashLed(ledRobotHealthBuffer, purpleLedPattern);
+      } else if (Telemetry.healthyRobot == Telemetry.AlertLevel.WARNING) {
+        flashLed(ledRobotHealthBuffer, greenLedPattern);
       } else {
         LEDPattern.kOff.applyTo(ledRobotHealthBuffer);
         ledStrip.setData(ledRobotHealthBuffer);

@@ -7,10 +7,8 @@ package frc.robot;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringArraySubscriber;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.telemetry.Telemetry;
@@ -36,6 +34,13 @@ public class Robot extends TimedRobot {
           .getTable("SmartDashboard")
           .getSubTable("Alerts")
           .getStringArrayTopic("errors")
+          .subscribe(new String[0]);
+
+  private static final StringArraySubscriber alertsWarnings =
+      NetworkTableInstance.getDefault()
+          .getTable("SmartDashboard")
+          .getSubTable("Alerts")
+          .getStringArrayTopic("warnings")
           .subscribe(new String[0]);
 
   /**
@@ -67,7 +72,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    Telemetry.healthyRobot = (alertsErrors.get().length == 0);
+    if (alertsErrors.get().length > 0) {
+      Telemetry.healthyRobot = Telemetry.AlertLevel.ERROR;
+    } else if (alertsWarnings.get().length > 0) {
+      Telemetry.healthyRobot = Telemetry.AlertLevel.WARNING;
+    } else {
+      Telemetry.healthyRobot = Telemetry.AlertLevel.NONE;
+    }
 
     // Runs the Scheduler. This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
