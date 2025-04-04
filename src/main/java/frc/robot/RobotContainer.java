@@ -37,7 +37,7 @@ public class RobotContainer {
       new LimelightVisionSubsystem(Constants.VisionConstants.VISION_CONFIG, swerveDriveSubsystem);
   private final CoralSubsystem coralSubsystem = new CoralSubsystem();
   private final PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
-  private final LightingSubsystem lightingSubsystem = new LightingSubsystem();
+  private final LightingSubsystem lightingSubsystem = new LightingSubsystem(swerveDriveSubsystem);
   private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
   // Driver and operator controllers

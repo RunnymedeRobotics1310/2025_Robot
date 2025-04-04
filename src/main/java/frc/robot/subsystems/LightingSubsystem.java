@@ -8,14 +8,16 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RunnymedeUtils;
+import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.telemetry.Telemetry;
 
 public class LightingSubsystem extends SubsystemBase {
+
+  private SwerveSubsystem swerve;
 
   public static boolean isClimbDeployed = false;
   public static boolean isCageInPosition = false;
@@ -56,7 +58,9 @@ public class LightingSubsystem extends SubsystemBase {
   private static final LEDPattern blueLedPattern = LEDPattern.solid(Color.kBlue);
   private static final LEDPattern orangeLedPattern = LEDPattern.solid(Color.kOrange);
 
-  public LightingSubsystem() {
+  public LightingSubsystem(SwerveSubsystem swerve) {
+    this.swerve = swerve;
+
     ledStrip.setLength(Constants.LightingConstants.LED_STRING_LENGTH);
     ledStrip.start();
 
@@ -93,12 +97,11 @@ public class LightingSubsystem extends SubsystemBase {
         }
       }
     } else {
-      boolean hasVisPose = SmartDashboard.getBoolean("swerve/hasVisPose", false);
       if (Telemetry.healthyRobot == Telemetry.AlertLevel.ERROR) {
         flashLed(ledRobotHealthBuffer, purpleLedPattern);
       } else if (Telemetry.healthyRobot == Telemetry.AlertLevel.WARNING) {
         flashLed(ledRobotHealthBuffer, greenLedPattern);
-      } else if (hasVisPose) {
+      } else if (swerve.hasVisPose()) {
         greenLedPattern.applyTo(ledBuffer);
         ledStrip.setData(ledBuffer);
       } else {

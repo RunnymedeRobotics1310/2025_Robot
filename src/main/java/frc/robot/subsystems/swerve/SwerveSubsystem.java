@@ -4,7 +4,6 @@ import static frc.robot.Constants.FieldConstants.*;
 import static frc.robot.Constants.Swerve.*;
 import static frc.robot.Constants.VisionConstants.VISION_PRIMARY_LIMELIGHT_NAME;
 
-import ca.team1310.swerve.RunnymedeSwerveDrive;
 import ca.team1310.swerve.core.SwerveMath;
 import ca.team1310.swerve.utils.SwerveUtils;
 import ca.team1310.swerve.vision.LimelightAwareSwerveDrive;
@@ -28,7 +27,7 @@ import frc.robot.telemetry.Telemetry;
 
 public class SwerveSubsystem extends SubsystemBase {
 
-  private final RunnymedeSwerveDrive drive;
+  private final LimelightAwareSwerveDrive drive;
   private final SwerveDriveSubsystemConfig config;
   private final SlewRateLimiter xLimiter;
   private final SlewRateLimiter yLimiter;
@@ -464,5 +463,14 @@ public class SwerveSubsystem extends SubsystemBase {
     } else {
       return 0;
     }
+  }
+
+  /**
+   * Check if the drive has a visual pose or not
+   *
+   * @return true if the drive has a visual pose, false otherwise
+   */
+  public boolean hasVisPose() {
+    return drive.getVisionPose() != null;
   }
 }
