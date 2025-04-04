@@ -55,6 +55,13 @@ public class DriveThroughFieldLocationCommand extends LoggingCommand {
     }
     this.targetHeadingDeg =
         SwerveUtils.normalizeDegrees(allianceLocation.getRotation().getDegrees());
+
+    StringBuilder sb = new StringBuilder();
+    sb.append("DriveThroughFieldLocationCommand: Target Pose: ")
+        .append(allianceLocation)
+        .append(" Heading Deg: ")
+        .append(targetHeadingDeg);
+    log(sb.toString());
   }
 
   @Override

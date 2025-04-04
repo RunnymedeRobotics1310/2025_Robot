@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.CoralConstants.CoralPose;
+import frc.robot.RunnymedeUtils;
 import frc.robot.commands.CancelCommand;
 import frc.robot.commands.auto.*;
 import frc.robot.commands.climb.AutoClimbCommand;
@@ -28,7 +29,6 @@ import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.PneumaticsSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
-import java.util.function.Consumer;
 
 /** The DriverController exposes all driver functions */
 public class OperatorInput extends SubsystemBase {
@@ -38,8 +38,6 @@ public class OperatorInput extends SubsystemBase {
   private final SwerveSubsystem swerve;
   private final CoralSubsystem coral;
   private final LimelightVisionSubsystem vision;
-
-  private Command autonomousCommand = new InstantCommand();
 
   private boolean matchNearEndTimerStarted = false;
 
@@ -154,43 +152,68 @@ public class OperatorInput extends SubsystemBase {
      * Set Score Height (POV)
      */
     // Y (delivery), A (intake) for arm position
-    new Trigger(() -> operatorController.getPOV() == 0 && !isAutoAlignEitherBranch() && !isOperatorShift())
+    new Trigger(
+            () ->
+                operatorController.getPOV() == 0
+                    && !isAutoAlignEitherBranch()
+                    && !isOperatorShift())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coralSubsystem));
-    new Trigger(() -> operatorController.getPOV() == 270 && !isAutoAlignEitherBranch() && !isOperatorShift())
+    new Trigger(
+            () ->
+                operatorController.getPOV() == 270
+                    && !isAutoAlignEitherBranch()
+                    && !isOperatorShift())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L3, coralSubsystem));
-    new Trigger(() -> operatorController.getPOV() == 180 && !isAutoAlignEitherBranch() && !isOperatorShift())
+    new Trigger(
+            () ->
+                operatorController.getPOV() == 180
+                    && !isAutoAlignEitherBranch()
+                    && !isOperatorShift())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L2, coralSubsystem));
-    new Trigger(() -> operatorController.getPOV() == 90 && !isAutoAlignEitherBranch() && !isOperatorShift())
+    new Trigger(
+            () ->
+                operatorController.getPOV() == 90
+                    && !isAutoAlignEitherBranch()
+                    && !isOperatorShift())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L1, coralSubsystem));
 
     // Semi-auto score commands
     new Trigger(() -> (isAutoAlignLeftBranch() && operatorController.getPOV() == 0))
-            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L4, true));
+        .onTrue(
+            new AlignShootLeaveCommand(
+                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L4, true));
     new Trigger(() -> (isAutoAlignRightBranch() && operatorController.getPOV() == 0))
-            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L4, false));
+        .onTrue(
+            new AlignShootLeaveCommand(
+                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L4, false));
 
     new Trigger(() -> (isAutoAlignLeftBranch() && operatorController.getPOV() == 270))
-            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L3, true));
+        .onTrue(
+            new AlignShootLeaveCommand(
+                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L3, true));
     new Trigger(() -> (isAutoAlignRightBranch() && operatorController.getPOV() == 270))
-            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L3, false));
+        .onTrue(
+            new AlignShootLeaveCommand(
+                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L3, false));
 
     new Trigger(() -> (isAutoAlignLeftBranch() && operatorController.getPOV() == 180))
-            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L2, true));
+        .onTrue(
+            new AlignShootLeaveCommand(
+                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L2, true));
     new Trigger(() -> (isAutoAlignRightBranch() && operatorController.getPOV() == 180))
-            .onTrue(new AlignShootLeaveCommand(driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L2, false));
+        .onTrue(
+            new AlignShootLeaveCommand(
+                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L2, false));
 
     /*
      * Set remove algae poses
      */
     new Trigger(
             () ->
-                operatorController.getPOV() == 0
-                    && isOperatorShift()
-                    && !isAutoAlignEitherBranch())
+                operatorController.getPOV() == 0 && isOperatorShift() && !isAutoAlignEitherBranch())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.REMOVE_HIGH_ALGAE, coralSubsystem));
 
-    new Trigger(
-            () -> operatorController.getPOV() == 270 && isOperatorShift())
+    new Trigger(() -> operatorController.getPOV() == 270 && isOperatorShift())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.REMOVE_LOW_ALGAE, coralSubsystem));
 
     /*
@@ -221,7 +244,6 @@ public class OperatorInput extends SubsystemBase {
         .onTrue(new AutoClimbCommand(climbSubsystem));
 
     new Trigger(this::isToggleCompressor).onTrue(new ToggleCompressorCommand(pneumaticsSubsystem));
-
   }
 
   public void configureDashboardBindings(
@@ -535,14 +557,6 @@ public class OperatorInput extends SubsystemBase {
     autoPatternChooser.addOption(
         "PP 3 Coral Left", Constants.AutoConstants.AutoPattern.PP_SCORE_3_LEFT);
 
-    autoPatternChooser.onChange(
-        new Consumer<Constants.AutoConstants.AutoPattern>() {
-          @Override
-          public void accept(Constants.AutoConstants.AutoPattern pattern) {
-            autonomousCommand = generateAutonomousCommand(delayChooser.getSelected(), pattern);
-          }
-        });
-
     SmartDashboard.putData("1310/auto/Delay Selector", delayChooser);
 
     delayChooser.setDefaultOption("No Delay", Constants.AutoConstants.Delay.NO_DELAY);
@@ -553,18 +567,6 @@ public class OperatorInput extends SubsystemBase {
     delayChooser.addOption("2 1/2 Seconds", Constants.AutoConstants.Delay.WAIT_2_5_SECONDS);
     delayChooser.addOption("3 Seconds", Constants.AutoConstants.Delay.WAIT_3_SECONDS);
     delayChooser.addOption("5 Seconds", Constants.AutoConstants.Delay.WAIT_5_SECONDS);
-
-    delayChooser.onChange(
-        new Consumer<Constants.AutoConstants.Delay>() {
-          @Override
-          public void accept(Constants.AutoConstants.Delay delay) {
-            autonomousCommand = generateAutonomousCommand(delay, autoPatternChooser.getSelected());
-          }
-        });
-
-    // Set default autonomous command
-    autonomousCommand =
-        generateAutonomousCommand(delayChooser.getSelected(), autoPatternChooser.getSelected());
   }
 
   private Command generateAutonomousCommand(
@@ -595,6 +597,22 @@ public class OperatorInput extends SubsystemBase {
   }
 
   public Command getAutonomousCommand() {
-    return autonomousCommand;
+    StringBuilder sb = new StringBuilder();
+    sb.append("Alliance[")
+        .append(RunnymedeUtils.getRunnymedeAlliance())
+        .append("], Has Vis Pose[")
+        .append(swerve.hasVisPose())
+        .append("], Pose[")
+        .append(swerve)
+        .append("], Coral[")
+        .append(coral)
+        .append("], AutoCommand[")
+        .append(autoPatternChooser.getSelected().name())
+        .append("], AutoDelay[")
+        .append(delayChooser.getSelected().name())
+        .append("]");
+
+    System.out.println(sb.toString());
+    return generateAutonomousCommand(delayChooser.getSelected(), autoPatternChooser.getSelected());
   }
 }

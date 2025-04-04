@@ -20,7 +20,13 @@ public class SetAllianceGyroCommand extends InstantCommand {
             headingOffset = 180;
           }
 
-          driveSubsystem.setYaw(yaw + headingOffset);
+          double newYaw = yaw + headingOffset;
+
+          StringBuilder sb = new StringBuilder();
+          sb.append("SetAllianceGyroCommand: Setting yaw to ").append(newYaw);
+          System.out.println(sb.toString());
+
+          driveSubsystem.setYaw(newYaw);
         });
   }
 

@@ -20,8 +20,6 @@ public class ExitZoneAutoCommand extends SequentialCommandGroup {
 
     addCommands(new SetAllianceGyroCommand(swerve, 180));
 
-    addCommands(new LogAutoCommand(swerve));
-
     addCommands(
         new DriveRobotOrientedCommand(swerve, 0.50, 0.00, 180 + allianceOffset).withTimeout(0.55));
   }
