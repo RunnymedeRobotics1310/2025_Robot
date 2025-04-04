@@ -88,6 +88,9 @@ public class TeleopDriveCommand extends LoggingCommand {
     // Operator y for fine-tuning robot oriented
     final double oY = Math.pow(-oi.getOperatorControllerAxis(LEFT, X), 3) * OPERATOR_SPEED_FACTOR;
 
+    double ow = 0;
+    if (oi.isOperatorShift()) ow = oi.getOperatorControllerAxis(RIGHT, X);
+
     // Left and right on the right stick will change the direction the robot is facing - its
     // heading. Positive x values on the stick translate to clockwise motion, and vice versa.
     // The coordinate system has positive motion as CCW.
@@ -191,12 +194,12 @@ public class TeleopDriveCommand extends LoggingCommand {
     }
 
     // if driver isn't driving, operator has control
-    if ((vX == 0 && vY == 0 && ccwRotAngularVelPct == 0) && (oX != 0 || oY != 0)) {
+    if ((vX == 0 && vY == 0 && ccwRotAngularVelPct == 0) && (oX != 0 || oY != 0 || ow != 0)) {
       operatorIsDriving = true;
       swerve.driveRobotOriented(
           oX * TRANSLATION_CONFIG.maxSpeedMPS(),
           oY * TRANSLATION_CONFIG.maxSpeedMPS(),
-          omegaRadiansPerSecond);
+          ow * Math.toRadians(5)); // 5deg/s
       // driver gets priority otherwise
     } else {
       if (fieldOriented) {

@@ -26,7 +26,9 @@ public class DefaultCoralCommand extends LoggingCommand {
   public void execute() {
 
     double elevatorInput = operatorInput.getElevatorInput();
+    if (operatorInput.isOperatorShift()) elevatorInput = 0;
     double armInput = operatorInput.getArmStick();
+    if (operatorInput.isOperatorShift()) armInput = 0;
     boolean ejectButton = operatorInput.getEjectButton();
     boolean injectButton = operatorInput.getInjectButton();
     boolean plant = operatorInput.getPlant();
