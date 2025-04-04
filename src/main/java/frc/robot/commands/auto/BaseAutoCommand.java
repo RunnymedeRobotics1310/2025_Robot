@@ -115,7 +115,7 @@ public class BaseAutoCommand extends SequentialCommandGroup {
     double intakeHeading = intakeLocation.pose.getRotation().getDegrees() + allianceOffset;
 
     return scoreL4CoralStop(reefLocation, speed)
-        .andThen(new DriveRobotOrientedCommand(swerve, -0.5, 0, reefHeading).withTimeout(0.2))
+        .andThen(new DriveRobotOrientedCommand(swerve, -0.5, 0, reefHeading).withTimeout(0.5))
         .andThen(
             (new WaitCommand(0.4).andThen(new IntakeCoralCommand(coral, false)))
                 .deadlineFor(
