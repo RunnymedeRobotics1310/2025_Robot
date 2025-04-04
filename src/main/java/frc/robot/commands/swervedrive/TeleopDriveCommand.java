@@ -199,7 +199,7 @@ public class TeleopDriveCommand extends LoggingCommand {
       swerve.driveRobotOriented(
           oX * TRANSLATION_CONFIG.maxSpeedMPS(),
           oY * TRANSLATION_CONFIG.maxSpeedMPS(),
-          ow * Math.toRadians(5)); // 5deg/s
+          ow * Math.toRadians(10)); // 5deg/s
       // driver gets priority otherwise
     } else {
       if (fieldOriented) {
