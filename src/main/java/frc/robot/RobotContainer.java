@@ -44,7 +44,6 @@ public class RobotContainer {
   private final OperatorInput operatorInput =
       new OperatorInput(
           OiConstants.DRIVER_CONTROLLER_PORT,
-          OiConstants.OPERATOR_CONTROLLER_PORT,
           OiConstants.CONTROLLER_DEADBAND,
           swerveDriveSubsystem,
           coralSubsystem,

@@ -2,7 +2,6 @@ package frc.robot.commands.swervedrive;
 
 import ca.team1310.swerve.utils.SwerveUtils;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.operator.OperatorInput;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
@@ -42,8 +41,8 @@ public class ReverseButAlsoTeleopDriveCommand extends TeleopDriveCommand{
                 || oi.getDriverControllerAxis(OperatorInput.Stick.RIGHT, OperatorInput.Axis.X) != 0
                 || oi.isFaceReef()
                 || oi.getRotate180Val()
-                || oi.isAlignRightStation()
-                || oi.isAlignLeftStation()
+                || oi.isRightShift()
+                || oi.isLeftShift()
                 || oi.isSlowMode()
                 || oi.isFastMode()
         );

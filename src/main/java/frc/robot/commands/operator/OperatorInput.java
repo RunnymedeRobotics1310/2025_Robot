@@ -34,7 +34,6 @@ import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 public class OperatorInput extends SubsystemBase {
 
   private final XboxController driverController;
-  private final XboxController operatorController;
   private final SwerveSubsystem swerve;
   private final CoralSubsystem coral;
   private final LimelightVisionSubsystem vision;
@@ -92,17 +91,14 @@ public class OperatorInput extends SubsystemBase {
    * Construct an OperatorInput class that is fed by a DriverController and an OperatorController.
    *
    * @param driverControllerPort on the driver station which the driver joystick is plugged into
-   * @param operatorControllerPort on the driver station which the aux joystick is plugged into
    */
   public OperatorInput(
       int driverControllerPort,
-      int operatorControllerPort,
       double deadband,
       SwerveSubsystem swerve,
       CoralSubsystem coral,
       LimelightVisionSubsystem vision) {
     driverController = new GameController(driverControllerPort, deadband);
-    operatorController = new GameController(operatorControllerPort, deadband);
     this.swerve = swerve;
     this.coral = coral;
     this.vision = vision;
@@ -137,108 +133,71 @@ public class OperatorInput extends SubsystemBase {
                 this, driveSubsystem, coralSubsystem, pneumaticsSubsystem, climbSubsystem));
 
     // Reset Gyro
-    new Trigger(() -> driverController.getBackButton())
+    new Trigger(driverController::getBackButton)
         .onTrue(new SetAllianceGyroCommand(driveSubsystem, 0));
 
-    // Set Yaw
-    new Trigger(() -> operatorController.getBackButton())
-        .onTrue(new SetAllianceGyroCommand(driveSubsystem, 180));
-
     // Compact (X button)
-    new Trigger(() -> driverController.getXButton() || operatorController.getXButton())
+    new Trigger(() -> driverController.getXButton() && !isRightShift())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.COMPACT, coralSubsystem));
 
     /*
      * Set Score Height (POV)
      */
     // Y (delivery), A (intake) for arm position
-    new Trigger(
-            () ->
-                operatorController.getPOV() == 0
-                    && !isAutoAlignEitherBranch()
-                    && !isOperatorShift())
+    new Trigger(() -> driverController.getPOV() == 0 && !isAnyShift())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L4, coralSubsystem));
-    new Trigger(
-            () ->
-                operatorController.getPOV() == 270
-                    && !isAutoAlignEitherBranch()
-                    && !isOperatorShift())
+    new Trigger(() -> driverController.getPOV() == 270 && !isAnyShift())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L3, coralSubsystem));
-    new Trigger(
-            () ->
-                operatorController.getPOV() == 180
-                    && !isAutoAlignEitherBranch()
-                    && !isOperatorShift())
+    new Trigger(() -> driverController.getPOV() == 180 && !isAnyShift())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L2, coralSubsystem));
-    new Trigger(
-            () ->
-                operatorController.getPOV() == 90
-                    && !isAutoAlignEitherBranch()
-                    && !isOperatorShift())
+    new Trigger(() -> driverController.getPOV() == 90 && !isAnyShift())
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L1, coralSubsystem));
 
     // Semi-auto score commands
-    new Trigger(() -> (isAutoAlignLeftBranch() && operatorController.getPOV() == 0))
+    new Trigger(() -> (isAnyShift() && driverController.getPOV() == 0))
         .onTrue(
             new AlignShootLeaveCommand(
-                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L4, true));
-    new Trigger(() -> (isAutoAlignRightBranch() && operatorController.getPOV() == 0))
+                driveSubsystem,
+                visionSubsystem,
+                coralSubsystem,
+                CoralPose.SCORE_L4,
+                this::isLeftShift));
+    new Trigger(() -> (isAnyShift() && driverController.getPOV() == 270))
         .onTrue(
             new AlignShootLeaveCommand(
-                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L4, false));
-
-    new Trigger(() -> (isAutoAlignLeftBranch() && operatorController.getPOV() == 270))
+                driveSubsystem,
+                visionSubsystem,
+                coralSubsystem,
+                CoralPose.SCORE_L3,
+                this::isLeftShift));
+    new Trigger(() -> (isAnyShift() && driverController.getPOV() == 180))
         .onTrue(
             new AlignShootLeaveCommand(
-                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L3, true));
-    new Trigger(() -> (isAutoAlignRightBranch() && operatorController.getPOV() == 270))
-        .onTrue(
-            new AlignShootLeaveCommand(
-                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L3, false));
-
-    new Trigger(() -> (isAutoAlignLeftBranch() && operatorController.getPOV() == 180))
-        .onTrue(
-            new AlignShootLeaveCommand(
-                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L2, true));
-    new Trigger(() -> (isAutoAlignRightBranch() && operatorController.getPOV() == 180))
-        .onTrue(
-            new AlignShootLeaveCommand(
-                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L2, false));
-
-    /*
-     * Set remove algae poses
-     */
-    new Trigger(
-            () ->
-                operatorController.getPOV() == 0 && isOperatorShift() && !isAutoAlignEitherBranch())
-        .onTrue(new MoveToCoralPoseCommand(CoralPose.REMOVE_HIGH_ALGAE, coralSubsystem));
-
-    new Trigger(() -> operatorController.getPOV() == 270 && isOperatorShift())
-        .onTrue(new MoveToCoralPoseCommand(CoralPose.REMOVE_LOW_ALGAE, coralSubsystem));
+                driveSubsystem,
+                visionSubsystem,
+                coralSubsystem,
+                CoralPose.SCORE_L2,
+                this::isLeftShift));
 
     /*
      * Coral Intake Buttons
      */
-    new Trigger(() -> isAlignLeftStation() || isAlignRightStation())
+    new Trigger(() -> driverController.getYButton() && !isRightShift() && isLeftShift())
         .onTrue(new IntakeCoralCommand(coralSubsystem, false, true, swerve, vision, this));
 
-    new Trigger(() -> driverController.getYButton())
+    new Trigger(() -> driverController.getYButton() && !isRightShift() && !isLeftShift())
         .onTrue(new IntakeCoralCommand(coralSubsystem, true));
+
+    new Trigger(() -> driverController.getYButton() && isRightShift() && !isLeftShift())
+        .onTrue(new IntakeCoralCommand(coralSubsystem, false));
 
     /*
      * Climb Buttons
      */
 
-    // climb
-    new Trigger(() -> driverController.getPOV() == 0)
-        .onTrue(new ClimbCommand(true, climbSubsystem));
-
-    // anti-climb
-    new Trigger(() -> driverController.getPOV() == 180)
-        .onTrue(new ClimbCommand(false, climbSubsystem));
-
-    new Trigger(() -> driverController.getPOV() == 270)
-        .onTrue(new AutoClimbCommand(climbSubsystem));
+    // climb & anti-climb
+    new Trigger(() -> isLeftShift() && driverController.getRightY() != 0)
+        .onTrue(new ClimbCommand(this::isRightYPositive, climbSubsystem));
 
     new Trigger(() -> Timer.getMatchTime() < 15 && RobotState.isTeleop())
         .onTrue(new AutoClimbCommand(climbSubsystem));
@@ -331,16 +290,11 @@ public class OperatorInput extends SubsystemBase {
    * Do not end the command while the button is pressed
    */
   public boolean isCancel() {
-    return (driverController.getStartButton() && !driverController.getBackButton())
-        || (operatorController.getStartButton());
+    return (driverController.getStartButton() && !driverController.getBackButton());
   }
 
   public boolean isZeroGyro() {
     return driverController.getBackButton();
-  }
-
-  public boolean is180Gyro() {
-    return operatorController.getBackButton();
   }
 
   /*
@@ -351,7 +305,7 @@ public class OperatorInput extends SubsystemBase {
   }
 
   public boolean getRotate180Val() {
-    return driverController.getAButton();
+    return driverController.getAButton() && !isRightShift();
   }
 
   /*
@@ -369,8 +323,24 @@ public class OperatorInput extends SubsystemBase {
     return driverController.getLeftBumperButton();
   }
 
+  public boolean isAnyShift() {
+    return isRightShift() || isLeftShift();
+  }
+
+  public boolean isRightShift() {
+    return driverController.getRightTriggerAxis() > 0.1;
+  }
+
+  public boolean isLeftShift() {
+    return driverController.getLeftTriggerAxis() > 0.1;
+  }
+
   public boolean isFaceReef() {
-    return driverController.getBButton();
+    return isLeftShift();
+  }
+
+  public boolean isRightYPositive() {
+    return driverController.getRightY() > 0;
   }
 
   public double getDriverControllerAxis(Stick stick, Axis axis) {
@@ -387,27 +357,8 @@ public class OperatorInput extends SubsystemBase {
         switch (axis) {
           case X:
             return driverController.getRightX();
-        }
-        break;
-    }
-
-    return 0;
-  }
-
-  public double getOperatorControllerAxis(Stick stick, Axis axis) {
-    switch (stick) {
-      case LEFT:
-        switch (axis) {
-          case X:
-            return operatorController.getLeftX();
           case Y:
-            return operatorController.getLeftY();
-        }
-        break;
-      case RIGHT:
-        switch (axis) {
-          case X:
-            return operatorController.getRightX();
+            return driverController.getRightY();
         }
         break;
     }
@@ -419,55 +370,30 @@ public class OperatorInput extends SubsystemBase {
    * Default Coral Command
    */
   public double getElevatorInput() {
-    return operatorController.getRightY();
+    return isRightShift() ? driverController.getRightY() : 0;
   }
 
   public double getArmStick() {
-    return operatorController.getRightX();
+    return isRightShift() ? driverController.getRightX() : 0;
   }
 
   public boolean getEjectButton() {
-    return operatorController.getBButton();
+    return driverController.getBButton() && isRightShift();
   }
 
   public boolean getInjectButton() {
-    return operatorController.getLeftBumperButton();
+    return driverController.getXButton() && isRightShift();
   }
 
   public boolean getPlant() {
-    return operatorController.getYButton();
-  }
-
-  public boolean isAutoAlignEitherBranch() {
-    return isAutoAlignLeftBranch() || isAutoAlignRightBranch();
-  }
-
-  public boolean isAutoAlignLeftBranch() {
-    return operatorController.getLeftTriggerAxis() > 0.1;
-  }
-
-  public boolean isAutoAlignRightBranch() {
-    return operatorController.getRightTriggerAxis() > 0.1;
-  }
-
-  public boolean isOperatorShift() {
-    return operatorController.getRightBumperButton();
-  }
-
-  // ALIGN CORAL STATION ANGLE
-  public boolean isAlignLeftStation() {
-    return driverController.getLeftTriggerAxis() > 0.5;
-  }
-
-  public boolean isAlignRightStation() {
-    return driverController.getRightTriggerAxis() > 0.5;
+    return driverController.getBButton() && !isRightShift();
   }
 
   /*
    * Compressor enable/disable
    */
   public boolean isToggleCompressor() {
-    return isOperatorShift() && operatorController.getAButton();
+    return isRightShift() && driverController.getAButton();
   }
 
   /*
@@ -475,12 +401,10 @@ public class OperatorInput extends SubsystemBase {
    */
   public void startVibrate() {
     driverController.setRumble(GenericHID.RumbleType.kBothRumble, 1);
-    operatorController.setRumble(GenericHID.RumbleType.kBothRumble, 1);
   }
 
   public void stopVibrate() {
     driverController.setRumble(GenericHID.RumbleType.kBothRumble, 0);
-    operatorController.setRumble(GenericHID.RumbleType.kBothRumble, 0);
   }
 
   @Override
@@ -536,9 +460,6 @@ public class OperatorInput extends SubsystemBase {
 
     if (currentRumblePattern.driverController) {
       driverController.setRumble(currentRumblePattern.rumbleType, rumbleAmount);
-    }
-    if (currentRumblePattern.operatorController) {
-      operatorController.setRumble(currentRumblePattern.rumbleType, rumbleAmount);
     }
   }
 

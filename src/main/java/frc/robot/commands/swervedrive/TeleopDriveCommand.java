@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
+import frc.robot.RunnymedeUtils;
 import frc.robot.commands.LoggingCommand;
 import frc.robot.commands.operator.OperatorInput;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -69,27 +70,30 @@ public class TeleopDriveCommand extends LoggingCommand {
   // @Override
   @Override
   public void execute() {
-    final boolean isZeroGyro = oi.isZeroGyro() || oi.is180Gyro();
+    final boolean isZeroGyro = oi.isZeroGyro();
 
     // With the driver standing behind the driver station glass, "forward" on the left stick is
     // its y value, but that should convert into positive x movement on the field. The
     // Runnymede Controller inverts stick y-axis values, so "forward" on stick is positive.
     // Thus, positive y stick axis maps to positive x translation on the field.
-    final double vX = oi.getDriverControllerAxis(LEFT, Y);
+    final double vX = oi.isRightShift() ? 0 : oi.getDriverControllerAxis(LEFT, Y);
 
     // Left and right movement on the left stick (the stick's x-axis) maps to the y-axis on the
     // field. Left on the stick (negative x) maps to positive y on the field, and vice versa.
     // Thus, negative x stick axis maps to positive y translation on the field.
-    final double vY = -oi.getDriverControllerAxis(LEFT, X);
+    final double vY = oi.isRightShift() ? 0 : -oi.getDriverControllerAxis(LEFT, X);
 
     // Operator x for fine-tuning robot oriented
-    final double oX = Math.pow(oi.getOperatorControllerAxis(LEFT, Y), 3) * OPERATOR_SPEED_FACTOR;
+    final double oX =
+        oi.isRightShift()
+            ? Math.pow(oi.getDriverControllerAxis(LEFT, Y), 3) * OPERATOR_SPEED_FACTOR
+            : 0;
 
     // Operator y for fine-tuning robot oriented
-    final double oY = Math.pow(-oi.getOperatorControllerAxis(LEFT, X), 3) * OPERATOR_SPEED_FACTOR;
-
-    double ow = 0;
-    if (oi.isOperatorShift()) ow = oi.getOperatorControllerAxis(RIGHT, X);
+    final double oY =
+        oi.isRightShift()
+            ? Math.pow(-oi.getDriverControllerAxis(LEFT, X), 3) * OPERATOR_SPEED_FACTOR
+            : 0;
 
     // Left and right on the right stick will change the direction the robot is facing - its
     // heading. Positive x values on the stick translate to clockwise motion, and vice versa.
@@ -102,8 +106,13 @@ public class TeleopDriveCommand extends LoggingCommand {
 
     final boolean faceReef = oi.isFaceReef();
 
-    final boolean faceLeftStation = oi.isAlignLeftStation();
-    final boolean faceRightStation = oi.isAlignRightStation();
+    boolean botOnLeftHalf =
+        swerve.getPose().getY() < Constants.FieldConstants.FIELD_EXTENT_METRES_Y / 2;
+    if (RunnymedeUtils.getRunnymedeAlliance() == Alliance.Red) {
+      botOnLeftHalf = !botOnLeftHalf;
+    }
+    final boolean faceLeftStation = oi.isLeftShift() && botOnLeftHalf;
+    final boolean faceRightStation = oi.isLeftShift() && !botOnLeftHalf;
 
     // Compute boost factor
     final boolean isSlow = oi.isSlowMode();
@@ -194,12 +203,12 @@ public class TeleopDriveCommand extends LoggingCommand {
     }
 
     // if driver isn't driving, operator has control
-    if ((vX == 0 && vY == 0 && ccwRotAngularVelPct == 0) && (oX != 0 || oY != 0 || ow != 0)) {
+    if ((vX == 0 && vY == 0 && ccwRotAngularVelPct == 0) && (oX != 0 || oY != 0)) {
       operatorIsDriving = true;
       swerve.driveRobotOriented(
           oX * TRANSLATION_CONFIG.maxSpeedMPS(),
           oY * TRANSLATION_CONFIG.maxSpeedMPS(),
-          ow * Math.toRadians(10)); // 5deg/s
+          omegaRadiansPerSecond); // 5deg/s
       // driver gets priority otherwise
     } else {
       if (fieldOriented) {

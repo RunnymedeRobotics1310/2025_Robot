@@ -13,6 +13,7 @@ import frc.robot.commands.swervedrive.NullDriveCommand;
 import frc.robot.subsystems.CoralSubsystem;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
+import java.util.function.BooleanSupplier;
 
 public class AlignShootLeaveCommand extends SequentialCommandGroup {
 
@@ -21,10 +22,10 @@ public class AlignShootLeaveCommand extends SequentialCommandGroup {
       LimelightVisionSubsystem vision,
       CoralSubsystem coral,
       Constants.CoralConstants.CoralPose coralPose,
-      boolean isLeftBranch) {
+      BooleanSupplier isLeftBranch) {
 
     DriveToVisibleTagCommand driveToTagCommand =
-        new DriveToVisibleTagCommand(swerve, vision, isLeftBranch);
+        new DriveToVisibleTagCommand(swerve, vision, isLeftBranch.getAsBoolean());
 
     addCommands(driveToTagCommand.alongWith(new MoveToCoralPoseCommand(coralPose, coral)));
 
