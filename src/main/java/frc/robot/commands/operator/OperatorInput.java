@@ -154,30 +154,30 @@ public class OperatorInput extends SubsystemBase {
         .onTrue(new MoveToCoralPoseCommand(CoralPose.SCORE_L1, coralSubsystem));
 
     // Semi-auto score commands
-    new Trigger(() -> (isAnyShift() && driverController.getPOV() == 0))
+    new Trigger(() -> (isLeftShift() && driverController.getPOV() == 0))
         .onTrue(
             new AlignShootLeaveCommand(
-                driveSubsystem,
-                visionSubsystem,
-                coralSubsystem,
-                CoralPose.SCORE_L4,
-                this::isLeftShift));
-    new Trigger(() -> (isAnyShift() && driverController.getPOV() == 270))
+                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L4, true));
+    new Trigger(() -> (isRightShift() && driverController.getPOV() == 0))
         .onTrue(
             new AlignShootLeaveCommand(
-                driveSubsystem,
-                visionSubsystem,
-                coralSubsystem,
-                CoralPose.SCORE_L3,
-                this::isLeftShift));
-    new Trigger(() -> (isAnyShift() && driverController.getPOV() == 180))
+                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L4, false));
+    new Trigger(() -> (isLeftShift() && driverController.getPOV() == 270))
         .onTrue(
             new AlignShootLeaveCommand(
-                driveSubsystem,
-                visionSubsystem,
-                coralSubsystem,
-                CoralPose.SCORE_L2,
-                this::isLeftShift));
+                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L3, true));
+    new Trigger(() -> (isRightShift() && driverController.getPOV() == 270))
+        .onTrue(
+            new AlignShootLeaveCommand(
+                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L3, false));
+    new Trigger(() -> (isLeftShift() && driverController.getPOV() == 180))
+        .onTrue(
+            new AlignShootLeaveCommand(
+                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L2, true));
+    new Trigger(() -> (isRightShift() && driverController.getPOV() == 180))
+        .onTrue(
+            new AlignShootLeaveCommand(
+                driveSubsystem, visionSubsystem, coralSubsystem, CoralPose.SCORE_L2, false));
 
     /*
      * Coral Intake Buttons
@@ -196,8 +196,10 @@ public class OperatorInput extends SubsystemBase {
      */
 
     // climb & anti-climb
-    new Trigger(() -> isLeftShift() && driverController.getRightY() != 0)
-        .onTrue(new ClimbCommand(this::isRightYPositive, climbSubsystem));
+    new Trigger(() -> isLeftShift() && driverController.getRightY() < 0)
+        .onTrue(new ClimbCommand(true, climbSubsystem));
+    new Trigger(() -> isLeftShift() && driverController.getRightY() > 0)
+        .onTrue(new ClimbCommand(false, climbSubsystem));
 
     new Trigger(() -> Timer.getMatchTime() < 15 && RobotState.isTeleop())
         .onTrue(new AutoClimbCommand(climbSubsystem));

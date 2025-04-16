@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
-import frc.robot.RunnymedeUtils;
 import frc.robot.commands.LoggingCommand;
 import frc.robot.commands.operator.OperatorInput;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
@@ -100,19 +99,16 @@ public class TeleopDriveCommand extends LoggingCommand {
     // The coordinate system has positive motion as CCW.
     // Therefore, negative x stick value maps to positive rotation on the field.
     final double ccwRotAngularVelPct =
-        -oi.getDriverControllerAxis(RIGHT, X) * 0.65; // TODO: put this in constants?
+        oi.isRightShift()
+            ? 0
+            : -oi.getDriverControllerAxis(RIGHT, X) * 0.65; // TODO: put this in constants?
 
     final boolean rotate180Val = oi.getRotate180Val();
 
     final boolean faceReef = oi.isFaceReef();
 
-    boolean botOnLeftHalf =
-        swerve.getPose().getY() < Constants.FieldConstants.FIELD_EXTENT_METRES_Y / 2;
-    if (RunnymedeUtils.getRunnymedeAlliance() == Alliance.Red) {
-      botOnLeftHalf = !botOnLeftHalf;
-    }
-    final boolean faceLeftStation = oi.isLeftShift() && botOnLeftHalf;
-    final boolean faceRightStation = oi.isLeftShift() && !botOnLeftHalf;
+    final boolean faceLeftStation = oi.isLeftShift() && oi.getRawDriverController().getYButton();
+    final boolean faceRightStation = oi.isRightShift() && oi.getRawDriverController().getYButton();
 
     // Compute boost factor
     final boolean isSlow = oi.isSlowMode();

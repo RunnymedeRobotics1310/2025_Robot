@@ -3,14 +3,12 @@ package frc.robot.commands.climb;
 import frc.robot.commands.LoggingCommand;
 import frc.robot.subsystems.ClimbSubsystem;
 
-import java.util.function.BooleanSupplier;
-
 public class ClimbCommand extends LoggingCommand {
 
-  private final BooleanSupplier deployClimb;
+  private final boolean deployClimb;
   private final ClimbSubsystem climbSubsystem;
 
-  public ClimbCommand(BooleanSupplier deployClimb, ClimbSubsystem climbSubsystem) {
+  public ClimbCommand(boolean deployClimb, ClimbSubsystem climbSubsystem) {
 
     this.deployClimb = deployClimb;
     this.climbSubsystem = climbSubsystem;
@@ -23,7 +21,7 @@ public class ClimbCommand extends LoggingCommand {
 
     logCommandStart();
 
-    if (deployClimb.getAsBoolean()) {
+    if (deployClimb) {
       climbSubsystem.setClimbDeployed(true);
     } else {
       climbSubsystem.setClimbDeployed(false);

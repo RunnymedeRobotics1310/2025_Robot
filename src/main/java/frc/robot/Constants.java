@@ -196,7 +196,7 @@ public final class Constants {
             /* inverted? */ false,
             /* current limit (A) */ 40,
             /* nominal voltage (V) */ 12,
-            /* ramp rate 0 to full power (s) */ 0.25,
+            /* ramp rate 0 to full power (s) */ 0.125,
             /* drive motor gear ratio */ 6.75 /* SDS MK4i L2 --> 6.75:1 */,
             /* drive motor PID p */ 0.11,
             /* drive motor PID i */ 0,
