@@ -50,7 +50,7 @@ public class IntakeCoralCommand extends LoggingCommand {
 
   @Override
   public void initialize() {
-    logCommandStart();
+    logCommandStart("isFar: " + isFar + "andRun" + andRun);
     coralSubsystem.setIntakeHardLimit(true);
     coralSubsystem.setIntakeSpeed(CoralConstants.CORAL_INTAKE_SPEED);
   }

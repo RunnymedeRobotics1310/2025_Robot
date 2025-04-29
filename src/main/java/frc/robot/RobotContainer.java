@@ -161,7 +161,7 @@ public class RobotContainer {
             visionSubsystem,
             Constants.AutoConstants.FieldLocation.PRE_SCORE_RIGHT_6));
     NamedCommands.registerCommand(
-        "stop", new NullDriveCommand(swerveDriveSubsystem).withTimeout(0.1));
+        "stop", new NullDriveCommand(swerveDriveSubsystem));
   }
 
   /**

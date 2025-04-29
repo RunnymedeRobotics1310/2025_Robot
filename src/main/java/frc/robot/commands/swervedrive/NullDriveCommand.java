@@ -20,6 +20,7 @@ public class NullDriveCommand extends LoggingCommand {
 
     @Override
     public void execute() {
+        log("stopped");
         swerve.stop();
     }
 

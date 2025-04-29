@@ -33,6 +33,7 @@ public class ReverseButAlsoTeleopDriveCommand extends TeleopDriveCommand{
 
     @Override
     public void execute() {
+        log("Backing up!");
 
         // true if any Teleop drive buttons are being used
         isDriving = (
