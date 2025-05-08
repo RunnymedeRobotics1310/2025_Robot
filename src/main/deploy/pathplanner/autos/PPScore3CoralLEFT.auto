@@ -67,6 +67,12 @@
                       "data": {
                         "name": "coral-compact"
                       }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "intake-close"
+                      }
                     }
                   ]
                 }
@@ -75,9 +81,9 @@
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "stop"
+            "pathName": "Left Coral Station to PRE_SCORE_LEFT_3"
           }
         }
       ]
