@@ -69,21 +69,22 @@
                       }
                     },
                     {
-                      "type": "named",
+                      "type": "parallel",
                       "data": {
-                        "name": "intake-close"
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "intake-close"
+                            }
+                          }
+                        ]
                       }
                     }
                   ]
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Left Coral Station to PRE_SCORE_LEFT_3"
           }
         }
       ]

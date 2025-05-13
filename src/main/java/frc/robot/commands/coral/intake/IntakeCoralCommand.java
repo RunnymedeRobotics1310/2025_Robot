@@ -26,15 +26,7 @@ public class IntakeCoralCommand extends LoggingCommand {
   private final OperatorInput oi;
 
   public IntakeCoralCommand(CoralSubsystem coralSubsystem, boolean isFar) {
-
-    this.coralSubsystem = coralSubsystem;
-    this.isFar = isFar;
-    this.andRun = false;
-    this.swerve = null;
-    this.vision = null;
-    this.oi = null;
-
-    addRequirements(coralSubsystem);
+    this(coralSubsystem, isFar, false, null, null, null);
   }
 
   public IntakeCoralCommand(CoralSubsystem coralSubsystem, boolean isFar, boolean andRun, SwerveSubsystem swerve, LimelightVisionSubsystem vision, OperatorInput oi) {
@@ -94,6 +86,9 @@ public class IntakeCoralCommand extends LoggingCommand {
               || bluePose.getY() > Constants.FieldConstants.FIELD_EXTENT_METRES_Y - 2)) {
         CommandScheduler.getInstance()
             .schedule(new ReverseButAlsoTeleopDriveCommand(swerve, vision, oi));
+        System.out.println("********************************************");
+        System.out.println("Teleop: " + DriverStation.isTeleopEnabled());
+        System.out.println("********************************************");
       }
     }
   }
