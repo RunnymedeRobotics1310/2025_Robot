@@ -307,7 +307,7 @@ public class OperatorInput extends SubsystemBase {
   }
 
   public boolean getRotate180Val() {
-    return driverController.getAButton() && !isRightShift();
+    return false;
   }
 
   /*
@@ -338,7 +338,7 @@ public class OperatorInput extends SubsystemBase {
   }
 
   public boolean isFaceReef() {
-    return isLeftShift();
+    return driverController.getAButton() && !isRightShift();
   }
 
   public boolean isRightYPositive() {
