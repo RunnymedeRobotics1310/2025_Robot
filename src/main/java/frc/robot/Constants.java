@@ -258,6 +258,8 @@ public final class Constants {
             Rotation2d.fromRotations(0.279297).getDegrees(),
             ANGLE_ENCODER_CONFIG);
 
+    public static final GyroConfig GYRO_CONFIG = GyroConfig.navx();
+
     public static final CoreSwerveConfig CORE_SWERVE_CONFIG =
         new CoreSwerveConfig(
             WHEEL_BASE_METRES,
@@ -271,6 +273,7 @@ public final class Constants {
             FRONT_RIGHT,
             BACK_LEFT,
             BACK_RIGHT,
+            GYRO_CONFIG,
             Constants.TelemetryConfig.swerve);
 
     public static final SwerveDriveSubsystemConfig SUBSYSTEM_CONFIG =
