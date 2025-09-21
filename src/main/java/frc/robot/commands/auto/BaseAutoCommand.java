@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants.AutoConstants.FieldLocation;
+import frc.robot.Constants.CoralConstants.CoralPose;
 import frc.robot.RunnymedeUtils;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
@@ -115,7 +117,7 @@ public class BaseAutoCommand extends SequentialCommandGroup {
     double intakeHeading = intakeLocation.pose.getRotation().getDegrees() + allianceOffset;
 
     return scoreL4CoralStop(reefLocation, speed)
-        .andThen(new DriveRobotOrientedCommand(swerve, -0.5, 0, reefHeading).withTimeout(0.5))
+        .andThen(new DriveRobotOrientedCommand(swerve, -0.5, 0, reefHeading).withTimeout(RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red ? 1 : 0.5))
         .andThen(
             (new WaitCommand(0.4).andThen(new IntakeCoralCommand(coral, false)))
                 .deadlineFor(
