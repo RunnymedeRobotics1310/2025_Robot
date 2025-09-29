@@ -3,8 +3,11 @@ package frc.robot;
 import static edu.wpi.first.math.util.Units.inchesToMeters;
 import static frc.robot.Constants.FieldConstants.FIELD_EXTENT_METRES_X;
 import static frc.robot.Constants.FieldConstants.FIELD_EXTENT_METRES_Y;
+import static frc.robot.Constants.VisionConstants.VISION_PRIMARY_LIMELIGHT_NAME;
 
 import ca.team1310.swerve.core.config.*;
+import ca.team1310.swerve.gyro.config.GyroConfig;
+import ca.team1310.swerve.vision.config.LimelightConfig;
 import ca.team1310.swerve.utils.Coordinates;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -156,6 +159,8 @@ public final class Constants {
 
     public static final double SDS_MK4I_WHEEL_RADIUS_M = 0.051;
 
+    public static final GyroConfig GYRO_CONFIG = GyroConfig.navx();
+
     public static final SwerveTranslationConfig TRANSLATION_CONFIG =
         new SwerveTranslationConfig(
             /* tolerance (m) */ 0.02,
@@ -273,9 +278,18 @@ public final class Constants {
             BACK_RIGHT,
             Constants.TelemetryConfig.swerve);
 
+    private static final LimelightConfig LIMELIGHT_CONFIG =
+        new LimelightConfig(
+            VISION_PRIMARY_LIMELIGHT_NAME, FIELD_EXTENT_METRES_X, FIELD_EXTENT_METRES_Y);
     public static final SwerveDriveSubsystemConfig SUBSYSTEM_CONFIG =
         new SwerveDriveSubsystemConfig(
-            true, CORE_SWERVE_CONFIG, TRANSLATION_CONFIG, ROTATION_CONFIG, TelemetryConfig.drive);
+            true,
+            CORE_SWERVE_CONFIG,
+            GYRO_CONFIG,
+            LIMELIGHT_CONFIG,
+            TRANSLATION_CONFIG,
+            ROTATION_CONFIG,
+            TelemetryConfig.drive);
 
     // Ultrasonic port
     public static final int ULTRASONIC_SENSOR_PORT = 0;

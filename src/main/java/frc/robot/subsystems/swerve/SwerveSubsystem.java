@@ -44,10 +44,7 @@ public class SwerveSubsystem extends SubsystemBase {
   public SwerveSubsystem(SwerveDriveSubsystemConfig config) {
     this.drive =
         new LimelightAwareSwerveDrive(
-            config.coreConfig(),
-            VISION_PRIMARY_LIMELIGHT_NAME,
-            FIELD_EXTENT_METRES_X,
-            FIELD_EXTENT_METRES_Y);
+            config.coreConfig(), config.gyroConfig(), config.limelightConfig());
     this.config = config;
     this.xLimiter = new SlewRateLimiter(this.config.translationConfig().maxAccelMPS2());
     this.yLimiter = new SlewRateLimiter(this.config.translationConfig().maxAccelMPS2());
