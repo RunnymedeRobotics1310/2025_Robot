@@ -62,7 +62,12 @@ public final class Constants {
 
     public static final int DRIVER_CONTROLLER_PORT = 0;
     public static final int OPERATOR_CONTROLLER_PORT = 1;
-    public static final double CONTROLLER_DEADBAND = .2;
+
+    public static final double CONTROLLER_TRANSLATE_DEADBAND = .15;
+    public static final double CONTROLLER_TRANSLATE_EXPO = .35;
+
+    public static final double CONTROLLER_ROTATE_DEADBAND = .15;
+    public static final double CONTROLLER_ROTATE_EXPO = .50;
 
     /**
      * Standard drive speed factor. Regular teleop drive will use this factor of the max
@@ -162,7 +167,7 @@ public final class Constants {
             /* min speed (m/s) */ 1.0,
             /* max speed (m/s) */ 4.8,
             /* max module speed (m/s) */ 5.36,
-            /* max acceleration (m/s/s) */ 42.0,
+            /* max acceleration (m/s/s) */ 4.0,
             /* velocity PID p */ 1.2,
             /* velocity PID i */ 0,
             /* velocity PID d */ 0);
@@ -182,7 +187,7 @@ public final class Constants {
             /* inverted? */ true,
             /* current limit (A) */ 20,
             /* nominal voltage (V) */ 12,
-            /* ramp rate 0 to full power (s) */ 0.25,
+            /* ramp rate 0 to full power (s) */ 0.02,
             /* angle motor gear ratio */ 150.0 / 7 /* SDS MK4i 150/7:1 */,
             /* angle motor PID p */ 0.0125,
             /* angle motor PID i */ 0,
@@ -196,7 +201,7 @@ public final class Constants {
             /* inverted? */ false,
             /* current limit (A) */ 40,
             /* nominal voltage (V) */ 12,
-            /* ramp rate 0 to full power (s) */ 0.25,
+            /* ramp rate 0 to full power (s) */ 0.02,
             /* drive motor gear ratio */ 6.75 /* SDS MK4i L2 --> 6.75:1 */,
             /* drive motor PID p */ 0.11,
             /* drive motor PID i */ 0,

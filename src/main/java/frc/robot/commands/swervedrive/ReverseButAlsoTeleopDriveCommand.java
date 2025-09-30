@@ -2,7 +2,7 @@ package frc.robot.commands.swervedrive;
 
 import ca.team1310.swerve.utils.SwerveUtils;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.commands.operator.JoystickShaper;
 import frc.robot.commands.operator.OperatorInput;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
@@ -15,9 +15,9 @@ public class ReverseButAlsoTeleopDriveCommand extends TeleopDriveCommand{
     private boolean isDriving;
     private Timer timer = new Timer();
 
-    public ReverseButAlsoTeleopDriveCommand(SwerveSubsystem swerve, LimelightVisionSubsystem vision, OperatorInput oi) {
+    public ReverseButAlsoTeleopDriveCommand(SwerveSubsystem swerve, LimelightVisionSubsystem vision, OperatorInput oi, JoystickShaper joystickShaper) {
 
-        super(swerve, vision, oi);
+        super(swerve, vision, oi, joystickShaper);
     this.oi = oi;
     this.swerve = swerve;
 

@@ -12,6 +12,7 @@ import frc.robot.commands.coral.DefaultCoralCommand;
 import frc.robot.commands.coral.MoveToCoralPoseCommand;
 import frc.robot.commands.coral.intake.IntakeCoralCommand;
 import frc.robot.commands.coral.intake.PlantCoralCommand;
+import frc.robot.commands.operator.JoystickShaper;
 import frc.robot.commands.operator.OperatorInput;
 import frc.robot.commands.swervedrive.DriveToReefTagCommand;
 import frc.robot.commands.swervedrive.NullDriveCommand;
@@ -40,22 +41,30 @@ public class RobotContainer {
   private final LightingSubsystem lightingSubsystem = new LightingSubsystem(swerveDriveSubsystem);
   private final ClimbSubsystem climbSubsystem = new ClimbSubsystem();
 
+  private final JoystickShaper joystickShaper =
+      new JoystickShaper(
+          OiConstants.CONTROLLER_TRANSLATE_DEADBAND,
+          OiConstants.CONTROLLER_TRANSLATE_EXPO,
+          OiConstants.CONTROLLER_ROTATE_DEADBAND,
+          OiConstants.CONTROLLER_ROTATE_EXPO);
+
   // Driver and operator controllers
   private final OperatorInput operatorInput =
       new OperatorInput(
           OiConstants.DRIVER_CONTROLLER_PORT,
           OiConstants.OPERATOR_CONTROLLER_PORT,
-          OiConstants.CONTROLLER_DEADBAND,
           swerveDriveSubsystem,
           coralSubsystem,
-          visionSubsystem);
+          visionSubsystem,
+          joystickShaper);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
     // Initialize all Subsystem default commands
     swerveDriveSubsystem.setDefaultCommand(
-        new TeleopDriveCommand(swerveDriveSubsystem, visionSubsystem, operatorInput));
+        new TeleopDriveCommand(
+            swerveDriveSubsystem, visionSubsystem, operatorInput, joystickShaper));
 
     coralSubsystem.setDefaultCommand(new DefaultCoralCommand(coralSubsystem, operatorInput));
 

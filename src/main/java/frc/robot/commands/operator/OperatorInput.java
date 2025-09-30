@@ -38,6 +38,7 @@ public class OperatorInput extends SubsystemBase {
   private final SwerveSubsystem swerve;
   private final CoralSubsystem coral;
   private final LimelightVisionSubsystem vision;
+  private final JoystickShaper joystickShaper;
 
   private boolean matchNearEndTimerStarted = false;
 
@@ -97,15 +98,16 @@ public class OperatorInput extends SubsystemBase {
   public OperatorInput(
       int driverControllerPort,
       int operatorControllerPort,
-      double deadband,
       SwerveSubsystem swerve,
       CoralSubsystem coral,
-      LimelightVisionSubsystem vision) {
-    driverController = new GameController(driverControllerPort, deadband);
-    operatorController = new GameController(operatorControllerPort, deadband);
+      LimelightVisionSubsystem vision,
+      JoystickShaper joystickShaper) {
+    driverController = new GameController(driverControllerPort);
+    operatorController = new GameController(operatorControllerPort);
     this.swerve = swerve;
     this.coral = coral;
     this.vision = vision;
+    this.joystickShaper = joystickShaper;
   }
 
   /**
@@ -220,7 +222,9 @@ public class OperatorInput extends SubsystemBase {
      * Coral Intake Buttons
      */
     new Trigger(() -> isAlignLeftStation() || isAlignRightStation())
-        .onTrue(new IntakeCoralCommand(coralSubsystem, false, true, swerve, vision, this));
+        .onTrue(
+            new IntakeCoralCommand(
+                coralSubsystem, false, true, swerve, vision, this, joystickShaper));
 
     new Trigger(() -> driverController.getYButton())
         .onTrue(new IntakeCoralCommand(coralSubsystem, true));

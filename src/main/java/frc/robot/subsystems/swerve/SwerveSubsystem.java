@@ -29,8 +29,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   private final LimelightAwareSwerveDrive drive;
   private final SwerveDriveSubsystemConfig config;
-  private final SlewRateLimiter xLimiter;
-  private final SlewRateLimiter yLimiter;
+  private final SlewRateLimiter radialLimiter;
   private final SlewRateLimiter omegaLimiter;
   private final PIDController headingPIDController;
   private final AnalogInput ultrasonicDistanceSensor = new AnalogInput(ULTRASONIC_SENSOR_PORT);
@@ -49,8 +48,7 @@ public class SwerveSubsystem extends SubsystemBase {
             FIELD_EXTENT_METRES_X,
             FIELD_EXTENT_METRES_Y);
     this.config = config;
-    this.xLimiter = new SlewRateLimiter(this.config.translationConfig().maxAccelMPS2());
-    this.yLimiter = new SlewRateLimiter(this.config.translationConfig().maxAccelMPS2());
+    this.radialLimiter = new SlewRateLimiter(this.config.translationConfig().maxAccelMPS2());
     this.omegaLimiter = new SlewRateLimiter(config.rotationConfig().maxAccelerationRadPS2());
     headingPIDController =
         new PIDController(
@@ -79,7 +77,8 @@ public class SwerveSubsystem extends SubsystemBase {
         this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
         (speeds, feedforwards) ->
             driveRobotRelative(
-                speeds), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds.
+                speeds,
+                false), // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds.
         // Also optionally outputs individual module feedforwards
         new PPHolonomicDriveController( // PPHolonomicController is the built in path following
             // controller for holonomic drive trains
@@ -120,17 +119,38 @@ public class SwerveSubsystem extends SubsystemBase {
    */
 
   /**
+   * Limit the translation vector to be within the radial limits of the robot. This prevents the
+   * robot from exceeding its maximum acceleration in any direction.
+   *
+   * @param x
+   * @param y
+   * @return limited Translation2d
+   */
+  private Translation2d limitRadial(double x, double y) {
+    Translation2d v = new Translation2d(x, y);
+
+    double mag = v.getNorm();
+    double limitedMag = radialLimiter.calculate(mag);
+
+    return (mag > 1e-6) ? v.times(limitedMag / mag) : new Translation2d();
+  }
+
+  /**
    * Add limiters to the change in drive values. Note this may not scale evenly - one may reach
    * desired speed before another.
    *
    * @param x m/s
    * @param y m/s
    * @param omega rad/s
+   * @param slewEnabled true to apply slew rate limiting, false to disable it
    */
-  private void driveSafely(double x, double y, double omega) {
-    x = xLimiter.calculate(x);
-    y = yLimiter.calculate(y);
-    omega = omegaLimiter.calculate(omega);
+  private void driveSafely(double x, double y, double omega, boolean slewEnabled) {
+    if (slewEnabled) {
+      Translation2d v = limitRadial(x, y);
+      x = v.getX();
+      y = v.getY();
+      omega = omegaLimiter.calculate(omega);
+    }
 
     if (this.config.enabled()) {
       var spds = ChassisSpeeds.discretize(x, y, omega, Robot.kDefaultPeriod);
@@ -152,6 +172,24 @@ public class SwerveSubsystem extends SubsystemBase {
    * @param omega rad/s
    */
   public final void driveRobotOriented(double x, double y, double omega) {
+    driveRobotOriented(x, y, omega, true);
+  }
+
+  /**
+   * The primary method for controlling the drivebase. The provided parameters specify the
+   * robot-relative chassis speeds of the robot.
+   *
+   * <p>This method is responsible for applying safety code to prevent the robot from attempting to
+   * exceed its physical limits both in terms of speed and acceleration.
+   *
+   * <p>
+   *
+   * @param x m/s
+   * @param y m/s
+   * @param omega rad/s
+   * @param slewEnabled true to apply slew rate limiting, false to disable it
+   */
+  public final void driveRobotOriented(double x, double y, double omega, boolean slewEnabled) {
     Telemetry.drive.fieldOrientedVelocityX = 0;
     Telemetry.drive.fieldOrientedVelocityY = 0;
     Telemetry.drive.fieldOrientedVelocityOmega = 0;
@@ -159,17 +197,21 @@ public class SwerveSubsystem extends SubsystemBase {
     Telemetry.drive.fieldOrientedDeltaToPoseY = 0;
     Telemetry.drive.fieldOrientedDeltaToPoseHeading = 0;
 
-    driveSafely(x, y, omega);
+    driveSafely(x, y, omega, slewEnabled);
   }
 
   /**
    * Translate ChassisSpeed into raw vX, vY, vR for PathPlanner
    *
    * @param speeds ChassisSpeed object
+   * @param slewEnabled true to apply slew rate limiting, false to disable it
    */
-  private void driveRobotRelative(ChassisSpeeds speeds) {
+  private void driveRobotRelative(ChassisSpeeds speeds, boolean slewEnabled) {
     driveRobotOriented(
-        speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
+        speeds.vxMetersPerSecond,
+        speeds.vyMetersPerSecond,
+        speeds.omegaRadiansPerSecond,
+        slewEnabled);
   }
 
   /**
@@ -229,7 +271,7 @@ public class SwerveSubsystem extends SubsystemBase {
     Telemetry.drive.fieldOrientedVelocityOmega = omega;
 
     var robotOriented = SwerveMath.toRobotOriented(x, y, Math.toRadians(drive.getYaw()));
-    driveSafely(robotOriented[0], robotOriented[1], omega);
+    driveSafely(robotOriented[0], robotOriented[1], omega, true);
   }
 
   /**

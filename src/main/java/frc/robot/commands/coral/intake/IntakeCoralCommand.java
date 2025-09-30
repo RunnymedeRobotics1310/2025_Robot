@@ -9,6 +9,7 @@ import frc.robot.Constants.CoralConstants.ArmAngle;
 import frc.robot.Constants.CoralConstants.ElevatorHeight;
 import frc.robot.RunnymedeUtils;
 import frc.robot.commands.LoggingCommand;
+import frc.robot.commands.operator.JoystickShaper;
 import frc.robot.commands.operator.OperatorInput;
 import frc.robot.commands.swervedrive.ReverseButAlsoTeleopDriveCommand;
 import frc.robot.subsystems.CoralSubsystem;
@@ -24,6 +25,7 @@ public class IntakeCoralCommand extends LoggingCommand {
   private final SwerveSubsystem swerve;
   private final LimelightVisionSubsystem vision;
   private final OperatorInput oi;
+  private final JoystickShaper joystickShaper;
 
   public IntakeCoralCommand(CoralSubsystem coralSubsystem, boolean isFar) {
 
@@ -33,17 +35,26 @@ public class IntakeCoralCommand extends LoggingCommand {
     this.swerve = null;
     this.vision = null;
     this.oi = null;
+    this.joystickShaper = null;
 
     addRequirements(coralSubsystem);
   }
 
-  public IntakeCoralCommand(CoralSubsystem coralSubsystem, boolean isFar, boolean andRun, SwerveSubsystem swerve, LimelightVisionSubsystem vision, OperatorInput oi) {
+  public IntakeCoralCommand(
+      CoralSubsystem coralSubsystem,
+      boolean isFar,
+      boolean andRun,
+      SwerveSubsystem swerve,
+      LimelightVisionSubsystem vision,
+      OperatorInput oi,
+      JoystickShaper joystickShaper) {
     this.coralSubsystem = coralSubsystem;
     this.isFar = isFar;
     this.andRun = andRun;
     this.swerve = swerve;
     this.vision = vision;
     this.oi = oi;
+    this.joystickShaper = joystickShaper;
 
     addRequirements(coralSubsystem);
   }
@@ -79,7 +90,6 @@ public class IntakeCoralCommand extends LoggingCommand {
     coralSubsystem.setIntakeHardLimit(false);
     logCommandEnd(interrupted);
 
-
     if (andRun) {
       Pose2d bluePose = swerve.getPose();
       if (RunnymedeUtils.getRunnymedeAlliance() == DriverStation.Alliance.Red) {
@@ -93,7 +103,7 @@ public class IntakeCoralCommand extends LoggingCommand {
           && (bluePose.getY() < 2
               || bluePose.getY() > Constants.FieldConstants.FIELD_EXTENT_METRES_Y - 2)) {
         CommandScheduler.getInstance()
-            .schedule(new ReverseButAlsoTeleopDriveCommand(swerve, vision, oi));
+            .schedule(new ReverseButAlsoTeleopDriveCommand(swerve, vision, oi, joystickShaper));
       }
     }
   }

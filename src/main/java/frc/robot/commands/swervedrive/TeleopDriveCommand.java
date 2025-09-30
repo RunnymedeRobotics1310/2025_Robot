@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.commands.LoggingCommand;
+import frc.robot.commands.operator.JoystickShaper;
 import frc.robot.commands.operator.OperatorInput;
 import frc.robot.subsystems.swerve.SwerveSubsystem;
 import frc.robot.subsystems.vision.LimelightVisionSubsystem;
@@ -27,6 +28,8 @@ public class TeleopDriveCommand extends LoggingCommand {
   private final SwerveSubsystem swerve;
   private final OperatorInput oi;
   private final LimelightVisionSubsystem visionSubsystem;
+  private final JoystickShaper joystickShaper;
+
   private boolean invert;
   private Double headingSetpointDeg = null;
   private boolean fieldOriented = true;
@@ -38,10 +41,13 @@ public class TeleopDriveCommand extends LoggingCommand {
   public TeleopDriveCommand(
       SwerveSubsystem swerve,
       LimelightVisionSubsystem visionSubsystem,
-      OperatorInput operatorInput) {
+      OperatorInput operatorInput,
+      JoystickShaper joystickShaper) {
     this.swerve = swerve;
     this.visionSubsystem = visionSubsystem;
     this.oi = operatorInput;
+    this.joystickShaper = joystickShaper;
+
     addRequirements(swerve);
   }
 
@@ -75,12 +81,28 @@ public class TeleopDriveCommand extends LoggingCommand {
     // its y value, but that should convert into positive x movement on the field. The
     // Runnymede Controller inverts stick y-axis values, so "forward" on stick is positive.
     // Thus, positive y stick axis maps to positive x translation on the field.
-    final double vX = oi.getDriverControllerAxis(LEFT, Y);
+    final double rawX = oi.getDriverControllerAxis(LEFT, Y);
 
     // Left and right movement on the left stick (the stick's x-axis) maps to the y-axis on the
     // field. Left on the stick (negative x) maps to positive y on the field, and vice versa.
     // Thus, negative x stick axis maps to positive y translation on the field.
-    final double vY = -oi.getDriverControllerAxis(LEFT, X);
+    final double rawY = -oi.getDriverControllerAxis(LEFT, X);
+
+    // Shape translation (deadzone, expo, blended square) + slew per axis
+    double[] xy = joystickShaper.shapeXY(rawX, rawY);
+    final double shapedX = xy[0];
+    final double shapedY = xy[1];
+
+    // Left and right on the right stick will change the direction the robot is facing - its
+    // heading. Positive x values on the stick translate to clockwise motion, and vice versa.
+    // The coordinate system has positive motion as CCW.
+    // Therefore, negative x stick value maps to positive rotation on the field.
+    final double rawRot = -oi.getDriverControllerAxis(RIGHT, X);
+    final double shapedRot = joystickShaper.shapeRotation(rawRot);
+
+    System.out.println("Raw    X: " + rawX + " Raw.   Y: " + rawY + " Raw   Rot: " + rawRot);
+    System.out.println(
+        "Shaped X: " + shapedX + " Shaped Y: " + shapedY + " Shaped Rot: " + shapedRot);
 
     // Operator x for fine-tuning robot oriented
     final double oX = Math.pow(oi.getOperatorControllerAxis(LEFT, Y), 3) * OPERATOR_SPEED_FACTOR;
@@ -90,13 +112,6 @@ public class TeleopDriveCommand extends LoggingCommand {
 
     double ow = 0;
     if (oi.isOperatorShift()) ow = oi.getOperatorControllerAxis(RIGHT, X);
-
-    // Left and right on the right stick will change the direction the robot is facing - its
-    // heading. Positive x values on the stick translate to clockwise motion, and vice versa.
-    // The coordinate system has positive motion as CCW.
-    // Therefore, negative x stick value maps to positive rotation on the field.
-    final double ccwRotAngularVelPct =
-        -oi.getDriverControllerAxis(RIGHT, X) * 0.65; // TODO: put this in constants?
 
     final boolean rotate180Val = oi.getRotate180Val();
 
@@ -112,20 +127,18 @@ public class TeleopDriveCommand extends LoggingCommand {
     final double boostFactor =
         isSlow ? SLOW_SPEED_FACTOR : (isFast ? MAX_SPEED_FACTOR : GENERAL_SPEED_FACTOR);
 
-    Translation2d velocity = calculateTeleopVelocity(vX, vY, boostFactor, invert);
+    Translation2d velocity = calculateTeleopVelocity(rawX, rawY, boostFactor, invert);
 
     final boolean doFlip = rotate180Val && !prevRotate180Val;
     prevRotate180Val = rotate180Val;
 
     final double omegaRadiansPerSecond;
     double desiredOmegaRadiansPerSecond;
-    double correctedCcwRotAngularVelPct = ccwRotAngularVelPct;
 
     // Compute Omega
-    if (correctedCcwRotAngularVelPct != 0) {
+    if (shapedRot != 0) {
       // User is steering!
-      omegaRadiansPerSecond =
-          Math.pow(correctedCcwRotAngularVelPct, 3) * ROTATION_CONFIG.maxRotVelocityRadPS();
+      omegaRadiansPerSecond = shapedRot * ROTATION_CONFIG.maxRotVelocityRadPS();
       // Save previous heading for when we are finished steering and slow enough.
       // headingSetpoint = Rotation2d.fromDegrees(swerve.getYaw());
       headingSetpointDeg = null;
@@ -194,7 +207,7 @@ public class TeleopDriveCommand extends LoggingCommand {
     }
 
     // if driver isn't driving, operator has control
-    if ((vX == 0 && vY == 0 && ccwRotAngularVelPct == 0) && (oX != 0 || oY != 0 || ow != 0)) {
+    if ((shapedX == 0 && shapedY == 0 && shapedRot == 0) && (oX != 0 || oY != 0 || ow != 0)) {
       operatorIsDriving = true;
       swerve.driveRobotOriented(
           oX * TRANSLATION_CONFIG.maxSpeedMPS(),
